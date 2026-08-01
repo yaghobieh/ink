@@ -1,6 +1,6 @@
 {
   "name": "@forgedevstack/ink",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "ForgeStack rich text editor for React — WYSIWYG toolbar, typo auto-fix, Angular adapter, and WordPress stub. The writing layer of ForgeStack.",
   "type": "module",
   "main": "./dist/index.cjs",
