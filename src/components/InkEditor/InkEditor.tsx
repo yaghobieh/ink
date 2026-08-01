@@ -26,6 +26,7 @@ import {
   INK_DEFAULT_AUTHOR,
   INK_DEFAULT_FEATURES,
   INK_DEFAULT_HIGHLIGHT_COLOR,
+  INK_DEFAULT_ICONS,
   INK_DEFAULT_TEXT_COLOR,
   INK_DEFAULT_TOOLBAR,
   INK_DEFAULT_VARIANT,
@@ -43,14 +44,20 @@ import {
   createCommentThread,
   createInkId,
   createTrackChange,
+  extractClipboardHtml,
+  extractClipboardText,
   extractSlashQuery,
   filterSlashCommands,
   getBlockElement,
+  hasInkPremiumFeature,
   InkHistoryStack,
   markActiveBlock,
   moveBlock,
   rejectTrackChangeInHtml,
   removeCommentMark,
+  resolveInkPremium,
+  sanitizePastedHtml,
+  themeTokensToStyle,
   wrapDeleteHtml,
   wrapInsertHtml,
   wrapSelectionAsComment,
@@ -76,32 +83,6 @@ import {
   ToolbarDropdown,
   TrackChangesBar,
 } from './components';
-
-const LABEL_ICONS: Record<string, string> = {
-  bold: 'B',
-  italic: 'I',
-  underline: 'U',
-  strikethrough: 'S',
-  bulletList: '•',
-  orderedList: '1.',
-  link: '🔗',
-  image: '🖼',
-  table: '▦',
-  undo: '↶',
-  redo: '↷',
-  trackChanges: '±',
-  comments: '💬',
-  ai: '✦',
-  clearFormat: '⌫',
-  alignLeft: '⫷',
-  alignCenter: '☰',
-  alignRight: '⫸',
-  alignJustify: '≡',
-  indent: '→',
-  outdent: '←',
-  blockquote: '“',
-  code: '</>',
-};
 
 const getSelectionHtml = (): string => {
   const selection = window.getSelection();
@@ -144,10 +125,26 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     slashCommands,
     tableRows = INK_TABLE_DEFAULT_ROWS,
     tableCols = INK_TABLE_DEFAULT_COLS,
+    premium: premiumProp,
+    theme,
+    icons: iconsProp,
+    pasteMode = 'plain',
+    onImageUpload,
+    wysiwyg = false,
+    style: styleProp,
     ...rest
   } = props;
 
   const features = { ...INK_DEFAULT_FEATURES, ...featuresProp };
+  const premium = resolveInkPremium(premiumProp);
+  const canUseIcons = hasInkPremiumFeature(premium, 'icons');
+  const canUseTheme = hasInkPremiumFeature(premium, 'theme');
+  const canUseRichPaste = hasInkPremiumFeature(premium, 'richPaste');
+  const canUseImageUpload = hasInkPremiumFeature(premium, 'imageUpload');
+  const canUseWysiwyg = hasInkPremiumFeature(premium, 'wysiwyg') && wysiwyg;
+  const icons = canUseIcons && iconsProp ? { ...INK_DEFAULT_ICONS, ...iconsProp } : INK_DEFAULT_ICONS;
+  const themeStyle = canUseTheme ? themeTokensToStyle(theme) : {};
+  const richPasteEnabled = canUseRichPaste && pasteMode === 'rich';
   const editorRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef(new InkHistoryStack(value ?? defaultValue));
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
@@ -340,6 +337,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     handleInput();
   };
 
+  const resolveImageSrc = async (file: File): Promise<string> => {
+    if (canUseImageUpload && onImageUpload) {
+      return onImageUpload(file);
+    }
+    return fileToDataUrl(file);
+  };
+
   const handleImage = async () => {
     if (disabled || readOnly) return;
     const input = document.createElement('input');
@@ -348,9 +352,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-      const dataUrl = await fileToDataUrl(file);
+      const src = await resolveImageSrc(file);
       editorRef.current?.focus();
-      insertImage(dataUrl, file.name);
+      insertImage(src, file.name);
       handleInput();
     };
     input.click();
@@ -422,25 +426,61 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     );
   };
 
+  const insertPastedImage = async (file: File) => {
+    const src = await resolveImageSrc(file);
+    const html = `<img src="${src}" alt="" style="max-width:100%;height:auto;" />`;
+    if (trackChangesEnabled && features.trackChanges) {
+      const change = createTrackChange('insert', html, author);
+      updateTrackChanges([...trackChanges, change]);
+      insertHTML(wrapInsertHtml(html, change.id));
+    } else {
+      insertImage(src);
+    }
+    handleInput();
+  };
+
   const handlePaste = async (event: ClipboardEvent<HTMLDivElement>) => {
-    if (!allowImagePaste || disabled || readOnly) return;
-    const items = event.clipboardData?.items;
+    if (disabled || readOnly) return;
+    const clipboard = event.clipboardData;
+    if (!clipboard) return;
+
+    if (richPasteEnabled) {
+      const html = extractClipboardHtml(clipboard);
+      if (html) {
+        event.preventDefault();
+        const clean = sanitizePastedHtml(html);
+        if (clean) {
+          insertHTML(clean);
+          handleInput();
+        }
+        const items = clipboard.items;
+        if (allowImagePaste && items) {
+          for (const item of Array.from(items)) {
+            if (!item.type.startsWith('image/')) continue;
+            const file = item.getAsFile();
+            if (file) await insertPastedImage(file);
+          }
+        }
+        return;
+      }
+      const text = extractClipboardText(clipboard);
+      if (text) {
+        event.preventDefault();
+        insertHTML(text.replace(/\n/g, '<br />'));
+        handleInput();
+        return;
+      }
+    }
+
+    if (!allowImagePaste) return;
+    const items = clipboard.items;
     if (!items) return;
     for (const item of Array.from(items)) {
       if (!item.type.startsWith('image/')) continue;
       event.preventDefault();
       const file = item.getAsFile();
       if (!file) continue;
-      const dataUrl = await fileToDataUrl(file);
-      if (trackChangesEnabled && features.trackChanges) {
-        const html = `<img src="${dataUrl}" alt="" style="max-width:100%;height:auto;" />`;
-        const change = createTrackChange('insert', html, author);
-        updateTrackChanges([...trackChanges, change]);
-        insertHTML(wrapInsertHtml(html, change.id));
-      } else {
-        insertImage(dataUrl);
-      }
-      handleInput();
+      await insertPastedImage(file);
     }
   };
 
@@ -556,7 +596,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="link"
-          icon={LABEL_ICONS.link}
+          icon={icons.link}
           title="Insert link"
           disabled={disabled || readOnly}
           onClick={handleLink}
@@ -567,7 +607,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="image"
-          icon={LABEL_ICONS.image}
+          icon={icons.image}
           title="Insert image"
           disabled={disabled || readOnly}
           onClick={() => {
@@ -581,7 +621,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="table"
-          icon={LABEL_ICONS.table}
+          icon={icons.table}
           title="Insert table"
           disabled={disabled || readOnly}
           onClick={handleTable}
@@ -592,7 +632,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="undo"
-          icon={LABEL_ICONS.undo}
+          icon={icons.undo}
           title="Undo"
           disabled={disabled || readOnly}
           onClick={handleUndo}
@@ -603,7 +643,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="redo"
-          icon={LABEL_ICONS.redo}
+          icon={icons.redo}
           title="Redo"
           disabled={disabled || readOnly}
           onClick={handleRedo}
@@ -615,7 +655,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="trackChanges"
-          icon={LABEL_ICONS.trackChanges}
+          icon={icons.trackChanges}
           title="Track changes"
           active={trackChangesEnabled}
           disabled={disabled || readOnly}
@@ -628,7 +668,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="comments"
-          icon={LABEL_ICONS.comments}
+          icon={icons.comments}
           title="Comments"
           active={commentsOpen}
           disabled={disabled || readOnly}
@@ -644,7 +684,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="ai"
-          icon={LABEL_ICONS.ai}
+          icon={icons.ai}
           title="Ink AI"
           active={showAiPanel}
           disabled={disabled || readOnly}
@@ -657,7 +697,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     return (
       <ToolbarButton
         key={item}
-        icon={LABEL_ICONS[item] ?? item.slice(0, 1).toUpperCase()}
+        icon={icons[item as keyof typeof icons] ?? item.slice(0, 1).toUpperCase()}
         title={config.title}
         active={activeFormats.has(item)}
         disabled={disabled || readOnly}
@@ -676,6 +716,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       data-testid={testId}
       data-disabled={disabled || undefined}
       data-variant={variant}
+      data-premium={premium.active || undefined}
+      data-wysiwyg={canUseWysiwyg || undefined}
+      style={{ ...themeStyle, ...styleProp }}
       {...rest}
     >
       <div className={INK_CLASS_TOOLBAR} role="toolbar" aria-label="Ink formatting toolbar">

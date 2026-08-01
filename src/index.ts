@@ -7,6 +7,12 @@ export {
   createCommentThread,
   createTrackChange,
   InkHistoryStack,
+  resolveInkPremium,
+  hasInkPremiumFeature,
+  isInkPremiumLicenseKey,
+  mintInkPremiumLicenseKey,
+  themeTokensToStyle,
+  sanitizePastedHtml,
 } from './utils';
 export { inkAi, createInkAiPlugin } from './plugins/ai';
 export {
@@ -21,6 +27,9 @@ export {
   INK_TRANSLATE_LANGUAGES,
   INK_QUICK_ACTIONS,
   INK_DEFAULT_FEATURES,
+  INK_DEFAULT_ICONS,
+  INK_PREMIUM_FEATURES,
+  INK_PREMIUM_LICENSE_PREFIX,
   TYPO_DICTIONARY,
 } from './constants';
 export type {
@@ -50,4 +59,12 @@ export type {
   InkFeatureName,
   InkEditorVariant,
   InkAiPlacement,
+  InkPremiumFeature,
+  InkPasteMode,
+  InkIconKey,
+  InkIconMap,
+  InkThemeTokens,
+  InkPremiumConfig,
+  InkResolvedPremium,
+  InkImageUploadHandler,
 } from './types';
