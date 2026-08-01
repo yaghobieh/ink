@@ -1,3 +1,8 @@
 export { ToolbarButton } from './ToolbarButton';
 export { ToolbarDropdown } from './ToolbarDropdown';
 export { ToolbarColorPicker } from './ToolbarColorPicker';
+export { CommentsPanel } from './CommentsPanel';
+export { AiPanel } from './AiPanel';
+export { BlockHandles } from './BlockHandles';
+export { SlashMenu } from './SlashMenu';
+export { TrackChangesBar } from './TrackChangesBar';

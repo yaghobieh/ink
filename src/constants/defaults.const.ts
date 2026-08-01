@@ -1,4 +1,9 @@
-import type { DropdownOption, ToolbarOption } from '../types';
+import type { DropdownOption, SlashCommandItem, ToolbarOption } from '../types';
+import type { InkFeaturesConfig } from '../types';
+import {
+  INK_DEFAULT_TABLE_COLS,
+  INK_DEFAULT_TABLE_ROWS,
+} from './numbers.const';
 
 export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'headingDropdown',
@@ -16,6 +21,14 @@ export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'divider',
   'link',
   'image',
+  'table',
+  'divider',
+  'undo',
+  'redo',
+  'divider',
+  'trackChanges',
+  'comments',
+  'ai',
   'divider',
   'clearFormat',
 ];
@@ -27,6 +40,25 @@ export const INK_SIMPLE_TOOLBAR: ToolbarOption[] = [
   'divider',
   'bulletList',
   'orderedList',
+];
+
+export const INK_COLLAB_TOOLBAR: ToolbarOption[] = [
+  'headingDropdown',
+  'divider',
+  'bold',
+  'italic',
+  'underline',
+  'divider',
+  'bulletList',
+  'orderedList',
+  'table',
+  'divider',
+  'trackChanges',
+  'comments',
+  'ai',
+  'divider',
+  'undo',
+  'redo',
 ];
 
 export const INK_HEADING_OPTIONS: DropdownOption[] = [
@@ -65,6 +97,8 @@ export const INK_BUTTON_CONFIG: Record<
   indent: { title: 'Indent', command: 'indent' },
   outdent: { title: 'Outdent', command: 'outdent' },
   clearFormat: { title: 'Clear formatting', command: 'removeFormat' },
+  undo: { title: 'Undo', command: 'undo' },
+  redo: { title: 'Redo', command: 'redo' },
 };
 
 export const INK_COLOR_SWATCHES = [
@@ -74,7 +108,7 @@ export const INK_COLOR_SWATCHES = [
   '#ca8a04',
   '#16a34a',
   '#2563eb',
-  '#7c3aed',
+  '#0f766e',
   '#db2777',
 ];
 
@@ -86,3 +120,82 @@ export const INK_CLASS_DIVIDER = 'Ink-Editor__divider';
 export const INK_CLASS_BUTTON = 'Ink-Editor__button';
 export const INK_CLASS_BUTTON_ACTIVE = 'Ink-Editor__button--active';
 export const INK_CLASS_FOOTER = 'Ink-Editor__footer';
+export const INK_CLASS_SHELL = 'Ink-Editor__shell';
+export const INK_CLASS_BODY = 'Ink-Editor__body';
+export const INK_CLASS_BLOCK_ACTIVE = 'Ink-block--active';
+export const INK_CLASS_TC_INSERT = 'Ink-tc-insert';
+export const INK_CLASS_TC_DELETE = 'Ink-tc-delete';
+export const INK_CLASS_COMMENT_MARK = 'Ink-comment-mark';
+export const INK_DEFAULT_AUTHOR = 'You';
+export const INK_DEFAULT_VARIANT = 'classic' as const;
+export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
+  table: true,
+  trackChanges: true,
+  comments: true,
+  ai: true,
+  blocks: true,
+  slash: true,
+  history: true,
+  typoAutoFix: true,
+};
+export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
+export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;
+
+export const INK_SLASH_COMMANDS: SlashCommandItem[] = [
+  {
+    id: 'heading1',
+    label: 'Heading 1',
+    keywords: ['h1', 'title', 'heading'],
+    insert: 'heading1',
+  },
+  {
+    id: 'heading2',
+    label: 'Heading 2',
+    keywords: ['h2', 'subtitle', 'heading'],
+    insert: 'heading2',
+  },
+  {
+    id: 'bullet',
+    label: 'Bullet list',
+    keywords: ['ul', 'list', 'bullet'],
+    insert: 'bulletList',
+  },
+  {
+    id: 'ordered',
+    label: 'Numbered list',
+    keywords: ['ol', 'list', 'numbered'],
+    insert: 'orderedList',
+  },
+  {
+    id: 'table',
+    label: 'Table',
+    keywords: ['table', 'grid'],
+    insert: 'table',
+  },
+  {
+    id: 'ai',
+    label: 'Ask AI',
+    keywords: ['ai', 'assistant', 'chat'],
+    insert: 'ai',
+  },
+];
+
+export const INK_TRANSLATE_LANGUAGES = [
+  'English',
+  'Spanish',
+  'French',
+  'German',
+  'Chinese (Simplified)',
+  'Japanese',
+  'Russian',
+  'Portuguese',
+  'Korean',
+  'Italian',
+] as const;
+
+export const INK_QUICK_ACTIONS = [
+  { id: 'rewrite', label: 'Rewrite', capability: 'rewrite' as const },
+  { id: 'summarize', label: 'Summarize', capability: 'summarize' as const },
+  { id: 'expand', label: 'Expand', capability: 'expand' as const },
+  { id: 'tone', label: 'Adjust tone', capability: 'tone' as const },
+];
