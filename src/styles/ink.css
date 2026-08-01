@@ -147,3 +147,57 @@
     --ink-accent-soft: rgb(45 212 191 / 0.15);
   }
 }
+
+.ink-theme-snow .Ink-Editor,
+.Ink-Editor.ink-theme-snow {
+  --ink-border: #e5e7eb;
+  --ink-bg: #ffffff;
+  --ink-toolbar: #f9fafb;
+  --ink-text: #111827;
+  --ink-muted: #6b7280;
+  --ink-accent: #0f766e;
+  --ink-accent-soft: #ccfbf1;
+  border-radius: 0.25rem;
+}
+
+.ink-theme-bubble .Ink-Editor,
+.Ink-Editor.ink-theme-bubble {
+  --ink-border: transparent;
+  --ink-bg: #ffffff;
+  --ink-toolbar: #ffffff;
+  --ink-text: #111827;
+  --ink-muted: #6b7280;
+  --ink-accent: #0f766e;
+  --ink-accent-soft: #ccfbf1;
+  box-shadow: 0 4px 24px rgb(15 23 42 / 0.1);
+  border-radius: 1rem;
+}
+
+.ink-theme-dark .Ink-Editor,
+.Ink-Editor.ink-theme-dark {
+  --ink-border: #3f3f46;
+  --ink-bg: #18181b;
+  --ink-toolbar: #27272a;
+  --ink-text: #f4f4f5;
+  --ink-muted: #a1a1aa;
+  --ink-accent: #2dd4bf;
+  --ink-accent-soft: rgb(45 212 191 / 0.15);
+}
+
+.ink-theme-minimal .Ink-Editor,
+.Ink-Editor.ink-theme-minimal {
+  --ink-border: #e7e5e4;
+  --ink-bg: #ffffff;
+  --ink-toolbar: #ffffff;
+  --ink-text: #1c1917;
+  --ink-muted: #78716c;
+  --ink-accent: #0f766e;
+  --ink-accent-soft: #f0fdfa;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.ink-theme-minimal .Ink-Editor__toolbar,
+.Ink-Editor.ink-theme-minimal .Ink-Editor__toolbar {
+  border-bottom-style: dashed;
+}
