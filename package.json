@@ -1,0 +1,89 @@
+{
+  "name": "@forgedevstack/ink",
+  "version": "1.0.0",
+  "description": "ForgeStack rich text editor for React — WYSIWYG toolbar, typo auto-fix, Angular adapter, and WordPress stub. The writing layer of ForgeStack.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./angular": {
+      "types": "./dist/angular/index.d.ts",
+      "import": "./dist/angular/index.js",
+      "require": "./dist/angular/index.cjs"
+    },
+    "./plugins/ai": {
+      "types": "./dist/plugins/ai/index.d.ts",
+      "import": "./dist/plugins/ai/index.js",
+      "require": "./dist/plugins/ai/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "wordpress"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc --noEmit && vite build && node scripts/copy-styles.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/core": {
+      "optional": true
+    },
+    "@angular/common": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "react",
+    "rich-text",
+    "wysiwyg",
+    "editor",
+    "contenteditable",
+    "typescript",
+    "forge",
+    "ink",
+    "angular",
+    "wordpress"
+  ],
+  "author": "John Yaghobieh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yaghobieh/ink.git"
+  },
+  "homepage": "https://inkforgejs.com",
+  "bugs": {
+    "url": "https://github.com/yaghobieh/ink/issues"
+  }
+}

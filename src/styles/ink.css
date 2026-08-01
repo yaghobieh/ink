@@ -1,0 +1,149 @@
+.Ink-Editor {
+  --ink-border: #e5e7eb;
+  --ink-bg: #ffffff;
+  --ink-toolbar: #f9fafb;
+  --ink-text: #111827;
+  --ink-muted: #6b7280;
+  --ink-accent: #0f766e;
+  --ink-accent-soft: #ccfbf1;
+  border: 1px solid var(--ink-border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--ink-bg);
+  color: var(--ink-text);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.Ink-Editor[data-disabled='true'] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.Ink-Editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-toolbar);
+}
+
+.Ink-Editor__button,
+.Ink-Editor__select {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.Ink-Editor__button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.4rem;
+  font-weight: 700;
+}
+
+.Ink-Editor__button:hover,
+.Ink-Editor__select:hover {
+  background: rgb(0 0 0 / 0.06);
+}
+
+.Ink-Editor__button--active {
+  background: var(--ink-accent-soft);
+  color: var(--ink-accent);
+}
+
+.Ink-Editor__select {
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+
+.Ink-Editor__divider {
+  width: 1px;
+  height: 1.25rem;
+  margin: 0 0.25rem;
+  background: var(--ink-border);
+}
+
+.Ink-Editor__color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
+.Ink-Editor__color input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.Ink-Editor__color-swatch {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--ink-border);
+}
+
+.Ink-Editor__content {
+  min-height: 150px;
+  padding: 1rem;
+  outline: none;
+  overflow: auto;
+  line-height: 1.6;
+}
+
+.Ink-Editor__content:empty::before {
+  content: attr(data-placeholder);
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+.Ink-Editor__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.Ink-Editor__content h1,
+.Ink-Editor__content h2,
+.Ink-Editor__content h3,
+.Ink-Editor__content h4,
+.Ink-Editor__content h5,
+.Ink-Editor__content h6 {
+  margin: 0.75rem 0 0.5rem;
+  line-height: 1.25;
+}
+
+.Ink-Editor__content p,
+.Ink-Editor__content ul,
+.Ink-Editor__content ol,
+.Ink-Editor__content blockquote,
+.Ink-Editor__content pre {
+  margin: 0.5rem 0;
+}
+
+.Ink-Editor__footer {
+  padding: 0.35rem 0.75rem;
+  border-top: 1px solid var(--ink-border);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+@media (prefers-color-scheme: dark) {
+  .Ink-Editor {
+    --ink-border: #3f3f46;
+    --ink-bg: #18181b;
+    --ink-toolbar: #27272a;
+    --ink-text: #f4f4f5;
+    --ink-muted: #a1a1aa;
+    --ink-accent: #2dd4bf;
+    --ink-accent-soft: rgb(45 212 191 / 0.15);
+  }
+}

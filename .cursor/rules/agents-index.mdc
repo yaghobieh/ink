@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+---
+# Ink Agents Index
+
+| Agent / skill | When |
+|---|---|
+| **ink-component-workflow** | Adding/changing editor surfaces or toolbar pieces |
+| **ink-code-quality** | Review — types/const separation, no magic values |
+| **ink-release-workflow** | Version bump, CHANGELOG, build, publish |
+
+UI work follows ForgeStack Developer UI conventions. Publishing follows `@forgedevstack/*` CI pattern.

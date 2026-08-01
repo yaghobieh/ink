@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+# Project Structure
+
+## Library (src/)
+- `src/components/InkEditor/` — editor + toolbar subcomponents
+- `src/constants/` — defaults, numbers, typo dictionary
+- `src/types/` — public and internal types
+- `src/utils/` — typo fix, className helpers
+- `src/plugins/ai/` — AI agent stub interface
+- `src/angular/` — Angular usage helpers / thin adapter entry
+- `src/styles/ink.css` — shipped as `dist/styles.css`
+
+## WordPress
+- `wordpress/ink-editor/` — PHP plugin stub + assets placeholder
+
+## Portal
+- Companion repo: `ink-portal` (demos with Bear chrome)
+
+Every folder has an `index.ts` barrel export.
