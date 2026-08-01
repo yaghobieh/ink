@@ -3,14 +3,15 @@
 [![npm version](https://img.shields.io/npm/v/@forgedevstack/ink.svg)](https://www.npmjs.com/package/@forgedevstack/ink)
 [![license](https://img.shields.io/npm/l/@forgedevstack/ink.svg)](./LICENSE)
 
-**ForgeStack rich text editor** for React. WYSIWYG toolbar, heading styles, colors, lists, links, image paste, built-in typo auto-fix MVP, CSS themes, Angular usage stub, and a WordPress plugin stub.
+**ForgeStack rich text editor** for React. CKEditor-inspired shell with tables, track changes, comments, block handles, slash commands, and pluggable Ink AI (bring your own LLM + local demo provider).
 
 <p align="center">
   <img src="./assets/ink-logo.png" alt="Ink logo" width="120" />
 </p>
 
-> **Domain:** [inkforgejs.com](https://inkforgejs.com) — docs + playground.  
-> **Inspired by Quill** in UX (light paper UI, docs sidebar, Format/Modules/Theme playground) — not a Quill fork. Ink is a contenteditable React component with ForgeStack integrations.
+> **Domain:** [inkforgejs.com](https://inkforgejs.com) — docs + demos.  
+> **Inspired by CKEditor 5** demos / AI features pages and earlier Quill-like portal aesthetics — not a fork. Ink is a contenteditable React component with ForgeStack integrations.  
+> **Honesty:** Local demo AI providers only. No hosted enterprise LLM, SOC2, or on-prem claims. Connect Claude / Gemini / GPT (or custom) via `inkAi.registerProvider`.
 
 ## Install
 
@@ -29,7 +30,10 @@ export function App() {
     <InkEditor
       value={value}
       onChange={setValue}
-      placeholder="Write something…"
+      variant="classic"
+      features={{ table: true, trackChanges: true, comments: true, ai: true, blocks: true, slash: true }}
+      ai={{ enabled: true, placement: 'sidebar', openOnInit: true }}
+      showCommentsPanel
       typoAutoFix
     />
   );
@@ -41,151 +45,103 @@ export function App() {
 | | |
 |---|---|
 | Docs portal | [ink-portal](https://github.com/yaghobieh/ink-portal) · [inkforgejs.com](https://inkforgejs.com) |
-| Live playground | `/playground` — Formats, Modules, Theme + code export |
+| Demos hub | `/demos` |
+| Ink AI | `/ai` |
+| Live playground | `/playground` |
 | npm | https://www.npmjs.com/package/@forgedevstack/ink |
 | Repo | https://github.com/yaghobieh/ink |
 
-<p align="center">
-  <img src="./assets/ink-hero.png" alt="Ink hero" width="640" />
-</p>
+## Feature matrix (CK-inspired → Ink 1.1.0)
+
+| Capability | Status |
+|---|---|
+| Classic / document editor shell | **Shipped MVP** |
+| Headings, lists, links, images, colors | **Shipped MVP** |
+| Tables (insert N×M) | **Shipped MVP** |
+| Undo / redo | **Shipped MVP** |
+| Block handles (move up/down) | **Shipped MVP** (full DnD Planned) |
+| Slash commands | **Shipped MVP** |
+| Track changes + Accept/Reject | **Shipped MVP** |
+| Comments archive sidebar | **Shipped MVP** |
+| AI chat + history | **Shipped MVP** (demo provider) |
+| AI Quick Actions / Review / Translate | **Shipped MVP** (demo) |
+| AI diff preview → apply | **Shipped MVP** |
+| Provider registry + model catalog | **Shipped MVP** (catalog constants; BYO run) |
+| Cost control / moderation / permissions / RAG hooks | **Stub** (typed interfaces + no-ops) |
+| Quality eval suite / MCP hosting | **Stub / Planned** |
+| Real-time multiplayer CRDT | **Planned** |
 
 ## Props (`InkEditorProps`)
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | — | Controlled HTML |
-| `defaultValue` | `string` | — | Uncontrolled initial HTML |
-| `onChange` | `(html: string) => void` | — | Fires when content changes |
-| `placeholder` | `string` | `"Start typing..."` | Empty-state placeholder |
-| `disabled` | `boolean` | `false` | Disables interaction |
-| `readOnly` | `boolean` | `false` | View-only content |
-| `minHeight` | `string \| number` | — | Content min height |
-| `maxHeight` | `string \| number` | — | Content max height |
-| `toolbar` | `ToolbarOption[]` | `INK_DEFAULT_TOOLBAR` | Toolbar buttons / controls |
-| `testId` | `string` | — | Testing id |
-| `allowImagePaste` | `boolean` | `true` | Paste images into the editor |
-| `showCharCount` | `boolean` | `false` | Footer character count |
-| `charCountMax` | `number` | — | Optional max for counter UI |
-| `typoAutoFix` | `boolean` | `false` | Blur-time typo MVP fixes |
+| `value` / `defaultValue` / `onChange` | HTML string | — | Controlled content |
+| `variant` | `'classic' \| 'document'` | `'classic'` | Shell layout |
+| `features` | `InkFeaturesConfig` | all on | Module toggles |
+| `toolbar` | `ToolbarOption[]` | `INK_DEFAULT_TOOLBAR` | Toolbar controls |
+| `trackChanges` / `onTrackChangesChange` | `InkTrackChange[]` | — | Parallel TC model |
+| `trackChangesEnabled` | `boolean` | `false` | Wrap inserts/deletes |
+| `comments` / `onCommentsChange` | `InkCommentThread[]` | — | Comment threads |
+| `showCommentsPanel` | `boolean` | `false` | Comments archive |
+| `ai` | `InkAiConfig` | — | AI panel config |
+| `slashCommands` | `boolean` | from features | `/` menu |
+| `tableRows` / `tableCols` | `number` | `3` | Default table size |
+| `author` | `string` | `'You'` | TC / comment author |
+| `typoAutoFix` | `boolean` | `true` | Blur typo MVP |
 
-Also accepts standard `div` HTML attributes except `onChange`.
-
-## Toolbar options (`ToolbarOption`)
+## Toolbar options
 
 ```
-bold | italic | underline | strikethrough
-heading1 | heading2 | heading3 | heading4 | heading5 | heading6
-paragraph | headingDropdown
-bulletList | orderedList | blockquote | code
-link | image | textColor | highlightColor
-alignLeft | alignCenter | alignRight | alignJustify
-indent | outdent | clearFormat | divider
+headingDropdown | bold | italic | underline | strikethrough
+textColor | highlightColor | bulletList | orderedList
+link | image | table | undo | redo
+trackChanges | comments | ai | clearFormat | divider
++ align* | indent | outdent | blockquote | code | heading1–6
 ```
 
-Presets exported from the package:
+Presets: `INK_DEFAULT_TOOLBAR`, `INK_SIMPLE_TOOLBAR`, `INK_COLLAB_TOOLBAR`.
 
-- `INK_DEFAULT_TOOLBAR` — full editing set
-- `INK_SIMPLE_TOOLBAR` — bold / italic / underline + lists
-
-```tsx
-import { InkEditor, INK_SIMPLE_TOOLBAR } from '@forgedevstack/ink';
-
-<InkEditor toolbar={INK_SIMPLE_TOOLBAR} />
-```
-
-## CSS variables & themes
-
-Root class: `.Ink-Editor`. Override variables on a wrapper or the editor:
-
-| Variable | Role |
-|----------|------|
-| `--ink-border` | Borders |
-| `--ink-bg` | Editor background |
-| `--ink-toolbar` | Toolbar background |
-| `--ink-text` | Body text |
-| `--ink-muted` | Placeholder / footer |
-| `--ink-accent` | Active / accent |
-| `--ink-accent-soft` | Active button soft fill |
-
-Theme helper classes (wrap the editor or add to the root):
-
-| Class | Look |
-|-------|------|
-| `.ink-theme-snow` | Clean Quill-like paper toolbar |
-| `.ink-theme-bubble` | Soft floating card |
-| `.ink-theme-dark` | Dark zinc surfaces |
-| `.ink-theme-minimal` | Flat, dashed toolbar edge |
-
-```tsx
-<div className="ink-theme-snow">
-  <InkEditor value={html} onChange={setHtml} />
-</div>
-```
-
-## Modules
-
-- **Typo auto-fix** — `typoAutoFix` runs `applyTypoAutoFix` on blur (small bundled dictionary; not a full spell engine)
-- **Image paste** — `allowImagePaste`
-- **Char count** — `showCharCount` / `charCountMax`
-- **Read only** — `readOnly`
+## Ink AI
 
 ```ts
-import { applyTypoAutoFix } from '@forgedevstack/ink';
+import { inkAi, INK_AI_MODEL_CATALOG } from '@forgedevstack/ink/plugins/ai';
 
-const { html, fixedCount } = applyTypoAutoFix(rawHtml);
-```
+// Demo provider is registered by default (no API keys).
+await inkAi.runProvider('demo', {
+  capability: 'rewrite',
+  html: '<p>Hello</p>',
+  selectionHtml: '<p>Hello</p>',
+});
 
-## AI plugin (stub)
-
-```ts
-import { inkAi } from '@forgedevstack/ink/plugins/ai';
-
-inkAi.register({
-  id: 'my-agent',
-  name: 'My Agent',
-  capabilities: ['rewrite'],
-  async run({ html }) {
-    return { html };
+inkAi.registerProvider({
+  id: 'my-openai',
+  name: 'My OpenAI',
+  models: INK_AI_MODEL_CATALOG.filter((m) => m.provider === 'openai'),
+  async run(request) {
+    // Call your backend / SDK — Ink does not host models.
+    return { html: request.html, text: '…' };
   },
 });
 ```
 
-Full agents land in **1.x**.
+Panel placement: `sidebar` | `drawer` | `floating`. Theme via `ai.uiTheme` / CSS vars `--ink-ai-*`.
 
-## Angular
+Architecture stubs (MVP interfaces): cost-control cache/rate-limit, moderation, permissions, external knowledge, quality eval, fallback chains — see `@forgedevstack/ink/plugins/ai` exports `createNoop*`.
 
-```ts
-import { createInkAngularUsage, documentInkAngularAdapter } from '@forgedevstack/ink/angular';
+## CSS variables & themes
 
-console.log(documentInkAngularAdapter());
-console.log(createInkAngularUsage());
-```
+| Variable | Role |
+|----------|------|
+| `--ink-border` / `--ink-bg` / `--ink-toolbar` | Surfaces |
+| `--ink-text` / `--ink-muted` / `--ink-accent` | Type + accent (teal) |
+| `--ink-shadow` / `--ink-radius` | Card chrome |
+| `--ink-ai-accent` / `--ink-ai-surface` / `--ink-ai-border` | AI panel |
 
-Mount `InkEditor` via your preferred React↔Angular bridge. A dedicated Angular component lands in 1.x.
+Themes: `.ink-theme-snow` · `.ink-theme-bubble` · `.ink-theme-dark` · `.ink-theme-minimal`
 
-## WordPress
+## Angular / WordPress
 
-See [`wordpress/README.md`](./wordpress/README.md).
-
-## Positioning vs Quill
-
-| | Quill | Ink |
-|---|---|---|
-| Core | Delta document model + Parchment | HTML string + contenteditable |
-| Framework | Framework-agnostic | React-first (ForgeStack) |
-| Themes | Snow / Bubble built-in | CSS variables + `ink-theme-*` classes |
-| Typo / AI | Ecosystem plugins | Built-in typo MVP + AI register stub |
-| License / lineage | Quill open source | Independent MIT package — **inspired by**, not a fork |
-
-## Features (1.0.1)
-
-- Controlled `value` / `onChange` (HTML string)
-- Toolbar: bold / italic / underline / strike, headings, text + highlight colors, lists, links, image insert/paste
-- **Typo auto-fix MVP** — bundled dictionary + heuristics
-- **Theme classes** — snow / bubble / dark / minimal
-- **AI agent stub** — `@forgedevstack/ink/plugins/ai`
-- **Angular** — `@forgedevstack/ink/angular` helpers
-- **WordPress** — `wordpress/ink-editor` stub
+See `@forgedevstack/ink/angular` and [`wordpress/README.md`](./wordpress/README.md).
 
 ## License
 

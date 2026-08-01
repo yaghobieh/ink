@@ -1,4 +1,8 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import type { InkAiConfig } from './ai.types';
+import type { InkCommentThread, InkCommentsChangeHandler } from './comments.types';
+import type { InkEditorVariant, InkFeaturesConfig } from './features.types';
+import type { InkTrackChange, InkTrackChangesChangeHandler } from './trackChanges.types';
 
 export type ToolbarOption =
   | 'bold'
@@ -19,6 +23,12 @@ export type ToolbarOption =
   | 'code'
   | 'link'
   | 'image'
+  | 'table'
+  | 'undo'
+  | 'redo'
+  | 'trackChanges'
+  | 'comments'
+  | 'ai'
   | 'textColor'
   | 'highlightColor'
   | 'alignLeft'
@@ -45,6 +55,21 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   showCharCount?: boolean;
   charCountMax?: number;
   typoAutoFix?: boolean;
+  variant?: InkEditorVariant;
+  features?: InkFeaturesConfig;
+  author?: string;
+  trackChanges?: InkTrackChange[];
+  onTrackChangesChange?: InkTrackChangesChangeHandler;
+  trackChangesEnabled?: boolean;
+  onTrackChangesEnabledChange?: (enabled: boolean) => void;
+  comments?: InkCommentThread[];
+  onCommentsChange?: InkCommentsChangeHandler;
+  showCommentsPanel?: boolean;
+  onShowCommentsPanelChange?: (open: boolean) => void;
+  ai?: InkAiConfig;
+  slashCommands?: boolean;
+  tableRows?: number;
+  tableCols?: number;
 }
 
 export interface ToolbarButtonProps {
@@ -79,4 +104,11 @@ export interface ToolbarColorPickerProps {
 export interface TypoFixResult {
   html: string;
   fixedCount: number;
+}
+
+export interface SlashCommandItem {
+  id: string;
+  label: string;
+  keywords: string[];
+  insert: 'heading1' | 'heading2' | 'bulletList' | 'orderedList' | 'table' | 'ai';
 }
