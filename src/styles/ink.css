@@ -8,6 +8,7 @@
   --ink-accent-soft: #ccfbf1;
   --ink-shadow: 0 10px 40px rgb(15 23 42 / 0.08);
   --ink-radius: 1rem;
+  --ink-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   --ink-ai-accent: var(--ink-accent);
   --ink-ai-surface: #f8fafc;
   --ink-ai-border: var(--ink-border);
@@ -17,7 +18,28 @@
   background: var(--ink-bg);
   color: var(--ink-text);
   box-shadow: var(--ink-shadow);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--ink-font-family);
+}
+
+.Ink-Editor[data-wysiwyg='true'] .Ink-Editor__content {
+  font-family: inherit;
+  line-height: 1.65;
+}
+
+.Ink-Editor[data-wysiwyg='true'] .Ink-Editor__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.Ink-Editor[data-wysiwyg='true'] .Ink-Editor__content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.Ink-Editor[data-wysiwyg='true'] .Ink-Editor__content th,
+.Ink-Editor[data-wysiwyg='true'] .Ink-Editor__content td {
+  border: 1px solid var(--ink-border);
+  padding: 0.4rem 0.6rem;
 }
 
 .Ink-Editor[data-variant='document'] {

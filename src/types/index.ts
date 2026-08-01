@@ -50,3 +50,15 @@ export type {
   InkEditorVariant,
   InkAiPlacement,
 } from './features.types';
+
+export type {
+  InkPremiumFeature,
+  InkPasteMode,
+  InkIconKey,
+  InkIconMap,
+  InkThemeTokens,
+  InkPremiumConfig,
+  InkResolvedPremium,
+  InkImageUploadHandler,
+  InkThemeStyle,
+} from './premium.types';

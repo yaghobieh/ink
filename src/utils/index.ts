@@ -17,3 +17,15 @@ export {
 } from './comments.utils';
 export { InkHistoryStack } from './history.utils';
 export { filterSlashCommands, extractSlashQuery } from './slash.utils';
+export {
+  resolveInkPremium,
+  hasInkPremiumFeature,
+  isInkPremiumLicenseKey,
+  themeTokensToStyle,
+} from './premium.utils';
+export { mintInkPremiumLicenseKey } from './license.utils';
+export {
+  sanitizePastedHtml,
+  extractClipboardHtml,
+  extractClipboardText,
+} from './paste.utils';

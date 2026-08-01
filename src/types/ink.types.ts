@@ -2,6 +2,13 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import type { InkAiConfig } from './ai.types';
 import type { InkCommentThread, InkCommentsChangeHandler } from './comments.types';
 import type { InkEditorVariant, InkFeaturesConfig } from './features.types';
+import type {
+  InkIconMap,
+  InkImageUploadHandler,
+  InkPasteMode,
+  InkPremiumConfig,
+  InkThemeTokens,
+} from './premium.types';
 import type { InkTrackChange, InkTrackChangesChangeHandler } from './trackChanges.types';
 
 export type ToolbarOption =
@@ -70,6 +77,12 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   slashCommands?: boolean;
   tableRows?: number;
   tableCols?: number;
+  premium?: InkPremiumConfig;
+  theme?: InkThemeTokens;
+  icons?: InkIconMap;
+  pasteMode?: InkPasteMode;
+  onImageUpload?: InkImageUploadHandler;
+  wysiwyg?: boolean;
 }
 
 export interface ToolbarButtonProps {

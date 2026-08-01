@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Premium scaffolding: `premium={{ enabled | licenseKey }}` unlocks theme tokens, icon map, rich paste, image upload, WYSIWYG
+- Props: `theme`, `icons`, `pasteMode="rich"`, `onImageUpload`, `wysiwyg`
+- Helpers: `resolveInkPremium`, `mintInkPremiumLicenseKey`, `sanitizePastedHtml`, `INK_DEFAULT_ICONS`
+- License format: `ink_prem_XXXX_XXXX_XXXX_XXXX`
+- Example Stripe webhook stub: `examples/stripe-webhook.mjs`
+
 ## 1.1.0 — 2026-08-01
 
 ### Added
