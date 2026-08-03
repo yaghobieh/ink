@@ -48,10 +48,10 @@
 
 ### Added
 - Theme helper classes: `.ink-theme-snow`, `.ink-theme-bubble`, `.ink-theme-dark`, `.ink-theme-minimal`
-- Expanded README: full prop table, `ToolbarOption` list, CSS variables, Quill positioning, portal links, asset screenshots
+- Expanded README: full prop table, `ToolbarOption` list, CSS variables, portal links, asset screenshots
 
 ### Docs
-- Companion light Quill-inspired portal (docs + Format/Modules/Theme playground)
+- Companion light portal (docs + Format/Modules/Theme playground)
 
 ## 1.0.0 — 2026-08-01
 

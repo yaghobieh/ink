@@ -6,7 +6,7 @@ Copy into Gemini (video / Veo-style prompt):
 
 Create a 45–60 second product demo video for **Ink**, a modern React rich-text editor from ForgeStack.
 
-**Visual style:** clean teal accent on soft paper-white UI, subtle motion, no competitor logos or names, no purple neon, no emoji stickers.
+**Visual style:** clean teal accent on soft paper-white UI, subtle motion, Ink branding only, no purple neon, no emoji stickers.
 
 **Storyboard:**
 

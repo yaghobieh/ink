@@ -5,7 +5,7 @@
 
 ## Goal
 
-Sell Ink Premium from Israel to buyers worldwide without naming competitors in product copy.
+Sell Ink Premium from Israel to buyers worldwide.
 
 ## Options (practical for IL merchants)
 

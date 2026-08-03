@@ -91,7 +91,7 @@
         {
           "keyHint": "INK-9",
           "type": "Bug",
-          "summary": "Remove competitor product names from copy and README",
+          "summary": "Remove third-party editor brand names from copy and README",
           "labels": ["library", "portal", "sprint-1"],
           "branch": "feature/ink-9",
           "status": "To Do"

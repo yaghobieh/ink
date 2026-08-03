@@ -1,6 +1,6 @@
 # Ink 1.1.0 — Linear paste
 
-**Milestone:** 1.1.0 (CKEditor-inspired shell + Ink AI)  
+**Milestone:** 1.1.0 (editor shell + Ink AI)  
 **npm:** `@forgedevstack/ink@1.1.0`  
 **Branch:** `release/1.1.0`
 
@@ -16,7 +16,7 @@
 
 ## Honesty
 
-CKEditor-inspired architecture with **local demo providers**. Bring your own LLM. No SOC2 / enterprise hosting claims.
+Local demo providers only. Bring your own LLM. No SOC2 / enterprise hosting claims.
 
 ## Follow-ups → milestone 1.1.1
 

@@ -51,7 +51,7 @@ export function App() {
 | npm | https://www.npmjs.com/package/@forgedevstack/ink |
 | Repo | https://github.com/yaghobieh/ink |
 
-## Feature matrix (CK-inspired → Ink 1.1.0)
+## Feature matrix (Ink 1.1.0)
 
 | Capability | Status |
 |---|---|
