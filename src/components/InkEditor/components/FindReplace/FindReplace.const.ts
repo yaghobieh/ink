@@ -1,0 +1,10 @@
+export const FIND_REPLACE_CLASS = 'Ink-FindReplace';
+export const FIND_REPLACE_FIELD_CLASS = 'Ink-FindReplace__field';
+export const FIND_REPLACE_ACTIONS_CLASS = 'Ink-FindReplace__actions';
+export const FIND_REPLACE_TITLE_CLASS = 'Ink-FindReplace__title';
+export const FIND_REPLACE_DEFAULT_TITLE = 'Find and replace';
+export const FIND_REPLACE_DEFAULT_FIND = 'Find';
+export const FIND_REPLACE_DEFAULT_REPLACE = 'Replace with';
+export const FIND_REPLACE_DEFAULT_ONE = 'Replace';
+export const FIND_REPLACE_DEFAULT_ALL = 'Replace all';
+export const FIND_REPLACE_DEFAULT_CLOSE = 'Close';

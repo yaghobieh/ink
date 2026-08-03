@@ -29,3 +29,10 @@ export {
   extractClipboardHtml,
   extractClipboardText,
 } from './paste.utils';
+export {
+  buildInkMemoryKey,
+  readInkMemory,
+  writeInkMemory,
+  clearInkMemory,
+} from './memory.utils';
+export { replaceInHtml, countOccurrences } from './findReplace.utils';

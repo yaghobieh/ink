@@ -3,14 +3,14 @@
 [![npm version](https://img.shields.io/npm/v/@forgedevstack/ink.svg)](https://www.npmjs.com/package/@forgedevstack/ink)
 [![license](https://img.shields.io/npm/l/@forgedevstack/ink.svg)](./LICENSE)
 
-**ForgeStack rich text editor** for React. CKEditor-inspired shell with tables, track changes, comments, block handles, slash commands, and pluggable Ink AI (bring your own LLM + local demo provider).
+**ForgeStack rich text editor** for React. Soft document shell with tables, track changes, comments, block handles, slash commands, sign pad, draft memory, and pluggable Ink AI (bring your own LLM + local demo provider).
 
 <p align="center">
   <img src="./assets/ink-logo.png" alt="Ink logo" width="120" />
 </p>
 
 > **Domain:** [inkforgejs.com](https://inkforgejs.com) — docs + demos.  
-> **Inspired by CKEditor 5** demos / AI features pages and earlier Quill-like portal aesthetics — not a fork. Ink is a contenteditable React component with ForgeStack integrations.  
+> Ink is a contenteditable React component with ForgeStack integrations — not a fork of other editors.  
 > **Honesty:** Local demo AI providers only. No hosted enterprise LLM, SOC2, or on-prem claims. Connect Claude / Gemini / GPT (or custom) via `inkAi.registerProvider`.
 
 ## Install

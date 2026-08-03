@@ -20,6 +20,8 @@ export const INK_DEFAULT_ICONS: Record<InkIconKey, string> = {
   link: '🔗',
   image: '🖼',
   table: '▦',
+  signature: '✍',
+  findReplace: '⌕',
   undo: '↶',
   redo: '↷',
   trackChanges: '±',

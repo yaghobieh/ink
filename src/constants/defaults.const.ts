@@ -22,6 +22,8 @@ export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'link',
   'image',
   'table',
+  'signature',
+  'findReplace',
   'divider',
   'undo',
   'redo',
@@ -137,6 +139,8 @@ export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   slash: true,
   history: true,
   typoAutoFix: true,
+  signature: true,
+  findReplace: true,
 };
 export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
 export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;

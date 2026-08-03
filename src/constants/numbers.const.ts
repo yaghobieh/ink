@@ -15,3 +15,21 @@ export const INK_SLASH_MENU_MAX_ITEMS = 8;
 export const INK_AI_PANEL_WIDTH_PX = 320;
 export const INK_COMMENTS_PANEL_WIDTH_PX = 300;
 export const INK_DEMO_AI_DELAY_MS = 180;
+
+export {
+  NUMBER_ZERO,
+  NUMBER_ONE,
+  NUMBER_TWO,
+  NUMBER_THREE,
+  NUMBER_FOUR,
+  NUMBER_FIVE,
+  NUMBER_SIX,
+  NUMBER_SEVEN,
+  NUMBER_EIGHT,
+  NUMBER_NINE,
+  NUMBER_TEN,
+  NUMBER_FIFTY,
+  NUMBER_ONE_HUNDRED,
+} from './numbers';
+
+export * from './numbers';

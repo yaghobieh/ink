@@ -21,6 +21,8 @@ export type InkIconKey = Extract<
   | 'link'
   | 'image'
   | 'table'
+  | 'signature'
+  | 'findReplace'
   | 'undo'
   | 'redo'
   | 'trackChanges'

@@ -55,9 +55,12 @@ import {
   moveBlock,
   rejectTrackChangeInHtml,
   removeCommentMark,
+  readInkMemory,
+  replaceInHtml,
   resolveInkPremium,
   sanitizePastedHtml,
   themeTokensToStyle,
+  writeInkMemory,
   wrapDeleteHtml,
   wrapInsertHtml,
   wrapSelectionAsComment,
@@ -77,6 +80,8 @@ import {
   AiPanel,
   BlockHandles,
   CommentsPanel,
+  FindReplace,
+  SignPad,
   SlashMenu,
   ToolbarButton,
   ToolbarColorPicker,
@@ -131,6 +136,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     pasteMode = 'plain',
     onImageUpload,
     wysiwyg = false,
+    keepInMemory = false,
+    memoryKey,
     style: styleProp,
     ...rest
   } = props;
@@ -162,6 +169,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [hasActiveBlock, setHasActiveBlock] = useState(false);
   const [slashItems, setSlashItems] = useState<SlashCommandItem[]>([]);
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
+  const [signPadOpen, setSignPadOpen] = useState(false);
+  const [findReplaceOpen, setFindReplaceOpen] = useState(false);
 
   const trackChanges = trackChangesProp ?? localTrackChanges;
   const comments = commentsProp ?? localComments;
@@ -192,14 +201,18 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   }, [value]);
 
   useEffect(() => {
-    if (!editorRef.current || value || !defaultValue) return;
-    editorRef.current.innerHTML = defaultValue;
-    historyRef.current = new InkHistoryStack(defaultValue);
+    if (!editorRef.current || value) return;
+    const remembered = keepInMemory ? readInkMemory(memoryKey) : '';
+    const initial = remembered || defaultValue;
+    if (!initial) return;
+    editorRef.current.innerHTML = initial;
+    historyRef.current = new InkHistoryStack(initial);
   }, []);
 
   const emitChange = (html: string) => {
     historyRef.current.push(html);
     onChange?.(html);
+    if (keepInMemory) writeInkMemory(html, memoryKey);
     if (showCharCount && editorRef.current) {
       setCharCount(editorRef.current.textContent?.length ?? 0);
     }
@@ -628,6 +641,32 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === 'signature') {
+      if (!features.signature) return null;
+      return (
+        <ToolbarButton
+          key="signature"
+          icon={icons.signature}
+          title="Sign pad"
+          active={signPadOpen}
+          disabled={disabled || readOnly}
+          onClick={() => setSignPadOpen(true)}
+        />
+      );
+    }
+    if (item === 'findReplace') {
+      if (!features.findReplace) return null;
+      return (
+        <ToolbarButton
+          key="findReplace"
+          icon={icons.findReplace}
+          title="Find and replace"
+          active={findReplaceOpen}
+          disabled={disabled || readOnly}
+          onClick={() => setFindReplaceOpen((prev) => !prev)}
+        />
+      );
+    }
     if (item === 'undo') {
       return (
         <ToolbarButton
@@ -724,6 +763,24 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       <div className={INK_CLASS_TOOLBAR} role="toolbar" aria-label="Ink formatting toolbar">
         {toolbar.map(renderToolbarItem)}
       </div>
+      <SignPad
+        open={signPadOpen}
+        onClose={() => setSignPadOpen(false)}
+        onConfirm={(dataUrl) => {
+          editorRef.current?.focus();
+          insertImage(dataUrl);
+          handleInput();
+        }}
+      />
+      <FindReplace
+        open={findReplaceOpen}
+        onClose={() => setFindReplaceOpen(false)}
+        onReplace={(find, replace, replaceAll) => {
+          if (!editorRef.current) return;
+          const next = replaceInHtml(editorRef.current.innerHTML, find, replace, replaceAll);
+          setHtml(next);
+        }}
+      />
       {trackChangesEnabled && features.trackChanges ? (
         <TrackChangesBar
           changes={trackChanges}

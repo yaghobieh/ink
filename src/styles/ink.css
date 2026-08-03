@@ -668,3 +668,57 @@
 .ink-theme-minimal.Ink-Editor .Ink-Editor__toolbar {
   border-bottom: 1px solid var(--ink-border);
 }
+
+.Ink-SignPad,
+.Ink-FindReplace {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-toolbar);
+}
+
+.Ink-SignPad__title,
+.Ink-FindReplace__title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-text);
+}
+
+.Ink-SignPad__canvas {
+  width: 100%;
+  max-width: 480px;
+  height: 180px;
+  border: 1px dashed var(--ink-border);
+  border-radius: 0.5rem;
+  background: #fff;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.Ink-SignPad__actions,
+.Ink-FindReplace__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.Ink-FindReplace__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.Ink-FindReplace__field input {
+  border: 1px solid var(--ink-border);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--ink-bg);
+  color: var(--ink-text);
+  font: inherit;
+}
+

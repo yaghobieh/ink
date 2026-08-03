@@ -1,0 +1,153 @@
+{
+  "projectKey": "INK",
+  "projectName": "Ink",
+  "boardColumns": ["To Do", "In Progress", "In Review", "Done"],
+  "labels": ["library", "portal", "sprint-0", "sprint-1", "sprint-2"],
+  "branching": {
+    "release": "release/{sprint}",
+    "feature": "feature/ink-{issueNumber}",
+    "prTarget": "release/{sprint}",
+    "sprintMerge": "release/{sprint} -> main",
+    "afterSprintMerge": ["close sprint", "npm version patch", "publish @forgedevstack/ink"]
+  },
+  "statusFlow": {
+    "startWork": "In Progress",
+    "prOpened": "In Review",
+    "mergedToReleaseOrDone": "Done"
+  },
+  "sprints": [
+    {
+      "name": "Sprint 0 — Shipped (historical)",
+      "status": "closed",
+      "versionRange": "1.0.0 → 1.1.1",
+      "issues": [
+        {
+          "keyHint": "INK-1",
+          "type": "Story",
+          "summary": "[Done] Ship @forgedevstack/ink 1.0.0",
+          "labels": ["library", "sprint-0"],
+          "status": "Done"
+        },
+        {
+          "keyHint": "INK-2",
+          "type": "Story",
+          "summary": "[Done] Portal light redesign + ink 1.0.1",
+          "labels": ["portal", "library", "sprint-0"],
+          "status": "Done"
+        },
+        {
+          "keyHint": "INK-3",
+          "type": "Feature",
+          "summary": "[Done] Editor shell 1.1.0 — tables, track changes, comments, blocks, slash, AI",
+          "labels": ["library", "sprint-0"],
+          "status": "Done"
+        },
+        {
+          "keyHint": "INK-4",
+          "type": "Feature",
+          "summary": "[Done] Premium unlock + PayPal/Stripe portal path (1.1.1)",
+          "labels": ["library", "portal", "sprint-0"],
+          "status": "Done"
+        },
+        {
+          "keyHint": "INK-5",
+          "type": "Bug",
+          "summary": "[Done] Portal dark mode / Vercel file: dep / docs routing polish",
+          "labels": ["portal", "sprint-0"],
+          "status": "Done"
+        }
+      ]
+    },
+    {
+      "name": "Sprint 1 — 1.1.2",
+      "status": "active",
+      "releaseBranch": "release/1",
+      "targetVersion": "1.1.2",
+      "issues": [
+        {
+          "keyHint": "INK-6",
+          "type": "Feature",
+          "summary": "Sign pad — canvas signature insert as image",
+          "labels": ["library", "sprint-1"],
+          "branch": "feature/ink-6",
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-7",
+          "type": "Story",
+          "summary": "Keep in memory — persist draft HTML (localStorage)",
+          "labels": ["library", "sprint-1"],
+          "branch": "feature/ink-7",
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-8",
+          "type": "Feature",
+          "summary": "Find and replace in editor",
+          "labels": ["library", "sprint-1"],
+          "branch": "feature/ink-8",
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-9",
+          "type": "Bug",
+          "summary": "Remove competitor product names from copy and README",
+          "labels": ["library", "portal", "sprint-1"],
+          "branch": "feature/ink-9",
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-10",
+          "type": "Story",
+          "summary": "Payments research — Israel + worldwide (PayPal / Polar / Lemon)",
+          "labels": ["portal", "sprint-1"],
+          "branch": "feature/ink-10",
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-11",
+          "type": "Story",
+          "summary": "Portal demo for sign pad + memory + find/replace",
+          "labels": ["portal", "sprint-1"],
+          "branch": "feature/ink-11",
+          "status": "To Do"
+        }
+      ]
+    },
+    {
+      "name": "Sprint 2 — Backend / Auth",
+      "status": "future",
+      "releaseBranch": "release/2",
+      "issues": [
+        {
+          "keyHint": "INK-12",
+          "type": "Epic",
+          "summary": "Ink BE — LOGIN + session API",
+          "labels": ["library", "sprint-2"],
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-13",
+          "type": "Story",
+          "summary": "Choose Node framework — evaluate Harbor (@forgedevstack/harbor)",
+          "labels": ["library", "sprint-2"],
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-14",
+          "type": "Story",
+          "summary": "Choose DB — MongoDB (Harbor ODM) vs Postgres",
+          "labels": ["library", "sprint-2"],
+          "status": "To Do"
+        },
+        {
+          "keyHint": "INK-15",
+          "type": "Feature",
+          "summary": "Auth: email/password login, JWT/session, license entitlement",
+          "labels": ["library", "portal", "sprint-2"],
+          "status": "To Do"
+        }
+      ]
+    }
+  ]
+}

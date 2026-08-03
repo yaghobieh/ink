@@ -6,3 +6,5 @@ export { AiPanel } from './AiPanel';
 export { BlockHandles } from './BlockHandles';
 export { SlashMenu } from './SlashMenu';
 export { TrackChangesBar } from './TrackChangesBar';
+export { SignPad } from './SignPad';
+export { FindReplace } from './FindReplace';
