@@ -8,6 +8,14 @@ export default defineConfig({
     react(),
     dts({ insertTypesEntry: true }),
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
+  test: {
+    environment: 'happy-dom',
+  },
   build: {
     minify: 'esbuild',
     lib: {

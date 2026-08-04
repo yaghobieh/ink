@@ -1,8 +1,21 @@
 # Changelog
 
-## Unreleased
+## Unreleased — 1.1.2
 
 ### Added
+- Sign pad toolbar (`signature`) — canvas draw → insert PNG image
+- `keepInMemory` + `memoryKey` — persist draft HTML in localStorage
+- Find and replace toolbar (`findReplace`) — text-node safe
+- Horizontal rule toolbar (`horizontalRule`)
+- Aerocraft-style utility classes for SignPad / FindReplace panels
+- `isLocalStorageAvailable` util; path aliases (`@/`)
+- Docs: Jira bootstrap, Confluence paste pack, payments research, articles + Gemini video prompt
+- Examples in README for sign pad, memory, find/replace
+
+### Changed
+- Product copy no longer names other editor vendors
+
+### Previously unreleased (1.1.1)
 - Premium scaffolding: `premium={{ enabled | licenseKey }}` unlocks theme tokens, icon map, rich paste, image upload, WYSIWYG
 - Props: `theme`, `icons`, `pasteMode="rich"`, `onImageUpload`, `wysiwyg`
 - Helpers: `resolveInkPremium`, `mintInkPremiumLicenseKey`, `sanitizePastedHtml`, `INK_DEFAULT_ICONS`
@@ -12,7 +25,7 @@
 ## 1.1.0 — 2026-08-01
 
 ### Added
-- CKEditor-inspired editor shell: soft light card, rounded toolbar, `variant="classic" | "document"`
+- Editor shell: soft light card, rounded toolbar, `variant="classic" | "document"`
 - Structure blocks with hover/focus outline and block handles (move up/down MVP)
 - Toolbar: table insert, undo/redo, track changes, comments, AI toggles
 - Tables: insert N×M HTML tables with basic editable cells
@@ -31,17 +44,17 @@
 - Exports: `INK_COLLAB_TOOLBAR`, `INK_AI_MODEL_CATALOG`, `buildTableHtml`, comment/track helpers
 
 ### Docs
-- Feature matrix: CK-inspired capabilities → Ink status (Shipped MVP / Stub / Planned)
-- Honesty framing: CKEditor-inspired architecture with local demo providers; bring your own LLM. No SOC2/enterprise hosting claims.
+- Feature matrix: capability → Ink status (Shipped MVP / Stub / Planned)
+- Honesty framing: local demo providers; bring your own LLM. No SOC2/enterprise hosting claims.
 
 ## 1.0.1 — 2026-08-01
 
 ### Added
 - Theme helper classes: `.ink-theme-snow`, `.ink-theme-bubble`, `.ink-theme-dark`, `.ink-theme-minimal`
-- Expanded README: full prop table, `ToolbarOption` list, CSS variables, Quill positioning, portal links, asset screenshots
+- Expanded README: full prop table, `ToolbarOption` list, CSS variables, portal links, asset screenshots
 
 ### Docs
-- Companion light Quill-inspired portal (docs + Format/Modules/Theme playground)
+- Companion light portal (docs + Format/Modules/Theme playground)
 
 ## 1.0.0 — 2026-08-01
 

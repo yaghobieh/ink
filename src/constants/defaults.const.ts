@@ -3,7 +3,12 @@ import type { InkFeaturesConfig } from '../types';
 import {
   INK_DEFAULT_TABLE_COLS,
   INK_DEFAULT_TABLE_ROWS,
-} from './numbers.const';
+} from './numbers';
+import {
+  TOOLBAR_OPTION_FIND_REPLACE,
+  TOOLBAR_OPTION_HORIZONTAL_RULE,
+  TOOLBAR_OPTION_SIGNATURE,
+} from './toolbar.const';
 
 export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'headingDropdown',
@@ -22,6 +27,9 @@ export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'link',
   'image',
   'table',
+  TOOLBAR_OPTION_SIGNATURE,
+  TOOLBAR_OPTION_FIND_REPLACE,
+  TOOLBAR_OPTION_HORIZONTAL_RULE,
   'divider',
   'undo',
   'redo',
@@ -137,6 +145,9 @@ export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   slash: true,
   history: true,
   typoAutoFix: true,
+  signature: true,
+  findReplace: true,
+  horizontalRule: true,
 };
 export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
 export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;

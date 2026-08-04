@@ -1,0 +1,11 @@
+---
+globs: src/**/*.ts,src/**/*.tsx,src/**/*.css
+---
+# Ink Library Rules
+
+- Additive APIs only — no breaking prop removals in a patch.
+- CSS class prefix: `Ink-` (BEM).
+- Peer deps: React only for core; Angular optional peer.
+- Premium features gated via `resolveInkPremium` / `hasInkPremiumFeature`.
+- Do not name competitor products in user-facing strings or README marketing lines.
+- Branching: `feature/ink-{n}` → `release/{sprint}` → `main`.

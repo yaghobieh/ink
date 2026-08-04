@@ -31,6 +31,9 @@ export type ToolbarOption =
   | 'link'
   | 'image'
   | 'table'
+  | 'signature'
+  | 'findReplace'
+  | 'horizontalRule'
   | 'undo'
   | 'redo'
   | 'trackChanges'
@@ -83,6 +86,8 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   pasteMode?: InkPasteMode;
   onImageUpload?: InkImageUploadHandler;
   wysiwyg?: boolean;
+  keepInMemory?: boolean;
+  memoryKey?: string;
 }
 
 export interface ToolbarButtonProps {
