@@ -113,7 +113,7 @@ export function ContractEditor() {
 2. Click the **✍** toolbar button.
 3. Draw with mouse/touch on the canvas.
 4. Click **Insert** — a PNG image is inserted into the document.
-5. Refresh with `keepInMemory` + `memoryKey` — draft HTML restores.
+5. Refresh with `keepInMemory` + `memoryKey` — draft HTML restores (memory wins on mount for controlled `value` / `onChange` too).
 
 ### Find and replace
 

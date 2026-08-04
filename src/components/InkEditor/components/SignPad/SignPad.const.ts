@@ -1,4 +1,4 @@
-import { NUMBER_TWO, NUMBER_FOUR, NUMBER_SIX } from '@/constants/numbers';
+import { NUMBER_TWO, NUMBER_FOUR, NUMBER_SIX, NUMBER_TWO_HUNDRED_FIFTY, NUMBER_TWO_HUNDRED_FIFTY_FIVE } from '@/constants/numbers';
 
 export const SIGN_PAD_CLASS = 'Ink-SignPad flex flex-col gap-2 p-3 border-b';
 export const SIGN_PAD_CANVAS_CLASS = 'Ink-SignPad__canvas w-full max-w-xl h-44 border border-dashed rounded-lg bg-white cursor-crosshair';
@@ -16,3 +16,10 @@ export const SIGN_PAD_FILL_STYLE = '#ffffff';
 export const SIGN_PAD_MIME = 'image/png';
 export const SIGN_PAD_EMPTY_ALPHA_THRESHOLD = NUMBER_FOUR;
 export const SIGN_PAD_SAMPLE_STEP = NUMBER_SIX;
+export const SIGN_PAD_FILL_CHANNEL = NUMBER_TWO_HUNDRED_FIFTY_FIVE;
+export const SIGN_PAD_INK_CHANNEL_MAX = NUMBER_TWO_HUNDRED_FIFTY;
+export const SIGN_PAD_RGBA_STRIDE = NUMBER_FOUR;
+export const SIGN_PAD_RED_OFFSET = 0;
+export const SIGN_PAD_GREEN_OFFSET = 1;
+export const SIGN_PAD_BLUE_OFFSET = 2;
+export const SIGN_PAD_ALPHA_OFFSET = 3;

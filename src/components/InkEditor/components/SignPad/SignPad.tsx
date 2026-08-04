@@ -17,7 +17,7 @@ import {
   SIGN_PAD_TITLE_CLASS,
 } from './SignPad.const';
 import type { SignPadProps } from './SignPad.types';
-import { canvasHasInk, getCanvasPoint } from './SignPad.utils';
+import { getCanvasPoint } from './SignPad.utils';
 
 export const SignPad: FC<SignPadProps> = (props) => {
   const {
@@ -34,7 +34,10 @@ export const SignPad: FC<SignPadProps> = (props) => {
   const [hasStroke, setHasStroke] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      drawingRef.current = false;
+      return;
+    }
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
@@ -44,6 +47,7 @@ export const SignPad: FC<SignPadProps> = (props) => {
     context.lineWidth = SIGN_PAD_LINE_WIDTH;
     context.lineCap = 'round';
     context.lineJoin = 'round';
+    drawingRef.current = false;
     setHasStroke(false);
   }, [open]);
 
@@ -87,9 +91,7 @@ export const SignPad: FC<SignPadProps> = (props) => {
 
   const handleConfirm = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ready = hasStroke || canvasHasInk(canvas);
-    if (!ready) return;
+    if (!canvas || !hasStroke) return;
     onConfirm(canvas.toDataURL(SIGN_PAD_MIME));
     onClose();
   };

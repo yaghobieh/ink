@@ -205,13 +205,18 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   useEffect(() => {
     if (!editorRef.current) return;
-    if (value !== undefined) return;
     const remembered = keepInMemory ? readInkMemory(memoryKey) : '';
-    const initial = remembered || defaultValue;
-    if (!initial) return;
-    editorRef.current.innerHTML = initial;
-    historyRef.current = new InkHistoryStack(initial);
-    onChange?.(initial);
+    if (remembered) {
+      editorRef.current.innerHTML = remembered;
+      historyRef.current = new InkHistoryStack(remembered);
+      onChange?.(remembered);
+      return;
+    }
+    if (value !== undefined) return;
+    if (!defaultValue) return;
+    editorRef.current.innerHTML = defaultValue;
+    historyRef.current = new InkHistoryStack(defaultValue);
+    onChange?.(defaultValue);
   }, []);
 
   const emitChange = (html: string) => {

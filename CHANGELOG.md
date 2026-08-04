@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased — 1.1.2
+## Unreleased — 1.1.3
+
+### Fixed
+- `keepInMemory` restores drafts on mount in controlled mode via `onChange`
+- SignPad clears drawing state when closed; Insert relies on stroke state only
+- `canvasHasInk` ignores white fill (RGB), not alpha alone
+- localStorage read/write/clear wrapped in try/catch
+- Default memory key moved to `DEFAULT_MEMORY_KEY` const
+
+## 1.1.2 — 2026-08-04
 
 ### Added
 - Sign pad toolbar (`signature`) — canvas draw → insert PNG image
