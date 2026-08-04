@@ -6,7 +6,10 @@ export type InkFeatureName =
   | 'blocks'
   | 'slash'
   | 'history'
-  | 'typoAutoFix';
+  | 'typoAutoFix'
+  | 'signature'
+  | 'findReplace'
+  | 'horizontalRule';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 

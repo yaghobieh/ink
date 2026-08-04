@@ -668,3 +668,54 @@
 .ink-theme-minimal.Ink-Editor .Ink-Editor__toolbar {
   border-bottom: 1px solid var(--ink-border);
 }
+
+.Ink-SignPad,
+.Ink-FindReplace {
+  border-bottom-color: var(--ink-border);
+  background: var(--ink-toolbar);
+  color: var(--ink-text);
+}
+
+.Ink-SignPad__title,
+.Ink-FindReplace__title {
+  color: var(--ink-text);
+}
+
+.Ink-SignPad__canvas {
+  max-width: 480px;
+  height: 180px;
+  border-color: var(--ink-border);
+  touch-action: none;
+}
+
+.Ink-FindReplace__field {
+  color: var(--ink-muted);
+}
+
+.Ink-FindReplace__field input {
+  border: 1px solid var(--ink-border);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--ink-bg);
+  color: var(--ink-text);
+  font: inherit;
+}
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.m-0 { margin: 0; }
+.w-full { width: 100%; }
+.max-w-xl { max-width: 36rem; }
+.h-44 { height: 11rem; }
+.border { border-width: 1px; border-style: solid; }
+.border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+.border-dashed { border-style: dashed; }
+.rounded-lg { border-radius: 0.5rem; }
+.bg-white { background-color: #fff; }
+.cursor-crosshair { cursor: crosshair; }
+.text-sm { font-size: 0.875rem; }
+.font-semibold { font-weight: 600; }

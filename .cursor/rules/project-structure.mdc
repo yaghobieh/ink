@@ -3,19 +3,34 @@ alwaysApply: true
 ---
 # Project Structure
 
+## Component folder (required)
+
+```
+Name/
+  Name.tsx              # required
+  Name.types.ts         # required
+  index.ts              # required
+  Name.const.ts         # if needed
+  Name.constants.ts     # alias ok if needed
+  Name.utils.ts         # if needed
+```
+
 ## Library (src/)
-- `src/components/InkEditor/` — editor + toolbar subcomponents
-- `src/constants/` — defaults, numbers, typo dictionary
+
+- `src/components/{Name}/` — public or editor subcomponents
+- `src/constants/` — defaults, numbers, generals, premium
 - `src/types/` — public and internal types
-- `src/utils/` — typo fix, className helpers
+- `src/utils/` — pure helpers
 - `src/plugins/ai/` — AI agent stub interface
-- `src/angular/` — Angular usage helpers / thin adapter entry
+- `src/angular/` — Angular helpers
 - `src/styles/ink.css` — shipped as `dist/styles.css`
 
-## WordPress
-- `wordpress/ink-editor/` — PHP plugin stub + assets placeholder
+## Labels
+
+Use `library` vs `portal` on Jira/Linear/docs for every task.
 
 ## Portal
-- Companion repo: `ink-portal` (demos with Bear chrome)
+
+Companion repo: `ink-portal` (Bear chrome). Same folder rules for pages/components.
 
 Every folder has an `index.ts` barrel export.

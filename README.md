@@ -3,14 +3,14 @@
 [![npm version](https://img.shields.io/npm/v/@forgedevstack/ink.svg)](https://www.npmjs.com/package/@forgedevstack/ink)
 [![license](https://img.shields.io/npm/l/@forgedevstack/ink.svg)](./LICENSE)
 
-**ForgeStack rich text editor** for React. CKEditor-inspired shell with tables, track changes, comments, block handles, slash commands, and pluggable Ink AI (bring your own LLM + local demo provider).
+**ForgeStack rich text editor** for React. Soft document shell with tables, track changes, comments, block handles, slash commands, sign pad, draft memory, and pluggable Ink AI (bring your own LLM + local demo provider).
 
 <p align="center">
   <img src="./assets/ink-logo.png" alt="Ink logo" width="120" />
 </p>
 
 > **Domain:** [inkforgejs.com](https://inkforgejs.com) — docs + demos.  
-> **Inspired by CKEditor 5** demos / AI features pages and earlier Quill-like portal aesthetics — not a fork. Ink is a contenteditable React component with ForgeStack integrations.  
+> Ink is a contenteditable React component with ForgeStack integrations — not a fork of other editors.  
 > **Honesty:** Local demo AI providers only. No hosted enterprise LLM, SOC2, or on-prem claims. Connect Claude / Gemini / GPT (or custom) via `inkAi.registerProvider`.
 
 ## Install
@@ -51,25 +51,81 @@ export function App() {
 | npm | https://www.npmjs.com/package/@forgedevstack/ink |
 | Repo | https://github.com/yaghobieh/ink |
 
-## Feature matrix (CK-inspired → Ink 1.1.0)
+## Feature matrix (Ink 1.1.2)
 
 | Capability | Status |
 |---|---|
-| Classic / document editor shell | **Shipped MVP** |
-| Headings, lists, links, images, colors | **Shipped MVP** |
-| Tables (insert N×M) | **Shipped MVP** |
-| Undo / redo | **Shipped MVP** |
-| Block handles (move up/down) | **Shipped MVP** (full DnD Planned) |
-| Slash commands | **Shipped MVP** |
-| Track changes + Accept/Reject | **Shipped MVP** |
-| Comments archive sidebar | **Shipped MVP** |
-| AI chat + history | **Shipped MVP** (demo provider) |
-| AI Quick Actions / Review / Translate | **Shipped MVP** (demo) |
-| AI diff preview → apply | **Shipped MVP** |
-| Provider registry + model catalog | **Shipped MVP** (catalog constants; BYO run) |
-| Cost control / moderation / permissions / RAG hooks | **Stub** (typed interfaces + no-ops) |
-| Quality eval suite / MCP hosting | **Stub / Planned** |
+| Classic / document editor shell | **Shipped** |
+| Headings, lists, links, images, colors | **Shipped** |
+| Tables (insert N×M) | **Shipped** |
+| Undo / redo | **Shipped** |
+| Block handles (move up/down) | **Shipped** (full DnD Planned) |
+| Slash commands | **Shipped** |
+| Track changes + Accept/Reject | **Shipped** |
+| Comments archive sidebar | **Shipped** |
+| Sign pad (canvas → image) | **Shipped** (1.1.2) |
+| Keep in memory (localStorage drafts) | **Shipped** (1.1.2) |
+| Find and replace | **Shipped** (1.1.2) |
+| Horizontal rule | **Shipped** (1.1.2) |
+| AI chat + history | **Shipped** (demo provider) |
+| AI Quick Actions / Review / Translate | **Shipped** (demo) |
+| Provider registry + model catalog | **Shipped** (BYO run) |
+| Cost control / moderation / permissions / RAG hooks | **Stub** |
 | Real-time multiplayer CRDT | **Planned** |
+
+## Examples
+
+### Sign pad + draft memory
+
+```tsx
+import { useState } from 'react';
+import { InkEditor } from '@forgedevstack/ink';
+import '@forgedevstack/ink/styles.css';
+
+export function ContractEditor() {
+  const [html, setHtml] = useState('<p>Sign below.</p>');
+  return (
+    <InkEditor
+      value={html}
+      onChange={setHtml}
+      keepInMemory
+      memoryKey="contract-draft"
+      features={{ signature: true, findReplace: true, horizontalRule: true }}
+      toolbar={[
+        'bold',
+        'italic',
+        'divider',
+        'signature',
+        'findReplace',
+        'horizontalRule',
+        'divider',
+        'undo',
+        'redo',
+      ]}
+    />
+  );
+}
+```
+
+**How to test sign pad**
+
+1. Open the portal playground or the example above.
+2. Click the **✍** toolbar button.
+3. Draw with mouse/touch on the canvas.
+4. Click **Insert** — a PNG image is inserted into the document.
+5. Refresh with `keepInMemory` + `memoryKey` — draft HTML restores.
+
+### Find and replace
+
+```tsx
+<InkEditor
+  defaultValue="<p>Hello world</p>"
+  features={{ findReplace: true }}
+  toolbar={['findReplace', 'bold', 'italic']}
+/>
+```
+
+Open **⌕**, type find/replace, use **Replace** or **Replace all** (text nodes only — attributes are safe).
 
 ## Props (`InkEditorProps`)
 
@@ -88,14 +144,16 @@ export function App() {
 | `tableRows` / `tableCols` | `number` | `3` | Default table size |
 | `author` | `string` | `'You'` | TC / comment author |
 | `typoAutoFix` | `boolean` | `true` | Blur typo MVP |
+| `keepInMemory` | `boolean` | `false` | Persist HTML in localStorage |
+| `memoryKey` | `string` | `'default'` | Storage key suffix (`ink-memory:{key}`) |
 
 ## Toolbar options
 
 ```
 headingDropdown | bold | italic | underline | strikethrough
 textColor | highlightColor | bulletList | orderedList
-link | image | table | undo | redo
-trackChanges | comments | ai | clearFormat | divider
+link | image | table | signature | findReplace | horizontalRule
+undo | redo | trackChanges | comments | ai | clearFormat | divider
 + align* | indent | outdent | blockquote | code | heading1–6
 ```
 
