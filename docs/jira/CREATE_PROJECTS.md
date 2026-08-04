@@ -38,10 +38,11 @@ Agent will populate from `INK_BOARD_BOOTSTRAP.json` (Sprint 0 done work + Sprint
 
 | Item | Pattern |
 |---|---|
-| Release branch | `release/{sprint}` e.g. `release/1` |
-| Feature branch | `feature/ink-{n}` |
-| PR target | release branch |
-| Labels | `library` / `portal` + `sprint-N` |
+| Release branch | `release/{version}` e.g. `release/1.1.4` — **must match sprint name** |
+| Feature branch | `feature/ink-{n}` or `feature/portal-…` |
+| PR target | release branch (not main) |
+| Labels | `library` / `portal` / `backend` + `sprint-1.1.4` |
 | Start work | → In Progress |
 | PR opened | → In Review |
-| Sprint merge to main | close sprint + npm bump |
+| Sprint merge to main | close sprint + **then** npm version bump (never mid-sprint) |
+| Confluence | one page per issue key (`INK-xx-…`) + overall epic page |
