@@ -1,7 +1,7 @@
-export const FIND_REPLACE_CLASS = 'Ink-FindReplace';
-export const FIND_REPLACE_FIELD_CLASS = 'Ink-FindReplace__field';
-export const FIND_REPLACE_ACTIONS_CLASS = 'Ink-FindReplace__actions';
-export const FIND_REPLACE_TITLE_CLASS = 'Ink-FindReplace__title';
+export const FIND_REPLACE_CLASS = 'Ink-FindReplace flex flex-col gap-2 p-3 border-b';
+export const FIND_REPLACE_FIELD_CLASS = 'Ink-FindReplace__field flex flex-col gap-1 text-sm';
+export const FIND_REPLACE_ACTIONS_CLASS = 'Ink-FindReplace__actions flex flex-wrap gap-1';
+export const FIND_REPLACE_TITLE_CLASS = 'Ink-FindReplace__title m-0 text-sm font-semibold';
 export const FIND_REPLACE_DEFAULT_TITLE = 'Find and replace';
 export const FIND_REPLACE_DEFAULT_FIND = 'Find';
 export const FIND_REPLACE_DEFAULT_REPLACE = 'Replace with';

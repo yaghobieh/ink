@@ -5,9 +5,12 @@
 ### Added
 - Sign pad toolbar (`signature`) — canvas draw → insert PNG image
 - `keepInMemory` + `memoryKey` — persist draft HTML in localStorage
-- Find and replace toolbar (`findReplace`)
-- `constants/numbers.ts` (`NUMBER_ZERO`…`NUMBER_ONE_HUNDRED`) and `generals.const.ts`
+- Find and replace toolbar (`findReplace`) — text-node safe
+- Horizontal rule toolbar (`horizontalRule`)
+- Aerocraft-style utility classes for SignPad / FindReplace panels
+- `isLocalStorageAvailable` util; path aliases (`@/`)
 - Docs: Jira bootstrap, Confluence paste pack, payments research, articles + Gemini video prompt
+- Examples in README for sign pad, memory, find/replace
 
 ### Changed
 - Product copy no longer names other editor vendors

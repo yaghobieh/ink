@@ -1,5 +1,5 @@
 import { useState, type FC, type FormEvent } from 'react';
-import { EMPTY_STRING } from '../../../../constants/generals.const';
+import { EMPTY_STRING } from '@/constants/generals.const';
 import {
   FIND_REPLACE_ACTIONS_CLASS,
   FIND_REPLACE_CLASS,
@@ -14,17 +14,18 @@ import {
 } from './FindReplace.const';
 import type { FindReplaceProps } from './FindReplace.types';
 
-export const FindReplace: FC<FindReplaceProps> = ({
-  open,
-  onClose,
-  onReplace,
-  findLabel = FIND_REPLACE_DEFAULT_FIND,
-  replaceLabel = FIND_REPLACE_DEFAULT_REPLACE,
-  replaceOneLabel = FIND_REPLACE_DEFAULT_ONE,
-  replaceAllLabel = FIND_REPLACE_DEFAULT_ALL,
-  closeLabel = FIND_REPLACE_DEFAULT_CLOSE,
-  title = FIND_REPLACE_DEFAULT_TITLE,
-}) => {
+export const FindReplace: FC<FindReplaceProps> = (props) => {
+  const {
+    open,
+    onClose,
+    onReplace,
+    findLabel = FIND_REPLACE_DEFAULT_FIND,
+    replaceLabel = FIND_REPLACE_DEFAULT_REPLACE,
+    replaceOneLabel = FIND_REPLACE_DEFAULT_ONE,
+    replaceAllLabel = FIND_REPLACE_DEFAULT_ALL,
+    closeLabel = FIND_REPLACE_DEFAULT_CLOSE,
+    title = FIND_REPLACE_DEFAULT_TITLE,
+  } = props;
   const [find, setFind] = useState(EMPTY_STRING);
   const [replace, setReplace] = useState(EMPTY_STRING);
 

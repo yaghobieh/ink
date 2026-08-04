@@ -33,6 +33,7 @@ export type ToolbarOption =
   | 'table'
   | 'signature'
   | 'findReplace'
+  | 'horizontalRule'
   | 'undo'
   | 'redo'
   | 'trackChanges'

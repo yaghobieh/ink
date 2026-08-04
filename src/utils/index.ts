@@ -35,4 +35,5 @@ export {
   writeInkMemory,
   clearInkMemory,
 } from './memory.utils';
+export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';

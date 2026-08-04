@@ -8,7 +8,8 @@ export type InkFeatureName =
   | 'history'
   | 'typoAutoFix'
   | 'signature'
-  | 'findReplace';
+  | 'findReplace'
+  | 'horizontalRule';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 

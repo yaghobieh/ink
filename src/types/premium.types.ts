@@ -23,6 +23,7 @@ export type InkIconKey = Extract<
   | 'table'
   | 'signature'
   | 'findReplace'
+  | 'horizontalRule'
   | 'undo'
   | 'redo'
   | 'trackChanges'

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FC, type PointerEvent } from 'react';
-import { NUMBER_ZERO } from '../../../../constants/numbers';
+import { NUMBER_ZERO } from '@/constants/numbers';
 import {
   SIGN_PAD_ACTIONS_CLASS,
   SIGN_PAD_CANVAS_CLASS,
@@ -10,6 +10,7 @@ import {
   SIGN_PAD_DEFAULT_CLEAR,
   SIGN_PAD_DEFAULT_CONFIRM,
   SIGN_PAD_DEFAULT_TITLE,
+  SIGN_PAD_FILL_STYLE,
   SIGN_PAD_LINE_WIDTH,
   SIGN_PAD_MIME,
   SIGN_PAD_STROKE_STYLE,
@@ -18,15 +19,16 @@ import {
 import type { SignPadProps } from './SignPad.types';
 import { canvasHasInk, getCanvasPoint } from './SignPad.utils';
 
-export const SignPad: FC<SignPadProps> = ({
-  open,
-  onClose,
-  onConfirm,
-  clearLabel = SIGN_PAD_DEFAULT_CLEAR,
-  confirmLabel = SIGN_PAD_DEFAULT_CONFIRM,
-  cancelLabel = SIGN_PAD_DEFAULT_CANCEL,
-  title = SIGN_PAD_DEFAULT_TITLE,
-}) => {
+export const SignPad: FC<SignPadProps> = (props) => {
+  const {
+    open,
+    onClose,
+    onConfirm,
+    clearLabel = SIGN_PAD_DEFAULT_CLEAR,
+    confirmLabel = SIGN_PAD_DEFAULT_CONFIRM,
+    cancelLabel = SIGN_PAD_DEFAULT_CANCEL,
+    title = SIGN_PAD_DEFAULT_TITLE,
+  } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false);
   const [hasStroke, setHasStroke] = useState(false);
@@ -36,7 +38,7 @@ export const SignPad: FC<SignPadProps> = ({
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
-    context.fillStyle = '#ffffff';
+    context.fillStyle = SIGN_PAD_FILL_STYLE;
     context.fillRect(NUMBER_ZERO, NUMBER_ZERO, canvas.width, canvas.height);
     context.strokeStyle = SIGN_PAD_STROKE_STYLE;
     context.lineWidth = SIGN_PAD_LINE_WIDTH;
@@ -78,14 +80,16 @@ export const SignPad: FC<SignPadProps> = ({
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
-    context.fillStyle = '#ffffff';
+    context.fillStyle = SIGN_PAD_FILL_STYLE;
     context.fillRect(NUMBER_ZERO, NUMBER_ZERO, canvas.width, canvas.height);
     setHasStroke(false);
   };
 
   const handleConfirm = () => {
     const canvas = canvasRef.current;
-    if (!canvas || !canvasHasInk(canvas)) return;
+    if (!canvas) return;
+    const ready = hasStroke || canvasHasInk(canvas);
+    if (!ready) return;
     onConfirm(canvas.toDataURL(SIGN_PAD_MIME));
     onClose();
   };

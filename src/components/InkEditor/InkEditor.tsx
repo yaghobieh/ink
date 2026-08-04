@@ -35,6 +35,9 @@ import {
   INK_PLACEHOLDER_DEFAULT,
   INK_TABLE_DEFAULT_COLS,
   INK_TABLE_DEFAULT_ROWS,
+  TOOLBAR_OPTION_FIND_REPLACE,
+  TOOLBAR_OPTION_HORIZONTAL_RULE,
+  TOOLBAR_OPTION_SIGNATURE,
 } from '../../constants';
 import {
   acceptTrackChangeInHtml,
@@ -201,12 +204,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   }, [value]);
 
   useEffect(() => {
-    if (!editorRef.current || value) return;
+    if (!editorRef.current) return;
+    if (value !== undefined) return;
     const remembered = keepInMemory ? readInkMemory(memoryKey) : '';
     const initial = remembered || defaultValue;
     if (!initial) return;
     editorRef.current.innerHTML = initial;
     historyRef.current = new InkHistoryStack(initial);
+    onChange?.(initial);
   }, []);
 
   const emitChange = (html: string) => {
@@ -641,11 +646,11 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
-    if (item === 'signature') {
+    if (item === TOOLBAR_OPTION_SIGNATURE) {
       if (!features.signature) return null;
       return (
         <ToolbarButton
-          key="signature"
+          key={TOOLBAR_OPTION_SIGNATURE}
           icon={icons.signature}
           title="Sign pad"
           active={signPadOpen}
@@ -654,16 +659,32 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
-    if (item === 'findReplace') {
+    if (item === TOOLBAR_OPTION_FIND_REPLACE) {
       if (!features.findReplace) return null;
       return (
         <ToolbarButton
-          key="findReplace"
+          key={TOOLBAR_OPTION_FIND_REPLACE}
           icon={icons.findReplace}
           title="Find and replace"
           active={findReplaceOpen}
           disabled={disabled || readOnly}
           onClick={() => setFindReplaceOpen((prev) => !prev)}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_HORIZONTAL_RULE) {
+      if (!features.horizontalRule) return null;
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_HORIZONTAL_RULE}
+          icon={icons.horizontalRule}
+          title="Horizontal rule"
+          disabled={disabled || readOnly}
+          onClick={() => {
+            editorRef.current?.focus();
+            insertHTML('<hr />');
+            handleInput();
+          }}
         />
       );
     }
