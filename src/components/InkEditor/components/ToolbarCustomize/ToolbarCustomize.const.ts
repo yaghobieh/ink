@@ -1,0 +1,17 @@
+import {
+  TOOLBAR_CUSTOMIZE_CLOSE_LABEL,
+  TOOLBAR_CUSTOMIZE_LIST_ARIA_LABEL,
+  TOOLBAR_CUSTOMIZE_TITLE,
+} from '../../../../constants';
+
+export const TOOLBAR_CUSTOMIZE_CLASS = 'Ink-ToolbarCustomize';
+export const TOOLBAR_CUSTOMIZE_TITLE_CLASS = 'Ink-ToolbarCustomize__title';
+export const TOOLBAR_CUSTOMIZE_LIST_CLASS = 'Ink-ToolbarCustomize__list';
+export const TOOLBAR_CUSTOMIZE_ITEM_CLASS = 'Ink-ToolbarCustomize__item';
+export const TOOLBAR_CUSTOMIZE_ACTIONS_CLASS = 'Ink-ToolbarCustomize__actions';
+
+export const TOOLBAR_CUSTOMIZE_DEFAULT_TITLE = TOOLBAR_CUSTOMIZE_TITLE;
+export const TOOLBAR_CUSTOMIZE_DEFAULT_CLOSE = TOOLBAR_CUSTOMIZE_CLOSE_LABEL;
+export const TOOLBAR_CUSTOMIZE_DEFAULT_LIST_ARIA = TOOLBAR_CUSTOMIZE_LIST_ARIA_LABEL;
+
+export const TOOLBAR_CUSTOMIZE_INPUT_TYPE = 'checkbox';

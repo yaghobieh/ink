@@ -42,3 +42,21 @@ export {
 } from './memory.utils';
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
+export {
+  captureSelectionInRoot,
+  restoreSelectionInRoot,
+  withPreservedSelection,
+} from './selection.utils';
+export type { SavedSelection } from './selection.utils';
+export {
+  buildToolbarStorageKey,
+  buildVisibleToolbarItems,
+  isSessionStorageAvailable,
+  listCustomizableToolbarOptions,
+  normalizeToolbarItems,
+  parseToolbarItems,
+  readToolbarHidden,
+  readToolbarItems,
+  writeToolbarHidden,
+  writeToolbarItems,
+} from './toolbarStorage.utils';

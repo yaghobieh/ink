@@ -11,6 +11,10 @@
 - Theming docs (`docs/theming.md`)
 - `chrome` prop (`boxed` | `borderless`) for Editor.js-style borderless chrome
 - Block drag-and-drop reorder via block handle grip (`reorderBlockBefore`)
+- Toolbar right-click menu: Customize toolbar / Hide toolbar (session or `keepInMemory` persistence via `ink-toolbar-items` / `ink-toolbar-hidden`)
+- `colorMode` prop (`light` | `dark` | `system`) sets `data-color-mode` for forced light/dark tokens
+- `onToolbarChange`, `toolbarHidden`, `onToolbarHiddenChange` for toolbar visibility/customization
+- Selection helpers: `captureSelectionInRoot`, `restoreSelectionInRoot`, `withPreservedSelection`
 
 ### Changed
 - SignPad / FindReplace / ToolbarButton reuse common Button, Field, Canvas, Box
@@ -19,12 +23,14 @@
 - Slash menu uses a lighter shadow / tighter radius
 - Block handles use circular + / grip controls closer to a floating block UI
 - Context menu portals to `document.body` and clamps to the viewport
+- Dark OS preference applies only when `data-color-mode` is omitted (`system`)
 
 ### Fixed
 - Controlled `value` sync no longer resets the caret to the top on Enter while focused
 - List markers visible again (`ul`/`ol` list-style + indent under `.Ink-Editor__content`)
 - Toolbar buttons preserve contenteditable selection (`onMouseDown` preventDefault)
 - Context menu outside-click close ignores clicks inside the portaled menu
+- Enter / HTML replace while focused restores selection range; editor focus uses `preventScroll`
 
 ## 1.1.3
 
