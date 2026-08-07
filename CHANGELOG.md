@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — 1.1.4
+## 1.1.4
 
 ### Added
 - OpenAI AI provider (`createOpenAiProvider`) with Chat Completions + capability system prompts
