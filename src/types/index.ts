@@ -48,6 +48,7 @@ export type {
   InkFeatureName,
   InkFeaturesConfig,
   InkEditorVariant,
+  InkEditorChrome,
   InkAiPlacement,
 } from './features.types';
 

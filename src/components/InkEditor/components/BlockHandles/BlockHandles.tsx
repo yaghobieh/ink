@@ -16,7 +16,7 @@ import {
 import type { BlockHandlesProps } from './BlockHandles.types';
 
 export const BlockHandles: FC<BlockHandlesProps> = (props) => {
-  const { visible, top, onMoveUp, onMoveDown } = props;
+  const { visible, top, onMoveUp, onMoveDown, onDragStart } = props;
   if (!visible) return null;
   return (
     <div className={BLOCK_HANDLES_CLASS} style={{ top }} aria-hidden={!visible}>
@@ -33,6 +33,8 @@ export const BlockHandles: FC<BlockHandlesProps> = (props) => {
         className={BLOCK_HANDLES_GRIP_CLASS}
         title={BLOCK_HANDLES_TITLE_GRIP}
         tabIndex={-1}
+        draggable
+        onDragStart={onDragStart}
       >
         {BLOCK_HANDLES_GRIP_LABEL}
       </button>

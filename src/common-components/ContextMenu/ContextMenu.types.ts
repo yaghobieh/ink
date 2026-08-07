@@ -14,3 +14,22 @@ export type ContextMenuProps = {
   items: ContextMenuItem[];
   onClose: () => void;
 };
+
+export interface ContextMenuPosition {
+  x: number;
+  y: number;
+}
+
+export interface ContextMenuViewportBounds {
+  width: number;
+  height: number;
+}
+
+export interface ClampContextMenuPositionInput {
+  x: number;
+  y: number;
+  menuWidth: number;
+  menuHeight: number;
+  viewport: ContextMenuViewportBounds;
+  edgePadding: number;
+}

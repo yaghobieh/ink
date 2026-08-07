@@ -3,7 +3,12 @@ export { ToolbarDropdown } from './ToolbarDropdown';
 export { ToolbarColorPicker } from './ToolbarColorPicker';
 export { CommentsPanel } from './CommentsPanel';
 export { AiPanel } from './AiPanel';
-export { BlockHandles } from './BlockHandles';
+export {
+  BlockHandles,
+  BLOCK_HANDLES_DRAG_EFFECT_MOVE,
+  BLOCK_HANDLES_DRAG_MIME,
+  BLOCK_HANDLES_DRAG_PAYLOAD,
+} from './BlockHandles';
 export {
   InlineToolbar,
   clampInlineToolbarPosition,

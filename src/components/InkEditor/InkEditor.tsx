@@ -4,6 +4,7 @@ import {
   useState,
   type FC,
   type ClipboardEvent,
+  type DragEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -41,6 +42,7 @@ import {
   CONTEXT_MENU_LABEL_STRIKE,
   CONTEXT_MENU_LABEL_UNDERLINE,
   INK_BUTTON_CONFIG,
+  INK_CLASS_BLOCK_ACTIVE,
   INK_CLASS_BODY,
   INK_CLASS_CONTENT,
   INK_CLASS_DIVIDER,
@@ -49,6 +51,7 @@ import {
   INK_CLASS_SHELL,
   INK_CLASS_TOOLBAR,
   INK_DEFAULT_AUTHOR,
+  INK_DEFAULT_CHROME,
   INK_DEFAULT_FEATURES,
   INK_DEFAULT_HIGHLIGHT_COLOR,
   INK_DEFAULT_ICONS,
@@ -81,6 +84,7 @@ import {
   InkHistoryStack,
   markActiveBlock,
   moveBlock,
+  reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
   readInkMemory,
@@ -108,6 +112,9 @@ import {
 import {
   AiPanel,
   BlockHandles,
+  BLOCK_HANDLES_DRAG_EFFECT_MOVE,
+  BLOCK_HANDLES_DRAG_MIME,
+  BLOCK_HANDLES_DRAG_PAYLOAD,
   CommentsPanel,
   FindReplace,
   InlineToolbar,
@@ -153,6 +160,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     charCountMax,
     typoAutoFix = true,
     variant = INK_DEFAULT_VARIANT,
+    chrome = INK_DEFAULT_CHROME,
     features: featuresProp,
     author = INK_DEFAULT_AUTHOR,
     trackChanges: trackChangesProp,
@@ -191,6 +199,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const richPasteEnabled = canUseRichPaste && pasteMode === 'rich';
   const editorRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef(new InkHistoryStack(value ?? defaultValue));
+  const lastEmittedHtmlRef = useRef<string | null>(null);
+  const dragBlockRef = useRef<HTMLElement | null>(null);
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const [currentBlock, setCurrentBlock] = useState('p');
   const [charCount, setCharCount] = useState(0);
@@ -234,9 +244,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   useEffect(() => {
     if (!editorRef.current || value === undefined) return;
-    if (editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
+    if (value === lastEmittedHtmlRef.current) return;
+    if (editorRef.current.innerHTML === value) {
+      lastEmittedHtmlRef.current = value;
+      return;
     }
+    const focused = document.activeElement === editorRef.current;
+    if (focused) return;
+    editorRef.current.innerHTML = value;
+    lastEmittedHtmlRef.current = value;
   }, [value]);
 
   useEffect(() => {
@@ -244,6 +260,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const remembered = keepInMemory ? readInkMemory(memoryKey) : '';
     if (remembered) {
       editorRef.current.innerHTML = remembered;
+      lastEmittedHtmlRef.current = remembered;
       historyRef.current = new InkHistoryStack(remembered);
       onChange?.(remembered);
       return;
@@ -251,12 +268,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (value !== undefined) return;
     if (!defaultValue) return;
     editorRef.current.innerHTML = defaultValue;
+    lastEmittedHtmlRef.current = defaultValue;
     historyRef.current = new InkHistoryStack(defaultValue);
     onChange?.(defaultValue);
   }, []);
 
   const emitChange = (html: string) => {
     historyRef.current.push(html);
+    lastEmittedHtmlRef.current = html;
     onChange?.(html);
     if (keepInMemory) writeInkMemory(html, memoryKey);
     if (showCharCount && editorRef.current) {
@@ -711,6 +730,41 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
   };
 
+  const handleBlockDragStart = (event: DragEvent<HTMLButtonElement>) => {
+    if (!editorRef.current) return;
+    const selection = window.getSelection();
+    const selectedBlock = getBlockElement(selection?.anchorNode ?? null, editorRef.current);
+    const activeBlock = editorRef.current.querySelector(`.${INK_CLASS_BLOCK_ACTIVE}`);
+    const block =
+      selectedBlock ?? (activeBlock instanceof HTMLElement ? activeBlock : null);
+    if (!block) return;
+    dragBlockRef.current = block;
+    markActiveBlock(editorRef.current, block);
+    event.dataTransfer.setData(BLOCK_HANDLES_DRAG_MIME, BLOCK_HANDLES_DRAG_PAYLOAD);
+    event.dataTransfer.effectAllowed = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
+  };
+
+  const handleContentDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (!dragBlockRef.current) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
+  };
+
+  const handleContentDrop = (event: DragEvent<HTMLDivElement>) => {
+    if (!editorRef.current || !dragBlockRef.current) return;
+    event.preventDefault();
+    const target = getBlockElement(event.target as Node, editorRef.current);
+    if (target && reorderBlockBefore(dragBlockRef.current, target)) {
+      handleInput();
+      refreshFormats();
+    }
+    dragBlockRef.current = null;
+  };
+
+  const handleContentDragEnd = () => {
+    dragBlockRef.current = null;
+  };
+
   const renderToolbarItem = (item: ToolbarOption, index: number): ReactNode => {
     if (item === 'divider') {
       return <span key={`divider-${index}`} className={INK_CLASS_DIVIDER} />;
@@ -927,6 +981,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       data-testid={testId}
       data-disabled={disabled || undefined}
       data-variant={variant}
+      data-chrome={chrome}
       data-premium={premium.active || undefined}
       data-wysiwyg={canUseWysiwyg || undefined}
       style={{ ...themeStyle, ...styleProp }}
@@ -970,6 +1025,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               top={activeBlockTop}
               onMoveUp={() => moveActiveBlock('up')}
               onMoveDown={() => moveActiveBlock('down')}
+              onDragStart={handleBlockDragStart}
             />
           ) : null}
           <div
@@ -988,6 +1044,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onKeyDown={handleKeyDown}
             onMouseUp={refreshFormats}
             onContextMenu={handleContextMenu}
+            onDragOver={handleContentDragOver}
+            onDrop={handleContentDrop}
+            onDragEnd={handleContentDragEnd}
             onPaste={(event) => {
               void handlePaste(event);
             }}

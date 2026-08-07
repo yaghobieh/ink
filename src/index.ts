@@ -75,6 +75,7 @@ export type {
   InkFeaturesConfig,
   InkFeatureName,
   InkEditorVariant,
+  InkEditorChrome,
   InkAiPlacement,
   InkPremiumFeature,
   InkPasteMode,

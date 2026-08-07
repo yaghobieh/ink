@@ -50,6 +50,17 @@
   pointer-events: none;
 }
 
+.Ink-Editor[data-chrome='borderless'] {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.Ink-Editor[data-chrome='borderless'] .Ink-Editor__toolbar {
+  border-bottom: none;
+  background: transparent;
+}
+
 .Ink-Editor__toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -174,6 +185,16 @@
 .Ink-Editor__content blockquote,
 .Ink-Editor__content pre {
   margin: 0.55rem 0;
+}
+
+.Ink-Editor__content ul {
+  list-style: disc;
+  padding-inline-start: $ink-list-indent;
+}
+
+.Ink-Editor__content ol {
+  list-style: decimal;
+  padding-inline-start: $ink-list-indent;
 }
 
 .Ink-Editor__content .Ink-block--active {

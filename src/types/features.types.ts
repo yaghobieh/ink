@@ -15,4 +15,6 @@ export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 
 export type InkEditorVariant = 'classic' | 'document';
 
+export type InkEditorChrome = 'boxed' | 'borderless';
+
 export type InkAiPlacement = 'sidebar' | 'drawer' | 'floating';
