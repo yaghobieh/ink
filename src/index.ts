@@ -39,7 +39,13 @@ export {
   withPreservedSelection,
 } from './utils';
 export type { SavedSelection } from './utils';
-export { inkAi, createInkAiPlugin } from './plugins/ai';
+export {
+  inkAi,
+  createInkAiPlugin,
+  createDemoAiProvider,
+  createOpenAiProvider,
+  createInkServerAiProvider,
+} from './plugins/ai';
 export {
   INK_DEFAULT_TOOLBAR,
   INK_SIMPLE_TOOLBAR,
@@ -52,6 +58,11 @@ export {
   INK_AI_MODEL_CATALOG,
   INK_AI_DEMO_PROVIDER_ID,
   INK_AI_DEMO_MODEL_ID,
+  INK_AI_OPENAI_PROVIDER_ID,
+  INK_AI_OPENAI_PROVIDER_NAME,
+  INK_AI_OPENAI_MODEL_GPT_4_1_MINI,
+  INK_AI_OPENAI_MODEL_GPT_4_1,
+  INK_AI_INK_SERVER_PROVIDER_ID,
   INK_TRANSLATE_LANGUAGES,
   INK_QUICK_ACTIONS,
   INK_DEFAULT_FEATURES,

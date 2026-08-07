@@ -80,8 +80,10 @@ import {
   INK_PLACEHOLDER_DEFAULT,
   INK_TABLE_DEFAULT_COLS,
   INK_TABLE_DEFAULT_ROWS,
+  INK_AI_DEMO_PROVIDER_ID,
   KEY_ENTER,
   KEY_ESCAPE,
+  KEY_TAB,
   KEY_Z,
   LIST_DROPDOWN_TITLE,
   LIST_VALUE_BULLET,
@@ -161,7 +163,11 @@ import {
   setTextColor,
   tryConvertMarkdownListPrefix,
 } from './helpers';
+import { inkAi } from '../../plugins/ai';
 import {
+  AiAutocomplete,
+  AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT,
+  AI_AUTOCOMPLETE_DEBOUNCE_MS,
   AiPanel,
   BlockHandles,
   BLOCK_HANDLES_DRAG_EFFECT_MOVE,
@@ -169,6 +175,8 @@ import {
   BLOCK_HANDLES_DRAG_PAYLOAD,
   CommentsPanel,
   FindReplace,
+  getCaretPositionInRoot,
+  getTextBeforeCaret,
   InlineToolbar,
   SignPad,
   SlashMenu,
@@ -272,6 +280,16 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [localComments, setLocalComments] = useState<InkCommentThread[]>(commentsProp ?? []);
   const [showCommentsPanel, setShowCommentsPanel] = useState(showCommentsPanelProp ?? false);
   const [showAiPanel, setShowAiPanel] = useState(Boolean(ai?.enabled && ai.openOnInit));
+  const [aiPanelBusy, setAiPanelBusy] = useState(false);
+  const aiPanelBusyRef = useRef(false);
+  const [aiAutocomplete, setAiAutocomplete] = useState({
+    visible: false,
+    suggestion: '',
+    top: NUMBER_ZERO,
+    left: NUMBER_ZERO,
+  });
+  const autocompleteTimerRef = useRef<number | null>(null);
+  const autocompleteRequestIdRef = useRef(NUMBER_ZERO);
   const [selectionHtml, setSelectionHtml] = useState('');
   const [activeBlockTop, setActiveBlockTop] = useState(0);
   const [hasActiveBlock, setHasActiveBlock] = useState(false);
@@ -315,6 +333,106 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const toolbarCatalog = toolbar;
   const customizableOptions = listCustomizableToolbarOptions(toolbarCatalog);
   const colorModeAttr = colorMode === COLOR_MODE_SYSTEM ? undefined : colorMode;
+  const autocompleteEnabled = Boolean(
+    features.ai && ai?.enabled && ai.autocomplete !== false && !disabled && !readOnly,
+  );
+
+  const clearAutocompleteTimer = () => {
+    if (autocompleteTimerRef.current !== null) {
+      window.clearTimeout(autocompleteTimerRef.current);
+      autocompleteTimerRef.current = null;
+    }
+  };
+
+  const dismissAiAutocomplete = () => {
+    clearAutocompleteTimer();
+    autocompleteRequestIdRef.current += 1;
+    setAiAutocomplete((prev) =>
+      prev.visible || prev.suggestion
+        ? { visible: false, suggestion: '', top: NUMBER_ZERO, left: NUMBER_ZERO }
+        : prev,
+    );
+  };
+
+  const scheduleAiAutocomplete = () => {
+    if (!autocompleteEnabled || aiPanelBusy || !editorRef.current) {
+      dismissAiAutocomplete();
+      return;
+    }
+    const selection = window.getSelection();
+    if (!selection || !selection.isCollapsed) {
+      dismissAiAutocomplete();
+      return;
+    }
+    clearAutocompleteTimer();
+    setAiAutocomplete((prev) =>
+      prev.visible || prev.suggestion
+        ? { ...prev, visible: false, suggestion: '' }
+        : prev,
+    );
+    const providerId = ai?.providerId || INK_AI_DEMO_PROVIDER_ID;
+    autocompleteTimerRef.current = window.setTimeout(() => {
+      autocompleteTimerRef.current = null;
+      if (!editorRef.current || aiPanelBusyRef.current) return;
+      const liveSelection = window.getSelection();
+      if (!liveSelection || !liveSelection.isCollapsed) return;
+      const prefix = getTextBeforeCaret(editorRef.current);
+      const position = getCaretPositionInRoot(editorRef.current);
+      if (!prefix.trim() || !position) return;
+      const requestId = autocompleteRequestIdRef.current + 1;
+      autocompleteRequestIdRef.current = requestId;
+      const html = editorRef.current.innerHTML;
+      void inkAi
+        .runProvider(providerId, {
+          capability: 'autocomplete',
+          html,
+          prompt: prefix,
+          modelId: ai?.modelId,
+        })
+        .then((response) => {
+          if (requestId !== autocompleteRequestIdRef.current) return;
+          const suggestion = response.text?.trim() || '';
+          if (!suggestion) {
+            setAiAutocomplete({
+              visible: false,
+              suggestion: '',
+              top: NUMBER_ZERO,
+              left: NUMBER_ZERO,
+            });
+            return;
+          }
+          const nextPosition =
+            (editorRef.current && getCaretPositionInRoot(editorRef.current)) || position;
+          setAiAutocomplete({
+            visible: true,
+            suggestion,
+            top: nextPosition.top,
+            left: nextPosition.left,
+          });
+        })
+        .catch(() => {
+          if (requestId !== autocompleteRequestIdRef.current) return;
+          setAiAutocomplete({
+            visible: false,
+            suggestion: '',
+            top: NUMBER_ZERO,
+            left: NUMBER_ZERO,
+          });
+        });
+    }, AI_AUTOCOMPLETE_DEBOUNCE_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearAutocompleteTimer();
+      autocompleteRequestIdRef.current += 1;
+    };
+  }, []);
+
+  useEffect(() => {
+    aiPanelBusyRef.current = aiPanelBusy;
+    if (aiPanelBusy) dismissAiAutocomplete();
+  }, [aiPanelBusy]);
 
   useEffect(() => {
     if (trackChangesEnabledProp !== undefined) setTrackChangesEnabled(trackChangesEnabledProp);
@@ -529,6 +647,23 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         setSlashItems([]);
       }
     }
+    if (autocompleteEnabled) {
+      scheduleAiAutocomplete();
+    } else {
+      dismissAiAutocomplete();
+    }
+  };
+
+  const acceptAiAutocomplete = () => {
+    const text = aiAutocomplete.suggestion;
+    if (!text) {
+      dismissAiAutocomplete();
+      return;
+    }
+    focusEditor(editorRef.current);
+    execCommand(AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT, text);
+    dismissAiAutocomplete();
+    handleInput();
   };
 
   const wrapSelectionWithDelete = (changeId: string) => {
@@ -886,7 +1021,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === KEY_TAB && aiAutocomplete.visible && aiAutocomplete.suggestion) {
+      event.preventDefault();
+      acceptAiAutocomplete();
+      return;
+    }
     if (event.key === KEY_ENTER) {
+      dismissAiAutocomplete();
       return;
     }
     if (tryConvertMarkdownListPrefix(event.nativeEvent)) {
@@ -894,6 +1035,11 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return;
     }
     if (event.key === KEY_ESCAPE) {
+      if (aiAutocomplete.visible) {
+        event.preventDefault();
+        dismissAiAutocomplete();
+        return;
+      }
       setSlashItems([]);
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
     }
@@ -1370,6 +1516,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onSelect={applySlash}
             />
           ) : null}
+          {autocompleteEnabled ? (
+            <AiAutocomplete
+              suggestion={aiAutocomplete.suggestion}
+              position={{ top: aiAutocomplete.top, left: aiAutocomplete.left }}
+              visible={aiAutocomplete.visible}
+              onAccept={acceptAiAutocomplete}
+              onDismiss={dismissAiAutocomplete}
+            />
+          ) : null}
           <InlineToolbar
             open={inlineToolbar.open}
             top={inlineToolbar.top}
@@ -1448,6 +1603,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             config={ai}
             documentHtml={editorRef.current?.innerHTML ?? value ?? ''}
             selectionHtml={selectionHtml}
+            onBusyChange={setAiPanelBusy}
             onClose={() => setShowAiPanel(false)}
             onApplyHtml={(html) => {
               focusEditor(editorRef.current);

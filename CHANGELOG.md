@@ -3,6 +3,10 @@
 ## Unreleased — 1.1.4
 
 ### Added
+- OpenAI AI provider (`createOpenAiProvider`) with Chat Completions + capability system prompts
+- Ink server AI bridge (`createInkServerAiProvider`) posting to `/api/ai/complete`
+- `autocomplete` capability on `InkAiCapability` and `ai.autocomplete` config (default on when AI enabled)
+- Inline AI autocomplete ghost suggestions (Tab accept, Escape dismiss) while typing
 - Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons, `GripIcon`
 - Path aliases: `@common-components`, `@utils`, `@const`
 - SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens

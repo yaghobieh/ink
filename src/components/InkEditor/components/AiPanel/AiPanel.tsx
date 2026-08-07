@@ -19,12 +19,13 @@ export interface AiPanelProps {
   selectionHtml: string;
   onApplyHtml: (html: string) => void;
   onClose?: () => void;
+  onBusyChange?: (busy: boolean) => void;
 }
 
 type AiTab = 'chat' | 'actions' | 'review' | 'translate';
 
 export const AiPanel: FC<AiPanelProps> = (props) => {
-  const { config, documentHtml, selectionHtml, onApplyHtml, onClose } = props;
+  const { config, documentHtml, selectionHtml, onApplyHtml, onClose, onBusyChange } = props;
   const [tab, setTab] = useState<AiTab>('chat');
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<InkAiChatTurn[]>([]);
@@ -35,12 +36,17 @@ export const AiPanel: FC<AiPanelProps> = (props) => {
   const providerId = config.providerId || INK_AI_DEMO_PROVIDER_ID;
   const themeClass = config.uiTheme?.className || config.className || '';
 
+  const setBusyState = (next: boolean) => {
+    setBusy(next);
+    onBusyChange?.(next);
+  };
+
   const runCapability = async (
     capability: Parameters<typeof inkAi.runProvider>[1]['capability'],
     options?: Record<string, string>,
     userPrompt?: string,
   ) => {
-    setBusy(true);
+    setBusyState(true);
     try {
       const nextHistory =
         capability === 'chat' && userPrompt
@@ -85,7 +91,7 @@ export const AiPanel: FC<AiPanelProps> = (props) => {
       if (response.diff) setDiff(response.diff);
       if (response.reviewSuggestions) setReviews(response.reviewSuggestions);
     } finally {
-      setBusy(false);
+      setBusyState(false);
     }
   };
 

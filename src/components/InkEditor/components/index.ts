@@ -4,6 +4,15 @@ export { ToolbarColorPicker } from './ToolbarColorPicker';
 export { CommentsPanel } from './CommentsPanel';
 export { AiPanel } from './AiPanel';
 export {
+  AiAutocomplete,
+  AI_AUTOCOMPLETE_DEBOUNCE_MS,
+  AI_AUTOCOMPLETE_MAX_PREFIX_CHARS,
+  AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT,
+  getTextBeforeCaret,
+  getCaretPositionInRoot,
+} from './AiAutocomplete';
+export type { AiAutocompleteProps, AiAutocompletePosition } from './AiAutocomplete';
+export {
   BlockHandles,
   BLOCK_HANDLES_DRAG_EFFECT_MOVE,
   BLOCK_HANDLES_DRAG_MIME,

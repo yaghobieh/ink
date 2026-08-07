@@ -110,6 +110,16 @@ const runDemo = async (request: InkAiRequest): Promise<InkAiResponse> => {
         ],
       };
     }
+    case 'autocomplete': {
+      const prefix = prompt || plain;
+      const continuation = prefix.trim().length
+        ? ' and continue with a clear next phrase.'
+        : 'Start typing to see a demo completion.';
+      return {
+        text: continuation,
+        meta: { provider: INK_AI_DEMO_PROVIDER_ID, model: INK_AI_DEMO_MODEL_ID },
+      };
+    }
     case 'suggestDiff':
     case 'quickAction':
     case 'rewrite':

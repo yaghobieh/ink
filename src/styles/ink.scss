@@ -684,6 +684,17 @@
   color: var(--ink-muted);
 }
 
+.Ink-AiAutocomplete {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  color: var(--ink-muted);
+  font-style: italic;
+  white-space: pre-wrap;
+  opacity: 0.65;
+  user-select: none;
+}
+
 @media (max-width: 900px) {
   .Ink-Editor__shell {
     flex-direction: column;

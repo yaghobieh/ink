@@ -1,0 +1,12 @@
+import {
+  NUMBER_FOUR,
+  NUMBER_ONE_HUNDRED,
+  NUMBER_SIX,
+} from '../../../../constants/numbers';
+
+export const AI_AUTOCOMPLETE_CLASS = 'Ink-AiAutocomplete';
+export const AI_AUTOCOMPLETE_ARIA_HIDDEN = true;
+export const AI_AUTOCOMPLETE_DEBOUNCE_MS = NUMBER_SIX * NUMBER_ONE_HUNDRED;
+export const AI_AUTOCOMPLETE_MAX_PREFIX_CHARS = NUMBER_FOUR * NUMBER_ONE_HUNDRED;
+export const AI_AUTOCOMPLETE_CARET_OFFSET_Y_PX = NUMBER_FOUR;
+export const AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT = 'insertText';

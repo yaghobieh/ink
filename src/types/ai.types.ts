@@ -9,7 +9,8 @@ export type InkAiCapability =
   | 'translate'
   | 'review'
   | 'quickAction'
-  | 'suggestDiff';
+  | 'suggestDiff'
+  | 'autocomplete';
 
 export interface InkAiChatTurn {
   id: string;
@@ -130,6 +131,7 @@ export interface InkAiConfig {
   openOnInit?: boolean;
   providerId?: string;
   modelId?: string;
+  autocomplete?: boolean;
   uiTheme?: InkAiUiTheme;
   className?: string;
   showHistory?: boolean;
