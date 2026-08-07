@@ -6,8 +6,14 @@ export {
   getBlockElement,
   moveBlock,
   reorderBlockBefore,
+  reorderBlockAfter,
+  resolveDropPosition,
+  clearBlockDragClasses,
+  markDraggingBlock,
+  markDropTarget,
   markActiveBlock,
 } from './blocks.utils';
+export type { BlockDropPosition } from './blocks.utils';
 export {
   wrapInsertHtml,
   wrapDeleteHtml,

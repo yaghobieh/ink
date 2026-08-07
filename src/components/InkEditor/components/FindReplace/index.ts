@@ -1,2 +1,2 @@
 export { FindReplace } from './FindReplace';
-export type { FindReplaceProps } from './FindReplace.types';
+export type { FindReplaceFocusField, FindReplaceProps } from './FindReplace.types';

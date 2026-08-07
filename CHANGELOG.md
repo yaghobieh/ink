@@ -3,27 +3,32 @@
 ## Unreleased — 1.1.4
 
 ### Added
-- Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons
+- Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons, `GripIcon`
 - Path aliases: `@common-components`, `@utils`, `@const`
 - SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
 - Right-click context menu (format, lists, link, heading, sign pad, comment, find)
 - Floating Inline Toolbar on text selection (Bold, Italic, Underline, Code, Link, Clear)
 - Theming docs (`docs/theming.md`)
 - `chrome` prop (`boxed` | `borderless`) for Editor.js-style borderless chrome
-- Block drag-and-drop reorder via block handle grip (`reorderBlockBefore`)
+- Block drag-and-drop reorder via block handle grip (`reorderBlockBefore` / `reorderBlockAfter`)
 - Toolbar right-click menu: Customize toolbar / Hide toolbar (session or `keepInMemory` persistence via `ink-toolbar-items` / `ink-toolbar-hidden`)
 - `colorMode` prop (`light` | `dark` | `system`) sets `data-color-mode` for forced light/dark tokens
 - `onToolbarChange`, `toolbarHidden`, `onToolbarHiddenChange` for toolbar visibility/customization
 - Selection helpers: `captureSelectionInRoot`, `restoreSelectionInRoot`, `withPreservedSelection`
+- Toolbar dropdowns: `fontDropdown` (System UI, Georgia, Times New Roman, Arial, Courier New, Verdana), `listDropdown` (bullet / dash / numbers / letters), `findReplaceDropdown` (Find / Replace)
+- Word-like toolbar options: `directionLtr`, `directionRtl`, `superscript`, `subscript`
+- Markdown list heuristic: typing `- ` or `* ` at line start converts to a bullet list
 
 ### Changed
 - SignPad / FindReplace / ToolbarButton reuse common Button, Field, Canvas, Box
 - Default undo/redo icons are stroke SVGs (premium `icons` override still works)
 - Styles build compiles SCSS → `dist/styles.css` (CSS source removed)
 - Slash menu uses a lighter shadow / tighter radius
-- Block handles use circular + / grip controls closer to a floating block UI
+- Block handles use circular + control and SVG six-dot grip (drag)
 - Context menu portals to `document.body` and clamps to the viewport
 - Dark OS preference applies only when `data-color-mode` is omitted (`system`)
+- Default toolbar uses `listDropdown` + `findReplaceDropdown` (+ font / direction / super-subscript); legacy `bulletList` / `orderedList` / `findReplace` still work when referenced
+- Portaled ContextMenu uses solid opaque light/dark fallbacks and higher z-index; inherits `data-color-mode` from the editor
 
 ### Fixed
 - Controlled `value` sync no longer resets the caret to the top on Enter while focused
@@ -31,6 +36,8 @@
 - Toolbar buttons preserve contenteditable selection (`onMouseDown` preventDefault)
 - Context menu outside-click close ignores clicks inside the portaled menu
 - Enter / HTML replace while focused restores selection range; editor focus uses `preventScroll`
+- Clear format (`clearFormat`) also strips color / background styles from the selection
+- Block DnD drop target follows pointer Y (before/after midpoint) with dragging opacity + drop indicator
 
 ## 1.1.3
 

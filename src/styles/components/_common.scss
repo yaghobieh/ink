@@ -31,14 +31,30 @@
 
 .Ink-ContextMenu {
   position: fixed;
-  z-index: 20;
+  z-index: 50;
   min-width: 11rem;
   padding: 0.3rem;
-  border: 1px solid var(--ink-border);
+  border: 1px solid #e5e7eb;
   border-radius: 0.65rem;
-  background: var(--ink-bg);
-  color: var(--ink-text);
-  box-shadow: var(--ink-shadow);
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 10px 40px rgb(15 23 42 / 0.12);
+
+  &[data-color-mode='dark'] {
+    border-color: #3f3f46;
+    background: #18181b;
+    color: #f4f4f5;
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .Ink-ContextMenu:not([data-color-mode]) {
+    border-color: #3f3f46;
+    background: #18181b;
+    color: #f4f4f5;
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+  }
 }
 
 .Ink-ContextMenu__item {
@@ -72,5 +88,10 @@
     stroke-width: 1.75;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  &--grip svg {
+    fill: currentColor;
+    stroke: none;
   }
 }

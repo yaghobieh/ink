@@ -1,3 +1,5 @@
+export type FindReplaceFocusField = 'find' | 'replace';
+
 export interface FindReplaceProps {
   open: boolean;
   onClose: () => void;
@@ -8,4 +10,5 @@ export interface FindReplaceProps {
   replaceAllLabel?: string;
   closeLabel?: string;
   title?: string;
+  focusField?: FindReplaceFocusField;
 }

@@ -17,7 +17,7 @@ import { clampContextMenuPosition } from './ContextMenu.utils';
 import { cn } from '@utils';
 
 export const ContextMenu: FC<ContextMenuProps> = (props) => {
-  const { open, x, y, items, onClose } = props;
+  const { open, x, y, items, onClose, colorMode } = props;
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,6 +62,7 @@ export const ContextMenu: FC<ContextMenuProps> = (props) => {
       ref={rootRef}
       className={CONTEXT_MENU_CLASS}
       role={CONTEXT_MENU_ROLE}
+      data-color-mode={colorMode}
       style={{ left: position.x, top: position.y }}
       onPointerDown={stop}
     >

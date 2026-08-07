@@ -7,6 +7,7 @@ export {
   Field,
   UndoIcon,
   RedoIcon,
+  GripIcon,
 } from './common-components';
 export type {
   BoxProps,
@@ -44,6 +45,9 @@ export {
   INK_SIMPLE_TOOLBAR,
   INK_COLLAB_TOOLBAR,
   INK_HEADING_OPTIONS,
+  INK_FONT_OPTIONS,
+  INK_LIST_OPTIONS,
+  INK_FIND_REPLACE_OPTIONS,
   INK_SLASH_COMMANDS,
   INK_AI_MODEL_CATALOG,
   INK_AI_DEMO_PROVIDER_ID,

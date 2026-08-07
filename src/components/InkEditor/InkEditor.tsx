@@ -17,6 +17,7 @@ import type {
   ToolbarOption,
 } from '../../types';
 import {
+  BLOCK_DROP_POSITION_BEFORE,
   COLOR_MODE_SYSTEM,
   CONTEXT_MENU_ID_BOLD,
   CONTEXT_MENU_ID_BULLET,
@@ -44,6 +45,14 @@ import {
   CONTEXT_MENU_LABEL_SIGNATURE,
   CONTEXT_MENU_LABEL_STRIKE,
   CONTEXT_MENU_LABEL_UNDERLINE,
+  DIR_LTR,
+  DIR_RTL,
+  FIND_REPLACE_DROPDOWN_TITLE,
+  FIND_REPLACE_FOCUS_FIND,
+  FIND_REPLACE_FOCUS_REPLACE,
+  FIND_REPLACE_VALUE_REPLACE,
+  FONT_DROPDOWN_TITLE,
+  FONT_VALUE_SYSTEM,
   INK_BUTTON_CONFIG,
   INK_CLASS_BLOCK_ACTIVE,
   INK_CLASS_BODY,
@@ -63,7 +72,10 @@ import {
   INK_DEFAULT_TEXT_COLOR,
   INK_DEFAULT_TOOLBAR,
   INK_DEFAULT_VARIANT,
+  INK_FIND_REPLACE_OPTIONS,
+  INK_FONT_OPTIONS,
   INK_HEADING_OPTIONS,
+  INK_LIST_OPTIONS,
   INK_MIN_HEIGHT,
   INK_PLACEHOLDER_DEFAULT,
   INK_TABLE_DEFAULT_COLS,
@@ -71,6 +83,8 @@ import {
   KEY_ENTER,
   KEY_ESCAPE,
   KEY_Z,
+  LIST_DROPDOWN_TITLE,
+  LIST_VALUE_BULLET,
   NUMBER_ZERO,
   TOOLBAR_CONTEXT_MENU_ID_CUSTOMIZE,
   TOOLBAR_CONTEXT_MENU_ID_HIDE,
@@ -78,7 +92,10 @@ import {
   TOOLBAR_CONTEXT_MENU_LABEL_HIDE,
   TOOLBAR_OPTION_DIVIDER,
   TOOLBAR_OPTION_FIND_REPLACE,
+  TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN,
+  TOOLBAR_OPTION_FONT_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
+  TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
   TOOLBAR_SHOW_CONTROL_LABEL,
@@ -88,6 +105,7 @@ import {
   applyTypoAutoFix,
   buildTableHtml,
   buildVisibleToolbarItems,
+  clearBlockDragClasses,
   cn,
   createCommentThread,
   createInkId,
@@ -101,7 +119,10 @@ import {
   InkHistoryStack,
   listCustomizableToolbarOptions,
   markActiveBlock,
+  markDraggingBlock,
+  markDropTarget,
   moveBlock,
+  reorderBlockAfter,
   reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
@@ -109,6 +130,7 @@ import {
   readToolbarHidden,
   readToolbarItems,
   replaceInHtml,
+  resolveDropPosition,
   resolveInkPremium,
   sanitizePastedHtml,
   themeTokensToStyle,
@@ -121,7 +143,12 @@ import {
   wrapSelectionAsComment,
 } from '../../utils';
 import { Button, ContextMenu, type ContextMenuItem } from '@common-components';
+import type { FindReplaceFocusField } from './components/FindReplace/FindReplace.types';
 import {
+  applyFontFamily,
+  applyListType,
+  clearFormatDeep,
+  detectListType,
   execCommand,
   fileToDataUrl,
   getActiveFormats,
@@ -129,8 +156,10 @@ import {
   insertImage,
   insertLink,
   queryCommandValue,
+  setBlockDirection,
   setHighlightColor,
   setTextColor,
+  tryConvertMarkdownListPrefix,
 } from './helpers';
 import {
   AiPanel,
@@ -250,6 +279,12 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [findReplaceFocus, setFindReplaceFocus] =
+    useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
+  const [currentFont, setCurrentFont] = useState(FONT_VALUE_SYSTEM);
+  const [currentList, setCurrentList] = useState(LIST_VALUE_BULLET);
+  const [findReplaceChoice, setFindReplaceChoice] =
+    useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
   const [contextMenu, setContextMenu] = useState({ open: false, x: NUMBER_ZERO, y: NUMBER_ZERO });
   const [toolbarContextMenu, setToolbarContextMenu] = useState({
     open: false,
@@ -441,6 +476,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (block) {
       setCurrentBlock(block.toLowerCase().replace(/[<>]/g, ''));
     }
+    setCurrentList(detectListType());
     setSelectionHtml(getSelectionHtml());
     updateInlineToolbar();
     if (!editorRef.current || !features.blocks) return;
@@ -518,6 +554,26 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const handleFormat = (format: ToolbarOption) => {
     if (disabled || readOnly) return;
     focusEditor(editorRef.current);
+    if (format === 'clearFormat') {
+      clearFormatDeep();
+      handleInput();
+      return;
+    }
+    if (format === 'directionLtr' && editorRef.current) {
+      setBlockDirection(editorRef.current, DIR_LTR);
+      handleInput();
+      return;
+    }
+    if (format === 'directionRtl' && editorRef.current) {
+      setBlockDirection(editorRef.current, DIR_RTL);
+      handleInput();
+      return;
+    }
+    if (format === 'superscript' || format === 'subscript') {
+      execCommand(format);
+      handleInput();
+      return;
+    }
     const config = INK_BUTTON_CONFIG[format];
     if (!config) return;
     if (config.value) {
@@ -534,6 +590,37 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     execCommand('formatBlock', next);
     setCurrentBlock(next);
     handleInput();
+  };
+
+  const handleFontChange = (next: string) => {
+    if (disabled || readOnly) return;
+    focusEditor(editorRef.current);
+    applyFontFamily(next);
+    setCurrentFont(next);
+    handleInput();
+  };
+
+  const handleListChange = (next: string) => {
+    if (disabled || readOnly) return;
+    focusEditor(editorRef.current);
+    applyListType(next);
+    setCurrentList(next);
+    handleInput();
+  };
+
+  const openFindReplace = (focusField: FindReplaceFocusField) => {
+    setFindReplaceFocus(focusField);
+    setFindReplaceChoice(focusField);
+    setFindReplaceOpen(true);
+  };
+
+  const handleFindReplaceChange = (next: string) => {
+    if (disabled || readOnly) return;
+    const focusField =
+      next === FIND_REPLACE_VALUE_REPLACE
+        ? FIND_REPLACE_FOCUS_REPLACE
+        : FIND_REPLACE_FOCUS_FIND;
+    openFindReplace(focusField);
   };
 
   const handleLink = () => {
@@ -802,6 +889,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (event.key === KEY_ENTER) {
       return;
     }
+    if (tryConvertMarkdownListPrefix(event.nativeEvent)) {
+      handleInput();
+      return;
+    }
     if (event.key === KEY_ESCAPE) {
       setSlashItems([]);
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
@@ -867,31 +958,55 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const activeBlock = editorRef.current.querySelector(`.${INK_CLASS_BLOCK_ACTIVE}`);
     const block =
       selectedBlock ?? (activeBlock instanceof HTMLElement ? activeBlock : null);
-    if (!block) return;
+    if (!block) {
+      event.preventDefault();
+      return;
+    }
     dragBlockRef.current = block;
+    clearBlockDragClasses(editorRef.current);
     markActiveBlock(editorRef.current, block);
+    markDraggingBlock(block);
     event.dataTransfer.setData(BLOCK_HANDLES_DRAG_MIME, BLOCK_HANDLES_DRAG_PAYLOAD);
     event.dataTransfer.effectAllowed = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
   };
 
   const handleContentDragOver = (event: DragEvent<HTMLDivElement>) => {
-    if (!dragBlockRef.current) return;
+    if (!editorRef.current || !dragBlockRef.current) return;
     event.preventDefault();
     event.dataTransfer.dropEffect = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
+    const target = getBlockElement(event.target as Node, editorRef.current);
+    if (!target || target === dragBlockRef.current) {
+      markDropTarget(editorRef.current, null, null);
+      return;
+    }
+    const position = resolveDropPosition(event.clientY, target);
+    markDropTarget(editorRef.current, target, position);
   };
 
   const handleContentDrop = (event: DragEvent<HTMLDivElement>) => {
     if (!editorRef.current || !dragBlockRef.current) return;
     event.preventDefault();
     const target = getBlockElement(event.target as Node, editorRef.current);
-    if (target && reorderBlockBefore(dragBlockRef.current, target)) {
-      handleInput();
-      refreshFormats();
+    const dragging = dragBlockRef.current;
+    if (target && target !== dragging) {
+      const position = resolveDropPosition(event.clientY, target);
+      const moved =
+        position === BLOCK_DROP_POSITION_BEFORE
+          ? reorderBlockBefore(dragging, target)
+          : reorderBlockAfter(dragging, target);
+      if (moved) {
+        handleInput();
+        refreshFormats();
+      }
     }
+    clearBlockDragClasses(editorRef.current);
     dragBlockRef.current = null;
   };
 
   const handleContentDragEnd = () => {
+    if (editorRef.current) {
+      clearBlockDragClasses(editorRef.current);
+    }
     dragBlockRef.current = null;
   };
 
@@ -908,6 +1023,30 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           value={currentBlock || 'p'}
           disabled={disabled || readOnly}
           onChange={handleHeadingChange}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_FONT_DROPDOWN) {
+      return (
+        <ToolbarDropdown
+          key={TOOLBAR_OPTION_FONT_DROPDOWN}
+          title={FONT_DROPDOWN_TITLE}
+          options={INK_FONT_OPTIONS}
+          value={currentFont}
+          disabled={disabled || readOnly}
+          onChange={handleFontChange}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_LIST_DROPDOWN) {
+      return (
+        <ToolbarDropdown
+          key={TOOLBAR_OPTION_LIST_DROPDOWN}
+          title={LIST_DROPDOWN_TITLE}
+          options={INK_LIST_OPTIONS}
+          value={currentList}
+          disabled={disabled || readOnly}
+          onChange={handleListChange}
         />
       );
     }
@@ -1003,7 +1142,23 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           title="Find and replace"
           active={findReplaceOpen}
           disabled={disabled || readOnly}
-          onClick={() => setFindReplaceOpen((prev) => !prev)}
+          onClick={() => {
+            if (findReplaceOpen) setFindReplaceOpen(false);
+            else openFindReplace(FIND_REPLACE_FOCUS_FIND);
+          }}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN) {
+      if (!features.findReplace) return null;
+      return (
+        <ToolbarDropdown
+          key={TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN}
+          title={FIND_REPLACE_DROPDOWN_TITLE}
+          options={INK_FIND_REPLACE_OPTIONS}
+          value={findReplaceChoice}
+          disabled={disabled || readOnly}
+          onChange={handleFindReplaceChange}
         />
       );
     }
@@ -1156,6 +1311,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       />
       <FindReplace
         open={findReplaceOpen}
+        focusField={findReplaceFocus}
         onClose={() => setFindReplaceOpen(false)}
         onReplace={(find, replace, replaceAll) => {
           if (!editorRef.current) return;
@@ -1237,6 +1393,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             x={contextMenu.x}
             y={contextMenu.y}
             items={contextMenuItems}
+            colorMode={colorModeAttr}
             onClose={() => setContextMenu((prev) => ({ ...prev, open: false }))}
           />
           <ContextMenu
@@ -1244,6 +1401,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             x={toolbarContextMenu.x}
             y={toolbarContextMenu.y}
             items={toolbarContextMenuItems}
+            colorMode={colorModeAttr}
             onClose={() => setToolbarContextMenu((prev) => ({ ...prev, open: false }))}
           />
         </div>

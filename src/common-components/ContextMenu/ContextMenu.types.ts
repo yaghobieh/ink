@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { InkColorMode } from '../../types';
 
 export type ContextMenuItem = {
   id: string;
@@ -13,6 +14,7 @@ export type ContextMenuProps = {
   y: number;
   items: ContextMenuItem[];
   onClose: () => void;
+  colorMode?: Exclude<InkColorMode, 'system'> | undefined;
 };
 
 export interface ContextMenuPosition {

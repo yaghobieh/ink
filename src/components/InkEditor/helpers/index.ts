@@ -10,4 +10,12 @@ export {
   fileToDataUrl,
   getActiveFormats,
   applyFormat,
+  applyFontFamily,
+  applyListType,
+  detectListType,
+  setBlockDirection,
+  clearFormatDeep,
+  stripSelectionColors,
+  tryConvertMarkdownListPrefix,
+  isSelectionInListItem,
 } from './format.utils';

@@ -1,3 +1,10 @@
 export const TOOLBAR_OPTION_SIGNATURE = 'signature' as const;
 export const TOOLBAR_OPTION_FIND_REPLACE = 'findReplace' as const;
+export const TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN = 'findReplaceDropdown' as const;
+export const TOOLBAR_OPTION_FONT_DROPDOWN = 'fontDropdown' as const;
+export const TOOLBAR_OPTION_LIST_DROPDOWN = 'listDropdown' as const;
 export const TOOLBAR_OPTION_HORIZONTAL_RULE = 'horizontalRule' as const;
+export const TOOLBAR_OPTION_DIRECTION_LTR = 'directionLtr' as const;
+export const TOOLBAR_OPTION_DIRECTION_RTL = 'directionRtl' as const;
+export const TOOLBAR_OPTION_SUPERSCRIPT = 'superscript' as const;
+export const TOOLBAR_OPTION_SUBSCRIPT = 'subscript' as const;

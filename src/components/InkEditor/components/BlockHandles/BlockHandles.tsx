@@ -1,10 +1,10 @@
 import type { FC } from 'react';
+import { GripIcon } from '@common-components';
 import {
   BLOCK_HANDLES_BTN_CLASS,
   BLOCK_HANDLES_CLASS,
   BLOCK_HANDLES_DOWN_LABEL,
   BLOCK_HANDLES_GRIP_CLASS,
-  BLOCK_HANDLES_GRIP_LABEL,
   BLOCK_HANDLES_PLUS_CLASS,
   BLOCK_HANDLES_PLUS_LABEL,
   BLOCK_HANDLES_TITLE_DOWN,
@@ -36,7 +36,7 @@ export const BlockHandles: FC<BlockHandlesProps> = (props) => {
         draggable
         onDragStart={onDragStart}
       >
-        {BLOCK_HANDLES_GRIP_LABEL}
+        <GripIcon />
       </button>
       <button
         type="button"

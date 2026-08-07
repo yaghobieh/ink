@@ -241,10 +241,30 @@
   padding-inline-start: $ink-list-indent;
 }
 
+.Ink-Editor__content ul.Ink-list--dash {
+  list-style-type: '– ';
+}
+
+.Ink-Editor__content ol.Ink-list--alpha {
+  list-style-type: lower-alpha;
+}
+
 .Ink-Editor__content .Ink-block--active {
   outline: 1px solid rgb(13 148 136 / 0.35);
   border-radius: 0.35rem;
   background: rgb(13 148 136 / 0.03);
+}
+
+.Ink-Editor__content .Ink-block--dragging {
+  opacity: 0.45;
+}
+
+.Ink-Editor__content .Ink-block--drop-before {
+  box-shadow: inset 0 2px 0 0 var(--ink-accent);
+}
+
+.Ink-Editor__content .Ink-block--drop-after {
+  box-shadow: inset 0 -2px 0 0 var(--ink-accent);
 }
 
 .Ink-Editor__content .Ink-table {
@@ -327,9 +347,16 @@
 }
 
 .Ink-BlockHandles__grip {
-  letter-spacing: -0.05em;
-  font-size: 0.7rem;
   cursor: grab;
+
+  .Ink-Icon {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+}
+
+.Ink-BlockHandles__grip:active {
+  cursor: grabbing;
 }
 
 .Ink-BlockHandles__btn {
