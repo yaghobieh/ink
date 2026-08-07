@@ -17,6 +17,7 @@ import type {
   ToolbarOption,
 } from '../../types';
 import {
+  COLOR_MODE_SYSTEM,
   CONTEXT_MENU_ID_BOLD,
   CONTEXT_MENU_ID_BULLET,
   CONTEXT_MENU_ID_CLEAR,
@@ -26,6 +27,7 @@ import {
   CONTEXT_MENU_ID_ITALIC,
   CONTEXT_MENU_ID_LINK,
   CONTEXT_MENU_ID_ORDERED,
+  CONTEXT_MENU_ID_SHOW_TOOLBAR,
   CONTEXT_MENU_ID_SIGNATURE,
   CONTEXT_MENU_ID_STRIKE,
   CONTEXT_MENU_ID_UNDERLINE,
@@ -38,6 +40,7 @@ import {
   CONTEXT_MENU_LABEL_ITALIC,
   CONTEXT_MENU_LABEL_LINK,
   CONTEXT_MENU_LABEL_ORDERED,
+  CONTEXT_MENU_LABEL_SHOW_TOOLBAR,
   CONTEXT_MENU_LABEL_SIGNATURE,
   CONTEXT_MENU_LABEL_STRIKE,
   CONTEXT_MENU_LABEL_UNDERLINE,
@@ -50,8 +53,10 @@ import {
   INK_CLASS_ROOT,
   INK_CLASS_SHELL,
   INK_CLASS_TOOLBAR,
+  INK_CLASS_TOOLBAR_SHOW,
   INK_DEFAULT_AUTHOR,
   INK_DEFAULT_CHROME,
+  INK_DEFAULT_COLOR_MODE,
   INK_DEFAULT_FEATURES,
   INK_DEFAULT_HIGHLIGHT_COLOR,
   INK_DEFAULT_ICONS,
@@ -63,14 +68,26 @@ import {
   INK_PLACEHOLDER_DEFAULT,
   INK_TABLE_DEFAULT_COLS,
   INK_TABLE_DEFAULT_ROWS,
+  KEY_ENTER,
+  KEY_ESCAPE,
+  KEY_Z,
+  NUMBER_ZERO,
+  TOOLBAR_CONTEXT_MENU_ID_CUSTOMIZE,
+  TOOLBAR_CONTEXT_MENU_ID_HIDE,
+  TOOLBAR_CONTEXT_MENU_LABEL_CUSTOMIZE,
+  TOOLBAR_CONTEXT_MENU_LABEL_HIDE,
+  TOOLBAR_OPTION_DIVIDER,
   TOOLBAR_OPTION_FIND_REPLACE,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
   TOOLBAR_OPTION_SIGNATURE,
+  TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
+  TOOLBAR_SHOW_CONTROL_LABEL,
 } from '../../constants';
 import {
   acceptTrackChangeInHtml,
   applyTypoAutoFix,
   buildTableHtml,
+  buildVisibleToolbarItems,
   cn,
   createCommentThread,
   createInkId,
@@ -82,22 +99,28 @@ import {
   getBlockElement,
   hasInkPremiumFeature,
   InkHistoryStack,
+  listCustomizableToolbarOptions,
   markActiveBlock,
   moveBlock,
   reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
   readInkMemory,
+  readToolbarHidden,
+  readToolbarItems,
   replaceInHtml,
   resolveInkPremium,
   sanitizePastedHtml,
   themeTokensToStyle,
+  withPreservedSelection,
   writeInkMemory,
+  writeToolbarHidden,
+  writeToolbarItems,
   wrapDeleteHtml,
   wrapInsertHtml,
   wrapSelectionAsComment,
 } from '../../utils';
-import { ContextMenu, type ContextMenuItem } from '@common-components';
+import { Button, ContextMenu, type ContextMenuItem } from '@common-components';
 import {
   execCommand,
   fileToDataUrl,
@@ -122,6 +145,7 @@ import {
   SlashMenu,
   ToolbarButton,
   ToolbarColorPicker,
+  ToolbarCustomize,
   ToolbarDropdown,
   TrackChangesBar,
   clampInlineToolbarPosition,
@@ -135,11 +159,15 @@ import type { InlineToolbarFormatAction } from './components';
 
 const getSelectionHtml = (): string => {
   const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) return '';
-  const range = selection.getRangeAt(0);
+  if (!selection || selection.rangeCount === NUMBER_ZERO) return '';
+  const range = selection.getRangeAt(NUMBER_ZERO);
   const container = document.createElement('div');
   container.appendChild(range.cloneContents());
   return container.innerHTML;
+};
+
+const focusEditor = (element: HTMLDivElement | null): void => {
+  element?.focus({ preventScroll: true });
 };
 
 export const InkEditor: FC<InkEditorProps> = (props) => {
@@ -161,6 +189,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     typoAutoFix = true,
     variant = INK_DEFAULT_VARIANT,
     chrome = INK_DEFAULT_CHROME,
+    colorMode = INK_DEFAULT_COLOR_MODE,
     features: featuresProp,
     author = INK_DEFAULT_AUTHOR,
     trackChanges: trackChangesProp,
@@ -183,6 +212,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     wysiwyg = false,
     keepInMemory = false,
     memoryKey,
+    onToolbarChange,
+    toolbarHidden: toolbarHiddenProp,
+    onToolbarHiddenChange,
     style: styleProp,
     ...rest
   } = props;
@@ -218,13 +250,36 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
-  const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
-  const [inlineToolbar, setInlineToolbar] = useState({ open: false, top: 0, left: 0 });
+  const [contextMenu, setContextMenu] = useState({ open: false, x: NUMBER_ZERO, y: NUMBER_ZERO });
+  const [toolbarContextMenu, setToolbarContextMenu] = useState({
+    open: false,
+    x: NUMBER_ZERO,
+    y: NUMBER_ZERO,
+  });
+  const [inlineToolbar, setInlineToolbar] = useState({
+    open: false,
+    top: NUMBER_ZERO,
+    left: NUMBER_ZERO,
+  });
+  const [visibleToolbar, setVisibleToolbar] = useState<ToolbarOption[]>(
+    () => readToolbarItems(keepInMemory, memoryKey) ?? toolbar,
+  );
+  const [localToolbarHidden, setLocalToolbarHidden] = useState(() => {
+    if (toolbarHiddenProp !== undefined) return toolbarHiddenProp;
+    return readToolbarHidden(keepInMemory, memoryKey) ?? false;
+  });
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const skipToolbarPropSyncRef = useRef(true);
+  const toolbarSignature = toolbar.join(',');
 
   const trackChanges = trackChangesProp ?? localTrackChanges;
   const comments = commentsProp ?? localComments;
   const commentsOpen = showCommentsPanelProp ?? showCommentsPanel;
   const slashEnabled = slashCommands ?? features.slash;
+  const isToolbarHidden = toolbarHiddenProp ?? localToolbarHidden;
+  const toolbarCatalog = toolbar;
+  const customizableOptions = listCustomizableToolbarOptions(toolbarCatalog);
+  const colorModeAttr = colorMode === COLOR_MODE_SYSTEM ? undefined : colorMode;
 
   useEffect(() => {
     if (trackChangesEnabledProp !== undefined) setTrackChangesEnabled(trackChangesEnabledProp);
@@ -243,6 +298,18 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   }, [showCommentsPanelProp]);
 
   useEffect(() => {
+    if (toolbarHiddenProp !== undefined) setLocalToolbarHidden(toolbarHiddenProp);
+  }, [toolbarHiddenProp]);
+
+  useEffect(() => {
+    if (skipToolbarPropSyncRef.current) {
+      skipToolbarPropSyncRef.current = false;
+      return;
+    }
+    setVisibleToolbar(toolbar);
+  }, [toolbarSignature]);
+
+  useEffect(() => {
     if (!editorRef.current || value === undefined) return;
     if (value === lastEmittedHtmlRef.current) return;
     if (editorRef.current.innerHTML === value) {
@@ -250,8 +317,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return;
     }
     const focused = document.activeElement === editorRef.current;
-    if (focused) return;
-    editorRef.current.innerHTML = value;
+    withPreservedSelection(focused ? editorRef.current : null, () => {
+      if (!editorRef.current) return;
+      editorRef.current.innerHTML = value;
+    });
     lastEmittedHtmlRef.current = value;
   }, [value]);
 
@@ -285,8 +354,33 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   const setHtml = (html: string) => {
     if (!editorRef.current) return;
-    editorRef.current.innerHTML = html;
+    withPreservedSelection(editorRef.current, () => {
+      if (!editorRef.current) return;
+      editorRef.current.innerHTML = html;
+    });
     emitChange(html);
+  };
+
+  const setToolbarHiddenState = (hidden: boolean) => {
+    setLocalToolbarHidden(hidden);
+    onToolbarHiddenChange?.(hidden);
+    writeToolbarHidden(hidden, keepInMemory, memoryKey);
+  };
+
+  const commitVisibleToolbar = (items: ToolbarOption[]) => {
+    setVisibleToolbar(items);
+    onToolbarChange?.(items);
+    writeToolbarItems(items, keepInMemory, memoryKey);
+  };
+
+  const handleToolbarItemToggle = (option: ToolbarOption, visible: boolean) => {
+    if (option === TOOLBAR_OPTION_DIVIDER) return;
+    const enabled = new Set<ToolbarOption>(
+      visibleToolbar.filter((item) => item !== TOOLBAR_OPTION_DIVIDER),
+    );
+    if (visible) enabled.add(option);
+    else enabled.delete(option);
+    commitVisibleToolbar(buildVisibleToolbarItems(toolbarCatalog, enabled));
   };
 
   const updateTrackChanges = (next: InkTrackChange[]) => {
@@ -414,13 +508,16 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const current = editorRef.current.innerHTML;
     const result = applyTypoAutoFix(current);
     if (result.html === current) return;
-    editorRef.current.innerHTML = result.html;
+    withPreservedSelection(editorRef.current, () => {
+      if (!editorRef.current) return;
+      editorRef.current.innerHTML = result.html;
+    });
     emitChange(result.html);
   };
 
   const handleFormat = (format: ToolbarOption) => {
     if (disabled || readOnly) return;
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     const config = INK_BUTTON_CONFIG[format];
     if (!config) return;
     if (config.value) {
@@ -433,7 +530,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   const handleHeadingChange = (next: string) => {
     if (disabled || readOnly) return;
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     execCommand('formatBlock', next);
     setCurrentBlock(next);
     handleInput();
@@ -443,7 +540,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (disabled || readOnly) return;
     const url = window.prompt('Enter URL:', 'https://');
     if (!url) return;
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     insertLink(url);
     handleInput();
   };
@@ -464,7 +561,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       const file = input.files?.[0];
       if (!file) return;
       const src = await resolveImageSrc(file);
-      editorRef.current?.focus();
+      focusEditor(editorRef.current);
       insertImage(src, file.name);
       handleInput();
     };
@@ -473,7 +570,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   const handleTable = () => {
     if (disabled || readOnly || !features.table) return;
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     const html = buildTableHtml(tableRows, tableCols);
     if (trackChangesEnabled && features.trackChanges) {
       const change = createTrackChange('insert', html, author);
@@ -508,7 +605,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
     if (disabled || readOnly) return;
     event.preventDefault();
+    setToolbarContextMenu((prev) => (prev.open ? { ...prev, open: false } : prev));
     setContextMenu({ open: true, x: event.clientX, y: event.clientY });
+  };
+
+  const handleToolbarContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    if (disabled || readOnly) return;
+    event.preventDefault();
+    setContextMenu((prev) => (prev.open ? { ...prev, open: false } : prev));
+    setToolbarContextMenu({ open: true, x: event.clientX, y: event.clientY });
   };
 
   const handleAddComment = () => {
@@ -516,7 +621,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const body = window.prompt('Comment:');
     if (!body?.trim()) return;
     const highlightId = createInkId('hl');
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     const wrapped = wrapSelectionAsComment(highlightId);
     if (!wrapped) return;
     const thread = createCommentThread(author, body.trim(), highlightId);
@@ -524,6 +629,19 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     setCommentsOpen(true);
     handleInput();
   };
+
+  const toolbarContextMenuItems: ContextMenuItem[] = [
+    {
+      id: TOOLBAR_CONTEXT_MENU_ID_CUSTOMIZE,
+      label: TOOLBAR_CONTEXT_MENU_LABEL_CUSTOMIZE,
+      onSelect: () => setCustomizeOpen(true),
+    },
+    {
+      id: TOOLBAR_CONTEXT_MENU_ID_HIDE,
+      label: TOOLBAR_CONTEXT_MENU_LABEL_HIDE,
+      onSelect: () => setToolbarHiddenState(true),
+    },
+  ];
 
   const contextMenuItems: ContextMenuItem[] = [
     {
@@ -589,6 +707,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       disabled: !features.comments,
       onSelect: () => handleAddComment(),
     },
+    ...(isToolbarHidden
+      ? [
+          {
+            id: CONTEXT_MENU_ID_SHOW_TOOLBAR,
+            label: CONTEXT_MENU_LABEL_SHOW_TOOLBAR,
+            onSelect: () => setToolbarHiddenState(false),
+          },
+        ]
+      : []),
   ];
 
   const handleAcceptChange = (id: string) => {
@@ -672,11 +799,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
+    if (event.key === KEY_ENTER) {
+      return;
+    }
+    if (event.key === KEY_ESCAPE) {
       setSlashItems([]);
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
     }
-    if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
+    if ((event.metaKey || event.ctrlKey) && event.key === KEY_Z) {
       event.preventDefault();
       if (event.shiftKey) handleRedo();
       else handleUndo();
@@ -684,7 +814,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   };
 
   const applySlash = (item: SlashCommandItem) => {
-    editorRef.current?.focus();
+    focusEditor(editorRef.current);
     const selection = window.getSelection();
     if (selection?.anchorNode?.textContent) {
       const text = selection.anchorNode.textContent;
@@ -790,7 +920,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           value={textColorValue}
           disabled={disabled || readOnly}
           onChange={(color) => {
-            editorRef.current?.focus();
+            focusEditor(editorRef.current);
             setTextColor(color);
             setTextColorValue(color);
             handleInput();
@@ -807,7 +937,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           value={highlightColorValue}
           disabled={disabled || readOnly}
           onChange={(color) => {
-            editorRef.current?.focus();
+            focusEditor(editorRef.current);
             setHighlightColor(color);
             setHighlightColorValue(color);
             handleInput();
@@ -886,7 +1016,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           title="Horizontal rule"
           disabled={disabled || readOnly}
           onClick={() => {
-            editorRef.current?.focus();
+            focusEditor(editorRef.current);
             insertHTML('<hr />');
             handleInput();
           }}
@@ -982,19 +1112,44 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       data-disabled={disabled || undefined}
       data-variant={variant}
       data-chrome={chrome}
+      data-color-mode={colorModeAttr}
       data-premium={premium.active || undefined}
       data-wysiwyg={canUseWysiwyg || undefined}
       style={{ ...themeStyle, ...styleProp }}
       {...rest}
     >
-      <div className={INK_CLASS_TOOLBAR} role="toolbar" aria-label="Ink formatting toolbar">
-        {toolbar.map(renderToolbarItem)}
-      </div>
+      {isToolbarHidden ? (
+        <div className={INK_CLASS_TOOLBAR_SHOW}>
+          <Button
+            type="button"
+            aria-label={TOOLBAR_SHOW_CONTROL_ARIA_LABEL}
+            onClick={() => setToolbarHiddenState(false)}
+          >
+            {TOOLBAR_SHOW_CONTROL_LABEL}
+          </Button>
+        </div>
+      ) : (
+        <div
+          className={INK_CLASS_TOOLBAR}
+          role="toolbar"
+          aria-label="Ink formatting toolbar"
+          onContextMenu={handleToolbarContextMenu}
+        >
+          {visibleToolbar.map(renderToolbarItem)}
+        </div>
+      )}
+      <ToolbarCustomize
+        open={customizeOpen}
+        options={customizableOptions}
+        visibleItems={visibleToolbar}
+        onToggle={handleToolbarItemToggle}
+        onClose={() => setCustomizeOpen(false)}
+      />
       <SignPad
         open={signPadOpen}
         onClose={() => setSignPadOpen(false)}
         onConfirm={(dataUrl) => {
-          editorRef.current?.focus();
+          focusEditor(editorRef.current);
           insertImage(dataUrl);
           handleInput();
         }}
@@ -1084,6 +1239,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             items={contextMenuItems}
             onClose={() => setContextMenu((prev) => ({ ...prev, open: false }))}
           />
+          <ContextMenu
+            open={toolbarContextMenu.open}
+            x={toolbarContextMenu.x}
+            y={toolbarContextMenu.y}
+            items={toolbarContextMenuItems}
+            onClose={() => setToolbarContextMenu((prev) => ({ ...prev, open: false }))}
+          />
         </div>
         {commentsOpen && features.comments ? (
           <CommentsPanel
@@ -1130,7 +1292,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             selectionHtml={selectionHtml}
             onClose={() => setShowAiPanel(false)}
             onApplyHtml={(html) => {
-              editorRef.current?.focus();
+              focusEditor(editorRef.current);
               if (selectionHtml) {
                 insertHTML(html);
               } else {

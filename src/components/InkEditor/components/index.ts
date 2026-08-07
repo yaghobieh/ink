@@ -26,3 +26,5 @@ export { SlashMenu } from './SlashMenu';
 export { TrackChangesBar } from './TrackChangesBar';
 export { SignPad } from './SignPad';
 export { FindReplace } from './FindReplace';
+export { ToolbarCustomize } from './ToolbarCustomize';
+export type { ToolbarCustomizeProps } from './ToolbarCustomize';

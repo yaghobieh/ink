@@ -71,6 +71,50 @@
   background: var(--ink-toolbar);
 }
 
+.Ink-Editor__toolbar-show {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.65rem;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-toolbar);
+}
+
+.Ink-ToolbarCustomize {
+  @include ink-panel;
+}
+
+.Ink-ToolbarCustomize__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.Ink-ToolbarCustomize__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 14rem;
+  overflow: auto;
+}
+
+.Ink-ToolbarCustomize__item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ink-text);
+  cursor: pointer;
+}
+
+.Ink-ToolbarCustomize__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .Ink-Editor__button {
   @include ink-button-base;
 }
@@ -635,8 +679,25 @@
   }
 }
 
+.Ink-Editor[data-color-mode='light'] {
+  @include ink-theme-tokens;
+}
+
+.Ink-Editor[data-color-mode='dark'] {
+  @include ink-theme-tokens(
+    $border: $ink-color-border-dark,
+    $bg: $ink-color-bg-dark,
+    $toolbar: $ink-color-toolbar-dark,
+    $text: $ink-color-text-dark,
+    $muted: $ink-color-muted-dark,
+    $accent: $ink-color-accent-dark,
+    $accent-soft: $ink-color-accent-soft-dark,
+    $shadow: $ink-color-shadow-dark
+  );
+}
+
 @media (prefers-color-scheme: dark) {
-  .Ink-Editor {
+  .Ink-Editor:not([data-color-mode]) {
     @include ink-theme-tokens(
       $border: $ink-color-border-dark,
       $bg: $ink-color-bg-dark,

@@ -15,6 +15,8 @@ Add a class on the editor root (or a parent):
 
 `prefers-color-scheme: dark` also remaps tokens when no explicit theme class is set.
 
+Pass `colorMode="light" | "dark" | "system"` to force tokens via `data-color-mode` on `.Ink-Editor` (`system` omits the attribute and follows the OS).
+
 ## CSS variables
 
 | Token | Role |

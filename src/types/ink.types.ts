@@ -1,7 +1,12 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { InkAiConfig } from './ai.types';
 import type { InkCommentThread, InkCommentsChangeHandler } from './comments.types';
-import type { InkEditorChrome, InkEditorVariant, InkFeaturesConfig } from './features.types';
+import type {
+  InkColorMode,
+  InkEditorChrome,
+  InkEditorVariant,
+  InkFeaturesConfig,
+} from './features.types';
 import type {
   InkIconMap,
   InkImageUploadHandler,
@@ -67,6 +72,7 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   typoAutoFix?: boolean;
   variant?: InkEditorVariant;
   chrome?: InkEditorChrome;
+  colorMode?: InkColorMode;
   features?: InkFeaturesConfig;
   author?: string;
   trackChanges?: InkTrackChange[];
@@ -89,6 +95,9 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   wysiwyg?: boolean;
   keepInMemory?: boolean;
   memoryKey?: string;
+  onToolbarChange?: (items: ToolbarOption[]) => void;
+  toolbarHidden?: boolean;
+  onToolbarHiddenChange?: (hidden: boolean) => void;
 }
 
 export interface ToolbarButtonProps {

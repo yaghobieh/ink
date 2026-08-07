@@ -123,6 +123,7 @@ export const INK_COLOR_SWATCHES = [
 export const INK_PLACEHOLDER_DEFAULT = 'Start typing...';
 export const INK_CLASS_ROOT = 'Ink-Editor';
 export const INK_CLASS_TOOLBAR = 'Ink-Editor__toolbar';
+export const INK_CLASS_TOOLBAR_SHOW = 'Ink-Editor__toolbar-show';
 export const INK_CLASS_CONTENT = 'Ink-Editor__content';
 export const INK_CLASS_DIVIDER = 'Ink-Editor__divider';
 export const INK_CLASS_BUTTON = 'Ink-Editor__button';

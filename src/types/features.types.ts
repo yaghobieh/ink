@@ -17,4 +17,6 @@ export type InkEditorVariant = 'classic' | 'document';
 
 export type InkEditorChrome = 'boxed' | 'borderless';
 
+export type InkColorMode = 'light' | 'dark' | 'system';
+
 export type InkAiPlacement = 'sidebar' | 'drawer' | 'floating';
