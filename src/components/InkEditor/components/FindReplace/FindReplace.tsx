@@ -1,5 +1,6 @@
 import { useState, type FC, type FormEvent } from 'react';
 import { EMPTY_STRING } from '@/constants/generals.const';
+import { Button, Field } from '@common-components';
 import {
   FIND_REPLACE_ACTIONS_CLASS,
   FIND_REPLACE_CLASS,
@@ -40,29 +41,29 @@ export const FindReplace: FC<FindReplaceProps> = (props) => {
   return (
     <form className={FIND_REPLACE_CLASS} aria-label={title} onSubmit={(event) => submit(event, false)}>
       <p className={FIND_REPLACE_TITLE_CLASS}>{title}</p>
-      <label className={FIND_REPLACE_FIELD_CLASS}>
-        <span>{findLabel}</span>
-        <input value={find} onChange={(event) => setFind(event.target.value)} autoFocus />
-      </label>
-      <label className={FIND_REPLACE_FIELD_CLASS}>
-        <span>{replaceLabel}</span>
-        <input value={replace} onChange={(event) => setReplace(event.target.value)} />
-      </label>
+      <Field
+        className={FIND_REPLACE_FIELD_CLASS}
+        label={findLabel}
+        value={find}
+        onChange={setFind}
+        autoFocus
+      />
+      <Field
+        className={FIND_REPLACE_FIELD_CLASS}
+        label={replaceLabel}
+        value={replace}
+        onChange={setReplace}
+      />
       <div className={FIND_REPLACE_ACTIONS_CLASS}>
-        <button type="button" className="Ink-Editor__button" onClick={onClose}>
+        <Button type="button" onClick={onClose}>
           {closeLabel}
-        </button>
-        <button type="submit" className="Ink-Editor__button" disabled={!find}>
+        </Button>
+        <Button type="submit" disabled={!find}>
           {replaceOneLabel}
-        </button>
-        <button
-          type="button"
-          className="Ink-Editor__button Ink-Editor__button--active"
-          disabled={!find}
-          onClick={(event) => submit(event, true)}
-        >
+        </Button>
+        <Button type="button" active disabled={!find} onClick={(event) => submit(event, true)}>
           {replaceAllLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

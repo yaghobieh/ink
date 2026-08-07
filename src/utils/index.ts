@@ -2,7 +2,12 @@ export { cn } from './cn.utils';
 export { applyTypoAutoFix } from './typo.utils';
 export { createInkId } from './id.utils';
 export { buildTableHtml } from './table.utils';
-export { getBlockElement, moveBlock, markActiveBlock } from './blocks.utils';
+export {
+  getBlockElement,
+  moveBlock,
+  reorderBlockBefore,
+  markActiveBlock,
+} from './blocks.utils';
 export {
   wrapInsertHtml,
   wrapDeleteHtml,

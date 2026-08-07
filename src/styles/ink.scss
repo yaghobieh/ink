@@ -1,16 +1,14 @@
+@use 'vars' as *;
+@use 'mixins' as *;
+@use 'components/common';
+@use 'components/inline-toolbar';
+
 .Ink-Editor {
-  --ink-border: #e5e7eb;
-  --ink-bg: #ffffff;
-  --ink-toolbar: #f8fafc;
-  --ink-text: #0f172a;
-  --ink-muted: #64748b;
-  --ink-accent: #0d9488;
-  --ink-accent-soft: #ccfbf1;
-  --ink-shadow: 0 10px 40px rgb(15 23 42 / 0.08);
-  --ink-radius: 1rem;
-  --ink-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  @include ink-theme-tokens;
+  --ink-radius: #{$ink-radius};
+  --ink-font-family: #{$ink-font-family};
   --ink-ai-accent: var(--ink-accent);
-  --ink-ai-surface: #f8fafc;
+  --ink-ai-surface: var(--ink-toolbar);
   --ink-ai-border: var(--ink-border);
   border: 1px solid var(--ink-border);
   border-radius: var(--ink-radius);
@@ -52,6 +50,17 @@
   pointer-events: none;
 }
 
+.Ink-Editor[data-chrome='borderless'] {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.Ink-Editor[data-chrome='borderless'] .Ink-Editor__toolbar {
+  border-bottom: none;
+  background: transparent;
+}
+
 .Ink-Editor__toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -62,31 +71,20 @@
   background: var(--ink-toolbar);
 }
 
-.Ink-Editor__button,
+.Ink-Editor__button {
+  @include ink-button-base;
+}
+
 .Ink-Editor__select {
   border: 0;
   background: transparent;
   color: inherit;
   border-radius: 0.45rem;
   cursor: pointer;
-}
 
-.Ink-Editor__button {
-  min-width: 2rem;
-  height: 2rem;
-  padding: 0 0.4rem;
-  font-weight: 650;
-  font-size: 0.85rem;
-}
-
-.Ink-Editor__button:hover,
-.Ink-Editor__select:hover {
-  background: rgb(15 23 42 / 0.05);
-}
-
-.Ink-Editor__button--active {
-  background: var(--ink-accent-soft);
-  color: var(--ink-accent);
+  &:hover {
+    background: rgb(15 23 42 / 0.05);
+  }
 }
 
 .Ink-Editor__select {
@@ -189,6 +187,16 @@
   margin: 0.55rem 0;
 }
 
+.Ink-Editor__content ul {
+  list-style: disc;
+  padding-inline-start: $ink-list-indent;
+}
+
+.Ink-Editor__content ol {
+  list-style: decimal;
+  padding-inline-start: $ink-list-indent;
+}
+
 .Ink-Editor__content .Ink-block--active {
   outline: 1px solid rgb(13 148 136 / 0.35);
   border-radius: 0.35rem;
@@ -242,27 +250,52 @@
 
 .Ink-BlockHandles {
   position: absolute;
-  left: 0.25rem;
+  left: 0.2rem;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  align-items: center;
+  gap: 0.2rem;
 }
 
+.Ink-BlockHandles__plus,
 .Ink-BlockHandles__grip,
 .Ink-BlockHandles__btn {
   width: 1.5rem;
-  height: 1.35rem;
+  height: 1.5rem;
   border: 0;
-  border-radius: 0.3rem;
+  border-radius: 999px;
   background: #fff;
-  box-shadow: 0 1px 3px rgb(15 23 42 / 0.12);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.14);
   color: var(--ink-muted);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
+.Ink-BlockHandles__plus {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.Ink-BlockHandles__grip {
+  letter-spacing: -0.05em;
+  font-size: 0.7rem;
+  cursor: grab;
+}
+
+.Ink-BlockHandles__btn {
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.Ink-BlockHandles__plus:hover,
 .Ink-BlockHandles__btn:hover,
 .Ink-BlockHandles__grip:hover {
   color: var(--ink-accent);
@@ -274,10 +307,10 @@
   z-index: 5;
   min-width: 12rem;
   background: #fff;
-  border: 1px solid var(--ink-border);
-  border-radius: 0.65rem;
-  box-shadow: 0 12px 32px rgb(15 23 42 / 0.12);
-  padding: 0.3rem;
+  border: 1px solid rgb(15 23 42 / 0.08);
+  border-radius: 0.55rem;
+  box-shadow: 0 4px 18px rgb(15 23 42 / 0.12), 0 0 0 1px rgb(15 23 42 / 0.03);
+  padding: 0.35rem;
 }
 
 .Ink-Slash__item {
@@ -604,14 +637,16 @@
 
 @media (prefers-color-scheme: dark) {
   .Ink-Editor {
-    --ink-border: #3f3f46;
-    --ink-bg: #18181b;
-    --ink-toolbar: #27272a;
-    --ink-text: #f4f4f5;
-    --ink-muted: #a1a1aa;
-    --ink-accent: #2dd4bf;
-    --ink-accent-soft: rgb(45 212 191 / 0.15);
-    --ink-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+    @include ink-theme-tokens(
+      $border: $ink-color-border-dark,
+      $bg: $ink-color-bg-dark,
+      $toolbar: $ink-color-toolbar-dark,
+      $text: $ink-color-text-dark,
+      $muted: $ink-color-muted-dark,
+      $accent: $ink-color-accent-dark,
+      $accent-soft: $ink-color-accent-soft-dark,
+      $shadow: $ink-color-shadow-dark
+    );
   }
 }
 
@@ -689,16 +724,7 @@
 }
 
 .Ink-FindReplace__field {
-  color: var(--ink-muted);
-}
-
-.Ink-FindReplace__field input {
-  border: 1px solid var(--ink-border);
-  border-radius: 0.4rem;
-  padding: 0.4rem 0.55rem;
-  background: var(--ink-bg);
-  color: var(--ink-text);
-  font: inherit;
+  @include ink-field;
 }
 
 .flex { display: flex; }

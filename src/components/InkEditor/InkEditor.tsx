@@ -4,7 +4,9 @@ import {
   useState,
   type FC,
   type ClipboardEvent,
+  type DragEvent,
   type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
 } from 'react';
 import type {
@@ -15,7 +17,32 @@ import type {
   ToolbarOption,
 } from '../../types';
 import {
+  CONTEXT_MENU_ID_BOLD,
+  CONTEXT_MENU_ID_BULLET,
+  CONTEXT_MENU_ID_CLEAR,
+  CONTEXT_MENU_ID_COMMENT,
+  CONTEXT_MENU_ID_FIND,
+  CONTEXT_MENU_ID_HEADING,
+  CONTEXT_MENU_ID_ITALIC,
+  CONTEXT_MENU_ID_LINK,
+  CONTEXT_MENU_ID_ORDERED,
+  CONTEXT_MENU_ID_SIGNATURE,
+  CONTEXT_MENU_ID_STRIKE,
+  CONTEXT_MENU_ID_UNDERLINE,
+  CONTEXT_MENU_LABEL_BOLD,
+  CONTEXT_MENU_LABEL_BULLET,
+  CONTEXT_MENU_LABEL_CLEAR,
+  CONTEXT_MENU_LABEL_COMMENT,
+  CONTEXT_MENU_LABEL_FIND,
+  CONTEXT_MENU_LABEL_HEADING,
+  CONTEXT_MENU_LABEL_ITALIC,
+  CONTEXT_MENU_LABEL_LINK,
+  CONTEXT_MENU_LABEL_ORDERED,
+  CONTEXT_MENU_LABEL_SIGNATURE,
+  CONTEXT_MENU_LABEL_STRIKE,
+  CONTEXT_MENU_LABEL_UNDERLINE,
   INK_BUTTON_CONFIG,
+  INK_CLASS_BLOCK_ACTIVE,
   INK_CLASS_BODY,
   INK_CLASS_CONTENT,
   INK_CLASS_DIVIDER,
@@ -24,6 +51,7 @@ import {
   INK_CLASS_SHELL,
   INK_CLASS_TOOLBAR,
   INK_DEFAULT_AUTHOR,
+  INK_DEFAULT_CHROME,
   INK_DEFAULT_FEATURES,
   INK_DEFAULT_HIGHLIGHT_COLOR,
   INK_DEFAULT_ICONS,
@@ -56,6 +84,7 @@ import {
   InkHistoryStack,
   markActiveBlock,
   moveBlock,
+  reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
   readInkMemory,
@@ -68,6 +97,7 @@ import {
   wrapInsertHtml,
   wrapSelectionAsComment,
 } from '../../utils';
+import { ContextMenu, type ContextMenuItem } from '@common-components';
 import {
   execCommand,
   fileToDataUrl,
@@ -82,15 +112,26 @@ import {
 import {
   AiPanel,
   BlockHandles,
+  BLOCK_HANDLES_DRAG_EFFECT_MOVE,
+  BLOCK_HANDLES_DRAG_MIME,
+  BLOCK_HANDLES_DRAG_PAYLOAD,
   CommentsPanel,
   FindReplace,
+  InlineToolbar,
   SignPad,
   SlashMenu,
   ToolbarButton,
   ToolbarColorPicker,
   ToolbarDropdown,
   TrackChangesBar,
+  clampInlineToolbarPosition,
+  selectionIsInsideElement,
+  INLINE_TOOLBAR_EDGE_PADDING_PX,
+  INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
+  INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
+  INLINE_TOOLBAR_GAP_PX,
 } from './components';
+import type { InlineToolbarFormatAction } from './components';
 
 const getSelectionHtml = (): string => {
   const selection = window.getSelection();
@@ -119,6 +160,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     charCountMax,
     typoAutoFix = true,
     variant = INK_DEFAULT_VARIANT,
+    chrome = INK_DEFAULT_CHROME,
     features: featuresProp,
     author = INK_DEFAULT_AUTHOR,
     trackChanges: trackChangesProp,
@@ -157,6 +199,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const richPasteEnabled = canUseRichPaste && pasteMode === 'rich';
   const editorRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef(new InkHistoryStack(value ?? defaultValue));
+  const lastEmittedHtmlRef = useRef<string | null>(null);
+  const dragBlockRef = useRef<HTMLElement | null>(null);
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const [currentBlock, setCurrentBlock] = useState('p');
   const [charCount, setCharCount] = useState(0);
@@ -174,6 +218,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
+  const [inlineToolbar, setInlineToolbar] = useState({ open: false, top: 0, left: 0 });
 
   const trackChanges = trackChangesProp ?? localTrackChanges;
   const comments = commentsProp ?? localComments;
@@ -198,9 +244,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   useEffect(() => {
     if (!editorRef.current || value === undefined) return;
-    if (editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
+    if (value === lastEmittedHtmlRef.current) return;
+    if (editorRef.current.innerHTML === value) {
+      lastEmittedHtmlRef.current = value;
+      return;
     }
+    const focused = document.activeElement === editorRef.current;
+    if (focused) return;
+    editorRef.current.innerHTML = value;
+    lastEmittedHtmlRef.current = value;
   }, [value]);
 
   useEffect(() => {
@@ -208,6 +260,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const remembered = keepInMemory ? readInkMemory(memoryKey) : '';
     if (remembered) {
       editorRef.current.innerHTML = remembered;
+      lastEmittedHtmlRef.current = remembered;
       historyRef.current = new InkHistoryStack(remembered);
       onChange?.(remembered);
       return;
@@ -215,12 +268,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (value !== undefined) return;
     if (!defaultValue) return;
     editorRef.current.innerHTML = defaultValue;
+    lastEmittedHtmlRef.current = defaultValue;
     historyRef.current = new InkHistoryStack(defaultValue);
     onChange?.(defaultValue);
   }, []);
 
   const emitChange = (html: string) => {
     historyRef.current.push(html);
+    lastEmittedHtmlRef.current = html;
     onChange?.(html);
     if (keepInMemory) writeInkMemory(html, memoryKey);
     if (showCharCount && editorRef.current) {
@@ -254,6 +309,38 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     onTrackChangesEnabledChange?.(enabled);
   };
 
+  const updateInlineToolbar = () => {
+    if (disabled || readOnly) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const selection = window.getSelection();
+    if (
+      !selection ||
+      selection.isCollapsed ||
+      selection.rangeCount === 0 ||
+      !selectionIsInsideElement(selection, editorRef.current)
+    ) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const position = clampInlineToolbarPosition({
+      selectionRect: rect,
+      toolbarWidth: INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
+      toolbarHeight: INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      gap: INLINE_TOOLBAR_GAP_PX,
+      edgePadding: INLINE_TOOLBAR_EDGE_PADDING_PX,
+    });
+    setInlineToolbar({ open: true, top: position.top, left: position.left });
+  };
+
   const refreshFormats = () => {
     setActiveFormats(getActiveFormats());
     const block = queryCommandValue('formatBlock');
@@ -261,6 +348,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       setCurrentBlock(block.toLowerCase().replace(/[<>]/g, ''));
     }
     setSelectionHtml(getSelectionHtml());
+    updateInlineToolbar();
     if (!editorRef.current || !features.blocks) return;
     const selection = window.getSelection();
     const anchor = selection?.anchorNode ?? null;
@@ -417,6 +505,12 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     setHtml(html);
   };
 
+  const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    if (disabled || readOnly) return;
+    event.preventDefault();
+    setContextMenu({ open: true, x: event.clientX, y: event.clientY });
+  };
+
   const handleAddComment = () => {
     if (disabled || readOnly || !features.comments) return;
     const body = window.prompt('Comment:');
@@ -430,6 +524,72 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     setCommentsOpen(true);
     handleInput();
   };
+
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      id: CONTEXT_MENU_ID_BOLD,
+      label: CONTEXT_MENU_LABEL_BOLD,
+      onSelect: () => handleFormat('bold'),
+    },
+    {
+      id: CONTEXT_MENU_ID_ITALIC,
+      label: CONTEXT_MENU_LABEL_ITALIC,
+      onSelect: () => handleFormat('italic'),
+    },
+    {
+      id: CONTEXT_MENU_ID_UNDERLINE,
+      label: CONTEXT_MENU_LABEL_UNDERLINE,
+      onSelect: () => handleFormat('underline'),
+    },
+    {
+      id: CONTEXT_MENU_ID_STRIKE,
+      label: CONTEXT_MENU_LABEL_STRIKE,
+      onSelect: () => handleFormat('strikethrough'),
+    },
+    {
+      id: CONTEXT_MENU_ID_HEADING,
+      label: CONTEXT_MENU_LABEL_HEADING,
+      onSelect: () => handleFormat('heading2'),
+    },
+    {
+      id: CONTEXT_MENU_ID_BULLET,
+      label: CONTEXT_MENU_LABEL_BULLET,
+      onSelect: () => handleFormat('bulletList'),
+    },
+    {
+      id: CONTEXT_MENU_ID_ORDERED,
+      label: CONTEXT_MENU_LABEL_ORDERED,
+      onSelect: () => handleFormat('orderedList'),
+    },
+    {
+      id: CONTEXT_MENU_ID_LINK,
+      label: CONTEXT_MENU_LABEL_LINK,
+      onSelect: () => handleLink(),
+    },
+    {
+      id: CONTEXT_MENU_ID_CLEAR,
+      label: CONTEXT_MENU_LABEL_CLEAR,
+      onSelect: () => handleFormat('clearFormat'),
+    },
+    {
+      id: CONTEXT_MENU_ID_FIND,
+      label: CONTEXT_MENU_LABEL_FIND,
+      disabled: !features.findReplace,
+      onSelect: () => setFindReplaceOpen(true),
+    },
+    {
+      id: CONTEXT_MENU_ID_SIGNATURE,
+      label: CONTEXT_MENU_LABEL_SIGNATURE,
+      disabled: !features.signature,
+      onSelect: () => setSignPadOpen(true),
+    },
+    {
+      id: CONTEXT_MENU_ID_COMMENT,
+      label: CONTEXT_MENU_LABEL_COMMENT,
+      disabled: !features.comments,
+      onSelect: () => handleAddComment(),
+    },
+  ];
 
   const handleAcceptChange = (id: string) => {
     if (!editorRef.current) return;
@@ -507,9 +667,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
   };
 
+  const handleInlineFormat = (action: InlineToolbarFormatAction) => {
+    handleFormat(action);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       setSlashItems([]);
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
     }
     if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
       event.preventDefault();
@@ -563,6 +728,41 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       handleInput();
       refreshFormats();
     }
+  };
+
+  const handleBlockDragStart = (event: DragEvent<HTMLButtonElement>) => {
+    if (!editorRef.current) return;
+    const selection = window.getSelection();
+    const selectedBlock = getBlockElement(selection?.anchorNode ?? null, editorRef.current);
+    const activeBlock = editorRef.current.querySelector(`.${INK_CLASS_BLOCK_ACTIVE}`);
+    const block =
+      selectedBlock ?? (activeBlock instanceof HTMLElement ? activeBlock : null);
+    if (!block) return;
+    dragBlockRef.current = block;
+    markActiveBlock(editorRef.current, block);
+    event.dataTransfer.setData(BLOCK_HANDLES_DRAG_MIME, BLOCK_HANDLES_DRAG_PAYLOAD);
+    event.dataTransfer.effectAllowed = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
+  };
+
+  const handleContentDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (!dragBlockRef.current) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = BLOCK_HANDLES_DRAG_EFFECT_MOVE;
+  };
+
+  const handleContentDrop = (event: DragEvent<HTMLDivElement>) => {
+    if (!editorRef.current || !dragBlockRef.current) return;
+    event.preventDefault();
+    const target = getBlockElement(event.target as Node, editorRef.current);
+    if (target && reorderBlockBefore(dragBlockRef.current, target)) {
+      handleInput();
+      refreshFormats();
+    }
+    dragBlockRef.current = null;
+  };
+
+  const handleContentDragEnd = () => {
+    dragBlockRef.current = null;
   };
 
   const renderToolbarItem = (item: ToolbarOption, index: number): ReactNode => {
@@ -781,6 +981,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       data-testid={testId}
       data-disabled={disabled || undefined}
       data-variant={variant}
+      data-chrome={chrome}
       data-premium={premium.active || undefined}
       data-wysiwyg={canUseWysiwyg || undefined}
       style={{ ...themeStyle, ...styleProp }}
@@ -824,6 +1025,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               top={activeBlockTop}
               onMoveUp={() => moveActiveBlock('up')}
               onMoveDown={() => moveActiveBlock('down')}
+              onDragStart={handleBlockDragStart}
             />
           ) : null}
           <div
@@ -841,6 +1043,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onKeyUp={refreshFormats}
             onKeyDown={handleKeyDown}
             onMouseUp={refreshFormats}
+            onContextMenu={handleContextMenu}
+            onDragOver={handleContentDragOver}
+            onDrop={handleContentDrop}
+            onDragEnd={handleContentDragEnd}
             onPaste={(event) => {
               void handlePaste(event);
             }}
@@ -853,6 +1059,31 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onSelect={applySlash}
             />
           ) : null}
+          <InlineToolbar
+            open={inlineToolbar.open}
+            top={inlineToolbar.top}
+            left={inlineToolbar.left}
+            icons={{
+              bold: icons.bold,
+              italic: icons.italic,
+              underline: icons.underline,
+              code: icons.code,
+              link: icons.link,
+              clearFormat: icons.clearFormat,
+            }}
+            activeFormats={activeFormats}
+            disabled={disabled || readOnly}
+            onFormat={handleInlineFormat}
+            onLink={handleLink}
+            onClose={() => setInlineToolbar((prev) => ({ ...prev, open: false }))}
+          />
+          <ContextMenu
+            open={contextMenu.open}
+            x={contextMenu.x}
+            y={contextMenu.y}
+            items={contextMenuItems}
+            onClose={() => setContextMenu((prev) => ({ ...prev, open: false }))}
+          />
         </div>
         {commentsOpen && features.comments ? (
           <CommentsPanel

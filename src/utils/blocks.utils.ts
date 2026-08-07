@@ -40,6 +40,14 @@ export const moveBlock = (block: HTMLElement, direction: 'up' | 'down'): boolean
   return true;
 };
 
+export const reorderBlockBefore = (block: HTMLElement, target: HTMLElement): boolean => {
+  const parent = block.parentElement;
+  if (!parent || block === target) return false;
+  if (target.parentElement !== parent) return false;
+  parent.insertBefore(block, target);
+  return true;
+};
+
 export const markActiveBlock = (root: HTMLElement, block: HTMLElement | null): void => {
   root.querySelectorAll('.Ink-block--active').forEach((element) => {
     element.classList.remove('Ink-block--active');

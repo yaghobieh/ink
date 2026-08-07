@@ -18,7 +18,13 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@common-components": ["src/common-components/index.ts"],
+      "@common-components/*": ["src/common-components/*"],
+      "@utils": ["src/utils/index.ts"],
+      "@utils/*": ["src/utils/*"],
+      "@const": ["src/constants/index.ts"],
+      "@const/*": ["src/constants/*"]
     }
   },
   "include": ["src"],

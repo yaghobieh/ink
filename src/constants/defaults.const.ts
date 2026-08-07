@@ -136,6 +136,9 @@ export const INK_CLASS_TC_DELETE = 'Ink-tc-delete';
 export const INK_CLASS_COMMENT_MARK = 'Ink-comment-mark';
 export const INK_DEFAULT_AUTHOR = 'You';
 export const INK_DEFAULT_VARIANT = 'classic' as const;
+export const INK_CHROME_BOXED = 'boxed' as const;
+export const INK_CHROME_BORDERLESS = 'borderless' as const;
+export const INK_DEFAULT_CHROME = INK_CHROME_BOXED;
 export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   table: true,
   trackChanges: true,

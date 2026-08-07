@@ -1,5 +1,22 @@
 export { InkEditor } from './components';
 export {
+  Box,
+  Button,
+  Canvas,
+  ContextMenu,
+  Field,
+  UndoIcon,
+  RedoIcon,
+} from './common-components';
+export type {
+  BoxProps,
+  ButtonProps,
+  CanvasProps,
+  ContextMenuItem,
+  ContextMenuProps,
+  FieldProps,
+} from './common-components';
+export {
   applyTypoAutoFix,
   cn,
   buildTableHtml,
@@ -58,6 +75,7 @@ export type {
   InkFeaturesConfig,
   InkFeatureName,
   InkEditorVariant,
+  InkEditorChrome,
   InkAiPlacement,
   InkPremiumFeature,
   InkPasteMode,

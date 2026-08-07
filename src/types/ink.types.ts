@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { InkAiConfig } from './ai.types';
 import type { InkCommentThread, InkCommentsChangeHandler } from './comments.types';
-import type { InkEditorVariant, InkFeaturesConfig } from './features.types';
+import type { InkEditorChrome, InkEditorVariant, InkFeaturesConfig } from './features.types';
 import type {
   InkIconMap,
   InkImageUploadHandler,
@@ -66,6 +66,7 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   charCountMax?: number;
   typoAutoFix?: boolean;
   variant?: InkEditorVariant;
+  chrome?: InkEditorChrome;
   features?: InkFeaturesConfig;
   author?: string;
   trackChanges?: InkTrackChange[];

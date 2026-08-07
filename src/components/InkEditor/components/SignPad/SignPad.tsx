@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FC, type PointerEvent } from 'react';
 import { NUMBER_ZERO } from '@/constants/numbers';
+import { Button, Canvas } from '@common-components';
 import {
   SIGN_PAD_ACTIONS_CLASS,
   SIGN_PAD_CANVAS_CLASS,
@@ -99,8 +100,8 @@ export const SignPad: FC<SignPadProps> = (props) => {
   return (
     <div className={SIGN_PAD_CLASS} role="dialog" aria-modal="true" aria-label={title}>
       <p className={SIGN_PAD_TITLE_CLASS}>{title}</p>
-      <canvas
-        ref={canvasRef}
+      <Canvas
+        canvasRef={canvasRef}
         className={SIGN_PAD_CANVAS_CLASS}
         width={SIGN_PAD_CANVAS_WIDTH}
         height={SIGN_PAD_CANVAS_HEIGHT}
@@ -110,20 +111,15 @@ export const SignPad: FC<SignPadProps> = (props) => {
         onPointerLeave={endDraw}
       />
       <div className={SIGN_PAD_ACTIONS_CLASS}>
-        <button type="button" className="Ink-Editor__button" onClick={handleClear}>
+        <Button type="button" onClick={handleClear}>
           {clearLabel}
-        </button>
-        <button type="button" className="Ink-Editor__button" onClick={onClose}>
+        </Button>
+        <Button type="button" onClick={onClose}>
           {cancelLabel}
-        </button>
-        <button
-          type="button"
-          className="Ink-Editor__button Ink-Editor__button--active"
-          disabled={!hasStroke}
-          onClick={handleConfirm}
-        >
+        </Button>
+        <Button type="button" active disabled={!hasStroke} onClick={handleConfirm}>
           {confirmLabel}
-        </button>
+        </Button>
       </div>
     </div>
   );

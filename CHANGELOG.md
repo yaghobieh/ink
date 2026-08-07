@@ -1,6 +1,32 @@
 # Changelog
 
-## Unreleased — 1.1.3
+## Unreleased — 1.1.4
+
+### Added
+- Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons
+- Path aliases: `@common-components`, `@utils`, `@const`
+- SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
+- Right-click context menu (format, lists, link, heading, sign pad, comment, find)
+- Floating Inline Toolbar on text selection (Bold, Italic, Underline, Code, Link, Clear)
+- Theming docs (`docs/theming.md`)
+- `chrome` prop (`boxed` | `borderless`) for Editor.js-style borderless chrome
+- Block drag-and-drop reorder via block handle grip (`reorderBlockBefore`)
+
+### Changed
+- SignPad / FindReplace / ToolbarButton reuse common Button, Field, Canvas, Box
+- Default undo/redo icons are stroke SVGs (premium `icons` override still works)
+- Styles build compiles SCSS → `dist/styles.css` (CSS source removed)
+- Slash menu uses a lighter shadow / tighter radius
+- Block handles use circular + / grip controls closer to a floating block UI
+- Context menu portals to `document.body` and clamps to the viewport
+
+### Fixed
+- Controlled `value` sync no longer resets the caret to the top on Enter while focused
+- List markers visible again (`ul`/`ol` list-style + indent under `.Ink-Editor__content`)
+- Toolbar buttons preserve contenteditable selection (`onMouseDown` preventDefault)
+- Context menu outside-click close ignores clicks inside the portaled menu
+
+## 1.1.3
 
 ### Fixed
 - `keepInMemory` restores drafts on mount in controlled mode via `onChange`

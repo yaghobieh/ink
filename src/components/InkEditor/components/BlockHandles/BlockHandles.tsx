@@ -1,25 +1,58 @@
 import type { FC } from 'react';
-
-export interface BlockHandlesProps {
-  visible: boolean;
-  top: number;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-}
+import {
+  BLOCK_HANDLES_BTN_CLASS,
+  BLOCK_HANDLES_CLASS,
+  BLOCK_HANDLES_DOWN_LABEL,
+  BLOCK_HANDLES_GRIP_CLASS,
+  BLOCK_HANDLES_GRIP_LABEL,
+  BLOCK_HANDLES_PLUS_CLASS,
+  BLOCK_HANDLES_PLUS_LABEL,
+  BLOCK_HANDLES_TITLE_DOWN,
+  BLOCK_HANDLES_TITLE_GRIP,
+  BLOCK_HANDLES_TITLE_PLUS,
+  BLOCK_HANDLES_TITLE_UP,
+  BLOCK_HANDLES_UP_LABEL,
+} from './BlockHandles.const';
+import type { BlockHandlesProps } from './BlockHandles.types';
 
 export const BlockHandles: FC<BlockHandlesProps> = (props) => {
-  const { visible, top, onMoveUp, onMoveDown } = props;
+  const { visible, top, onMoveUp, onMoveDown, onDragStart } = props;
   if (!visible) return null;
   return (
-    <div className="Ink-BlockHandles" style={{ top }} aria-hidden={!visible}>
-      <button type="button" className="Ink-BlockHandles__grip" title="Block" tabIndex={-1}>
-        ⋮⋮
+    <div className={BLOCK_HANDLES_CLASS} style={{ top }} aria-hidden={!visible}>
+      <button
+        type="button"
+        className={BLOCK_HANDLES_PLUS_CLASS}
+        title={BLOCK_HANDLES_TITLE_PLUS}
+        tabIndex={-1}
+      >
+        {BLOCK_HANDLES_PLUS_LABEL}
       </button>
-      <button type="button" className="Ink-BlockHandles__btn" title="Move block up" onClick={onMoveUp}>
-        ↑
+      <button
+        type="button"
+        className={BLOCK_HANDLES_GRIP_CLASS}
+        title={BLOCK_HANDLES_TITLE_GRIP}
+        tabIndex={-1}
+        draggable
+        onDragStart={onDragStart}
+      >
+        {BLOCK_HANDLES_GRIP_LABEL}
       </button>
-      <button type="button" className="Ink-BlockHandles__btn" title="Move block down" onClick={onMoveDown}>
-        ↓
+      <button
+        type="button"
+        className={BLOCK_HANDLES_BTN_CLASS}
+        title={BLOCK_HANDLES_TITLE_UP}
+        onClick={onMoveUp}
+      >
+        {BLOCK_HANDLES_UP_LABEL}
+      </button>
+      <button
+        type="button"
+        className={BLOCK_HANDLES_BTN_CLASS}
+        title={BLOCK_HANDLES_TITLE_DOWN}
+        onClick={onMoveDown}
+      >
+        {BLOCK_HANDLES_DOWN_LABEL}
       </button>
     </div>
   );
