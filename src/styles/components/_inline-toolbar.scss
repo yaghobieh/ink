@@ -1,0 +1,31 @@
+@use '../vars' as *;
+
+.Ink-InlineToolbar {
+  position: fixed;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.25rem 0.3rem;
+  border: 1px solid rgb(15 23 42 / 0.08);
+  border-radius: 0.5rem;
+  background: #ffffff;
+  box-shadow: 0 3px 15px rgb(15 23 42 / 0.12), 0 0 0 1px rgb(15 23 42 / 0.03);
+  color: var(--ink-text);
+}
+
+.Ink-InlineToolbar__item {
+  min-width: 1.85rem;
+  height: 1.85rem;
+  padding: 0 0.35rem;
+  border-radius: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.Ink-InlineToolbar__divider {
+  width: 1px;
+  height: 1.1rem;
+  margin: 0 0.2rem;
+  background: rgb(15 23 42 / 0.12);
+}

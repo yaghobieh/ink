@@ -4,6 +4,19 @@ export { ToolbarColorPicker } from './ToolbarColorPicker';
 export { CommentsPanel } from './CommentsPanel';
 export { AiPanel } from './AiPanel';
 export { BlockHandles } from './BlockHandles';
+export {
+  InlineToolbar,
+  clampInlineToolbarPosition,
+  selectionIsInsideElement,
+  INLINE_TOOLBAR_EDGE_PADDING_PX,
+  INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
+  INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
+  INLINE_TOOLBAR_GAP_PX,
+} from './InlineToolbar';
+export type {
+  InlineToolbarFormatAction,
+  InlineToolbarProps,
+} from './InlineToolbar';
 export { SlashMenu } from './SlashMenu';
 export { TrackChangesBar } from './TrackChangesBar';
 export { SignPad } from './SignPad';

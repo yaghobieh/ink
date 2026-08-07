@@ -110,13 +110,21 @@ import {
   BlockHandles,
   CommentsPanel,
   FindReplace,
+  InlineToolbar,
   SignPad,
   SlashMenu,
   ToolbarButton,
   ToolbarColorPicker,
   ToolbarDropdown,
   TrackChangesBar,
+  clampInlineToolbarPosition,
+  selectionIsInsideElement,
+  INLINE_TOOLBAR_EDGE_PADDING_PX,
+  INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
+  INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
+  INLINE_TOOLBAR_GAP_PX,
 } from './components';
+import type { InlineToolbarFormatAction } from './components';
 
 const getSelectionHtml = (): string => {
   const selection = window.getSelection();
@@ -201,6 +209,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
+  const [inlineToolbar, setInlineToolbar] = useState({ open: false, top: 0, left: 0 });
 
   const trackChanges = trackChangesProp ?? localTrackChanges;
   const comments = commentsProp ?? localComments;
@@ -281,6 +290,38 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     onTrackChangesEnabledChange?.(enabled);
   };
 
+  const updateInlineToolbar = () => {
+    if (disabled || readOnly) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const selection = window.getSelection();
+    if (
+      !selection ||
+      selection.isCollapsed ||
+      selection.rangeCount === 0 ||
+      !selectionIsInsideElement(selection, editorRef.current)
+    ) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
+      return;
+    }
+    const position = clampInlineToolbarPosition({
+      selectionRect: rect,
+      toolbarWidth: INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
+      toolbarHeight: INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      gap: INLINE_TOOLBAR_GAP_PX,
+      edgePadding: INLINE_TOOLBAR_EDGE_PADDING_PX,
+    });
+    setInlineToolbar({ open: true, top: position.top, left: position.left });
+  };
+
   const refreshFormats = () => {
     setActiveFormats(getActiveFormats());
     const block = queryCommandValue('formatBlock');
@@ -288,6 +329,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       setCurrentBlock(block.toLowerCase().replace(/[<>]/g, ''));
     }
     setSelectionHtml(getSelectionHtml());
+    updateInlineToolbar();
     if (!editorRef.current || !features.blocks) return;
     const selection = window.getSelection();
     const anchor = selection?.anchorNode ?? null;
@@ -606,9 +648,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
   };
 
+  const handleInlineFormat = (action: InlineToolbarFormatAction) => {
+    handleFormat(action);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       setSlashItems([]);
+      setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
     }
     if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
       event.preventDefault();
@@ -953,6 +1000,24 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onSelect={applySlash}
             />
           ) : null}
+          <InlineToolbar
+            open={inlineToolbar.open}
+            top={inlineToolbar.top}
+            left={inlineToolbar.left}
+            icons={{
+              bold: icons.bold,
+              italic: icons.italic,
+              underline: icons.underline,
+              code: icons.code,
+              link: icons.link,
+              clearFormat: icons.clearFormat,
+            }}
+            activeFormats={activeFormats}
+            disabled={disabled || readOnly}
+            onFormat={handleInlineFormat}
+            onLink={handleLink}
+            onClose={() => setInlineToolbar((prev) => ({ ...prev, open: false }))}
+          />
           <ContextMenu
             open={contextMenu.open}
             x={contextMenu.x}

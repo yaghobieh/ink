@@ -7,12 +7,15 @@
 - Path aliases: `@common-components`, `@utils`, `@const`
 - SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
 - Right-click context menu (format, lists, link, heading, sign pad, comment, find)
+- Floating Inline Toolbar on text selection (Bold, Italic, Underline, Code, Link, Clear)
 - Theming docs (`docs/theming.md`)
 
 ### Changed
 - SignPad / FindReplace / ToolbarButton reuse common Button, Field, Canvas, Box
 - Default undo/redo icons are stroke SVGs (premium `icons` override still works)
 - Styles build compiles SCSS → `dist/styles.css` (CSS source removed)
+- Slash menu uses a lighter shadow / tighter radius
+- Block handles use circular + / grip controls closer to a floating block UI
 
 ## 1.1.3
 

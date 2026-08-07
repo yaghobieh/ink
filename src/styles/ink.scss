@@ -1,6 +1,7 @@
 @use 'vars' as *;
 @use 'mixins' as *;
 @use 'components/common';
+@use 'components/inline-toolbar';
 
 .Ink-Editor {
   @include ink-theme-tokens;
@@ -228,27 +229,52 @@
 
 .Ink-BlockHandles {
   position: absolute;
-  left: 0.25rem;
+  left: 0.2rem;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  align-items: center;
+  gap: 0.2rem;
 }
 
+.Ink-BlockHandles__plus,
 .Ink-BlockHandles__grip,
 .Ink-BlockHandles__btn {
   width: 1.5rem;
-  height: 1.35rem;
+  height: 1.5rem;
   border: 0;
-  border-radius: 0.3rem;
+  border-radius: 999px;
   background: #fff;
-  box-shadow: 0 1px 3px rgb(15 23 42 / 0.12);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.14);
   color: var(--ink-muted);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
+.Ink-BlockHandles__plus {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.Ink-BlockHandles__grip {
+  letter-spacing: -0.05em;
+  font-size: 0.7rem;
+  cursor: grab;
+}
+
+.Ink-BlockHandles__btn {
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.Ink-BlockHandles__plus:hover,
 .Ink-BlockHandles__btn:hover,
 .Ink-BlockHandles__grip:hover {
   color: var(--ink-accent);
@@ -260,10 +286,10 @@
   z-index: 5;
   min-width: 12rem;
   background: #fff;
-  border: 1px solid var(--ink-border);
-  border-radius: 0.65rem;
-  box-shadow: 0 12px 32px rgb(15 23 42 / 0.12);
-  padding: 0.3rem;
+  border: 1px solid rgb(15 23 42 / 0.08);
+  border-radius: 0.55rem;
+  box-shadow: 0 4px 18px rgb(15 23 42 / 0.12), 0 0 0 1px rgb(15 23 42 / 0.03);
+  padding: 0.35rem;
 }
 
 .Ink-Slash__item {

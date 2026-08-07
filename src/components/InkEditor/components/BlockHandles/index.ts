@@ -1,2 +1,2 @@
 export { BlockHandles } from './BlockHandles';
-export type { BlockHandlesProps } from './BlockHandles';
+export type { BlockHandlesProps } from './BlockHandles.types';
