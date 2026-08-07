@@ -6,7 +6,7 @@
 - Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons
 - Path aliases: `@common-components`, `@utils`, `@const`
 - SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
-- Right-click context menu (bold / italic / underline / clear / find)
+- Right-click context menu (format, lists, link, heading, sign pad, comment, find)
 - Theming docs (`docs/theming.md`)
 
 ### Changed

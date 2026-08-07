@@ -1,6 +1,17 @@
-# Confluence paste pack (Ink)
+# Confluence (Ink space)
 
-Confluence MCP is blocked on this site (`403 — app is not installed`). Paste these pages into https://yaghobieh.atlassian.net/wiki after creating an **Ink** space (key `INK` or `INKDOC`).
+Live space: https://yaghobieh.atlassian.net/wiki/spaces/Ink/overview
+
+## Sync note
+
+Atlassian MCP currently has **Jira-only** scopes (`read:jira-work`, `write:jira-work`). Confluence create via API returns `403 — app is not installed` until Confluence scopes are added to the MCP app.
+
+**Release 1.1.4 progress** lives here (canonical until Confluence publish completes):
+
+- Linear: https://linear.app/gatewise2026/document/ink-release-114-progress-6e0d6af1c3c0
+- Draft started in Confluence Ink space (title filled; collaborative editor timed out — finish Publish in the UI)
+
+Remaining paste pack files below are legacy drafts for pages not yet migrated.
 
 | Page | File | Labels |
 |---|---|---|
@@ -13,5 +24,3 @@ Confluence MCP is blocked on this site (`403 — app is not installed`). Paste t
 | Research — Payments (IL + world) | `07-research-payments.md` | portal |
 | Sprint 2 — Backend options | `08-sprint2-backend.md` | library |
 | Guide — Git ↔ Jira sync | `09-guide-git-jira-sync.md` | library, portal |
-
-**Rule:** every new feature gets a new Confluence page (copy from feature template). Link the page URL on the Linear issue and Discord `#ink` message.

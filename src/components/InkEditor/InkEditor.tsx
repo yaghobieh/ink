@@ -17,14 +17,28 @@ import type {
 } from '../../types';
 import {
   CONTEXT_MENU_ID_BOLD,
+  CONTEXT_MENU_ID_BULLET,
   CONTEXT_MENU_ID_CLEAR,
+  CONTEXT_MENU_ID_COMMENT,
   CONTEXT_MENU_ID_FIND,
+  CONTEXT_MENU_ID_HEADING,
   CONTEXT_MENU_ID_ITALIC,
+  CONTEXT_MENU_ID_LINK,
+  CONTEXT_MENU_ID_ORDERED,
+  CONTEXT_MENU_ID_SIGNATURE,
+  CONTEXT_MENU_ID_STRIKE,
   CONTEXT_MENU_ID_UNDERLINE,
   CONTEXT_MENU_LABEL_BOLD,
+  CONTEXT_MENU_LABEL_BULLET,
   CONTEXT_MENU_LABEL_CLEAR,
+  CONTEXT_MENU_LABEL_COMMENT,
   CONTEXT_MENU_LABEL_FIND,
+  CONTEXT_MENU_LABEL_HEADING,
   CONTEXT_MENU_LABEL_ITALIC,
+  CONTEXT_MENU_LABEL_LINK,
+  CONTEXT_MENU_LABEL_ORDERED,
+  CONTEXT_MENU_LABEL_SIGNATURE,
+  CONTEXT_MENU_LABEL_STRIKE,
   CONTEXT_MENU_LABEL_UNDERLINE,
   INK_BUTTON_CONFIG,
   INK_CLASS_BODY,
@@ -436,6 +450,20 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     setContextMenu({ open: true, x: event.clientX, y: event.clientY });
   };
 
+  const handleAddComment = () => {
+    if (disabled || readOnly || !features.comments) return;
+    const body = window.prompt('Comment:');
+    if (!body?.trim()) return;
+    const highlightId = createInkId('hl');
+    editorRef.current?.focus();
+    const wrapped = wrapSelectionAsComment(highlightId);
+    if (!wrapped) return;
+    const thread = createCommentThread(author, body.trim(), highlightId);
+    updateComments([thread, ...comments]);
+    setCommentsOpen(true);
+    handleInput();
+  };
+
   const contextMenuItems: ContextMenuItem[] = [
     {
       id: CONTEXT_MENU_ID_BOLD,
@@ -453,6 +481,31 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       onSelect: () => handleFormat('underline'),
     },
     {
+      id: CONTEXT_MENU_ID_STRIKE,
+      label: CONTEXT_MENU_LABEL_STRIKE,
+      onSelect: () => handleFormat('strikethrough'),
+    },
+    {
+      id: CONTEXT_MENU_ID_HEADING,
+      label: CONTEXT_MENU_LABEL_HEADING,
+      onSelect: () => handleFormat('heading2'),
+    },
+    {
+      id: CONTEXT_MENU_ID_BULLET,
+      label: CONTEXT_MENU_LABEL_BULLET,
+      onSelect: () => handleFormat('bulletList'),
+    },
+    {
+      id: CONTEXT_MENU_ID_ORDERED,
+      label: CONTEXT_MENU_LABEL_ORDERED,
+      onSelect: () => handleFormat('orderedList'),
+    },
+    {
+      id: CONTEXT_MENU_ID_LINK,
+      label: CONTEXT_MENU_LABEL_LINK,
+      onSelect: () => handleLink(),
+    },
+    {
       id: CONTEXT_MENU_ID_CLEAR,
       label: CONTEXT_MENU_LABEL_CLEAR,
       onSelect: () => handleFormat('clearFormat'),
@@ -463,21 +516,19 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       disabled: !features.findReplace,
       onSelect: () => setFindReplaceOpen(true),
     },
+    {
+      id: CONTEXT_MENU_ID_SIGNATURE,
+      label: CONTEXT_MENU_LABEL_SIGNATURE,
+      disabled: !features.signature,
+      onSelect: () => setSignPadOpen(true),
+    },
+    {
+      id: CONTEXT_MENU_ID_COMMENT,
+      label: CONTEXT_MENU_LABEL_COMMENT,
+      disabled: !features.comments,
+      onSelect: () => handleAddComment(),
+    },
   ];
-
-  const handleAddComment = () => {
-    if (disabled || readOnly || !features.comments) return;
-    const body = window.prompt('Comment:');
-    if (!body?.trim()) return;
-    const highlightId = createInkId('hl');
-    editorRef.current?.focus();
-    const wrapped = wrapSelectionAsComment(highlightId);
-    if (!wrapped) return;
-    const thread = createCommentThread(author, body.trim(), highlightId);
-    updateComments([thread, ...comments]);
-    setCommentsOpen(true);
-    handleInput();
-  };
 
   const handleAcceptChange = (id: string) => {
     if (!editorRef.current) return;
