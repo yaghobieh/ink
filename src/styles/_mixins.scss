@@ -9,7 +9,8 @@
   $muted: $ink-color-muted,
   $accent: $ink-color-accent,
   $accent-soft: $ink-color-accent-soft,
-  $shadow: $ink-color-shadow
+  $shadow: $ink-color-shadow,
+  $table-header: $ink-color-table-header
 ) {
   --ink-border: #{$border};
   --ink-bg: #{$bg};
@@ -19,6 +20,7 @@
   --ink-accent: #{$accent};
   --ink-accent-soft: #{$accent-soft};
   --ink-shadow: #{$shadow};
+  --ink-table-header: #{$table-header};
 }
 
 @mixin ink-flex($direction: row, $wrap: nowrap, $gap: 0) {

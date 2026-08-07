@@ -1,7 +1,14 @@
 export { cn } from './cn.utils';
 export { applyTypoAutoFix } from './typo.utils';
 export { createInkId } from './id.utils';
-export { buildTableHtml } from './table.utils';
+export {
+  buildTableHtml,
+  getTableCellFromSelection,
+  insertTableRow,
+  insertTableColumn,
+  deleteTableRow,
+  deleteTableColumn,
+} from './table.utils';
 export {
   getBlockElement,
   moveBlock,

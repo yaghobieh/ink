@@ -31,6 +31,12 @@ import {
   CONTEXT_MENU_ID_SHOW_TOOLBAR,
   CONTEXT_MENU_ID_SIGNATURE,
   CONTEXT_MENU_ID_STRIKE,
+  CONTEXT_MENU_ID_TABLE_COL_LEFT,
+  CONTEXT_MENU_ID_TABLE_COL_RIGHT,
+  CONTEXT_MENU_ID_TABLE_DELETE_COL,
+  CONTEXT_MENU_ID_TABLE_DELETE_ROW,
+  CONTEXT_MENU_ID_TABLE_ROW_ABOVE,
+  CONTEXT_MENU_ID_TABLE_ROW_BELOW,
   CONTEXT_MENU_ID_UNDERLINE,
   CONTEXT_MENU_LABEL_BOLD,
   CONTEXT_MENU_LABEL_BULLET,
@@ -44,6 +50,12 @@ import {
   CONTEXT_MENU_LABEL_SHOW_TOOLBAR,
   CONTEXT_MENU_LABEL_SIGNATURE,
   CONTEXT_MENU_LABEL_STRIKE,
+  CONTEXT_MENU_LABEL_TABLE_COL_LEFT,
+  CONTEXT_MENU_LABEL_TABLE_COL_RIGHT,
+  CONTEXT_MENU_LABEL_TABLE_DELETE_COL,
+  CONTEXT_MENU_LABEL_TABLE_DELETE_ROW,
+  CONTEXT_MENU_LABEL_TABLE_ROW_ABOVE,
+  CONTEXT_MENU_LABEL_TABLE_ROW_BELOW,
   CONTEXT_MENU_LABEL_UNDERLINE,
   DIR_LTR,
   DIR_RTL,
@@ -107,6 +119,11 @@ import {
   applyTypoAutoFix,
   buildTableHtml,
   buildVisibleToolbarItems,
+  deleteTableColumn,
+  deleteTableRow,
+  getTableCellFromSelection,
+  insertTableColumn,
+  insertTableRow,
   clearBlockDragClasses,
   cn,
   createCommentThread,
@@ -304,6 +321,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [findReplaceChoice, setFindReplaceChoice] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
   const [contextMenu, setContextMenu] = useState({ open: false, x: NUMBER_ZERO, y: NUMBER_ZERO });
+  const [tableContextActive, setTableContextActive] = useState(false);
   const [toolbarContextMenu, setToolbarContextMenu] = useState({
     open: false,
     x: NUMBER_ZERO,
@@ -828,6 +846,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (disabled || readOnly) return;
     event.preventDefault();
     setToolbarContextMenu((prev) => (prev.open ? { ...prev, open: false } : prev));
+    setTableContextActive(Boolean(features.table && getTableCellFromSelection()));
     setContextMenu({ open: true, x: event.clientX, y: event.clientY });
   };
 
@@ -865,7 +884,53 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     },
   ];
 
+  const runTableMutation = (
+    mutate: (cell: HTMLTableCellElement) => boolean,
+  ): void => {
+    const cell = getTableCellFromSelection();
+    if (!cell || !features.table) return;
+    if (!mutate(cell)) return;
+    handleInput();
+  };
+
+  const tableContextMenuItems: ContextMenuItem[] =
+    features.table && tableContextActive
+      ? [
+          {
+            id: CONTEXT_MENU_ID_TABLE_ROW_ABOVE,
+            label: CONTEXT_MENU_LABEL_TABLE_ROW_ABOVE,
+            onSelect: () => runTableMutation((cell) => insertTableRow(cell, 'before')),
+          },
+          {
+            id: CONTEXT_MENU_ID_TABLE_ROW_BELOW,
+            label: CONTEXT_MENU_LABEL_TABLE_ROW_BELOW,
+            onSelect: () => runTableMutation((cell) => insertTableRow(cell, 'after')),
+          },
+          {
+            id: CONTEXT_MENU_ID_TABLE_COL_LEFT,
+            label: CONTEXT_MENU_LABEL_TABLE_COL_LEFT,
+            onSelect: () => runTableMutation((cell) => insertTableColumn(cell, 'before')),
+          },
+          {
+            id: CONTEXT_MENU_ID_TABLE_COL_RIGHT,
+            label: CONTEXT_MENU_LABEL_TABLE_COL_RIGHT,
+            onSelect: () => runTableMutation((cell) => insertTableColumn(cell, 'after')),
+          },
+          {
+            id: CONTEXT_MENU_ID_TABLE_DELETE_ROW,
+            label: CONTEXT_MENU_LABEL_TABLE_DELETE_ROW,
+            onSelect: () => runTableMutation((cell) => deleteTableRow(cell)),
+          },
+          {
+            id: CONTEXT_MENU_ID_TABLE_DELETE_COL,
+            label: CONTEXT_MENU_LABEL_TABLE_DELETE_COL,
+            onSelect: () => runTableMutation((cell) => deleteTableColumn(cell)),
+          },
+        ]
+      : [];
+
   const contextMenuItems: ContextMenuItem[] = [
+    ...tableContextMenuItems,
     {
       id: CONTEXT_MENU_ID_BOLD,
       label: CONTEXT_MENU_LABEL_BOLD,
@@ -1549,7 +1614,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             y={contextMenu.y}
             items={contextMenuItems}
             colorMode={colorModeAttr}
-            onClose={() => setContextMenu((prev) => ({ ...prev, open: false }))}
+            onClose={() => {
+              setTableContextActive(false);
+              setContextMenu((prev) => ({ ...prev, open: false }));
+            }}
           />
           <ContextMenu
             open={toolbarContextMenu.open}

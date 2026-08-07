@@ -7,6 +7,8 @@
 - Ink server AI bridge (`createInkServerAiProvider`) posting to `/api/ai/complete`
 - `autocomplete` capability on `InkAiCapability` and `ai.autocomplete` config (default on when AI enabled)
 - Inline AI autocomplete ghost suggestions (Tab accept, Escape dismiss) while typing
+- Table context menu: insert/delete row and column (right-click inside a cell)
+- Table helpers: `insertTableRow`, `insertTableColumn`, `deleteTableRow`, `deleteTableColumn`, `getTableCellFromSelection`
 - Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons, `GripIcon`
 - Path aliases: `@common-components`, `@utils`, `@const`
 - SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
@@ -38,6 +40,7 @@
 - Controlled `value` sync no longer resets the caret to the top on Enter while focused
 - List markers visible again (`ul`/`ol` list-style + indent under `.Ink-Editor__content`)
 - Toolbar buttons preserve contenteditable selection (`onMouseDown` preventDefault)
+- Table header cells use `--ink-table-header` (dark mode no longer flashes a light gray header)
 - Context menu outside-click close ignores clicks inside the portaled menu
 - Enter / HTML replace while focused restores selection range; editor focus uses `preventScroll`
 - Clear format (`clearFormat`) also strips color / background styles from the selection

@@ -282,7 +282,8 @@
 }
 
 .Ink-Editor__content .Ink-table th {
-  background: #f1f5f9;
+  background: var(--ink-table-header, var(--ink-toolbar));
+  color: var(--ink-text);
   font-weight: 650;
   text-align: left;
 }
@@ -730,7 +731,8 @@
     $muted: $ink-color-muted-dark,
     $accent: $ink-color-accent-dark,
     $accent-soft: $ink-color-accent-soft-dark,
-    $shadow: $ink-color-shadow-dark
+    $shadow: $ink-color-shadow-dark,
+    $table-header: $ink-color-table-header-dark
   );
 }
 
@@ -744,7 +746,8 @@
       $muted: $ink-color-muted-dark,
       $accent: $ink-color-accent-dark,
       $accent-soft: $ink-color-accent-soft-dark,
-      $shadow: $ink-color-shadow-dark
+      $shadow: $ink-color-shadow-dark,
+      $table-header: $ink-color-table-header-dark
     );
   }
 }
@@ -783,6 +786,7 @@
   --ink-muted: #a1a1aa;
   --ink-accent: #2dd4bf;
   --ink-accent-soft: rgb(45 212 191 / 0.15);
+  --ink-table-header: #{$ink-color-table-header-dark};
 }
 
 .ink-theme-minimal .Ink-Editor,
