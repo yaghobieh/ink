@@ -1,0 +1,45 @@
+$ink-color-border: #e5e7eb;
+$ink-color-bg: #ffffff;
+$ink-color-toolbar: #f8fafc;
+$ink-color-text: #0f172a;
+$ink-color-muted: #64748b;
+$ink-color-accent: #0d9488;
+$ink-color-accent-soft: #ccfbf1;
+$ink-color-shadow: 0 10px 40px rgb(15 23 42 / 0.08);
+$ink-radius: 1rem;
+$ink-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+$ink-color-border-dark: #3f3f46;
+$ink-color-bg-dark: #18181b;
+$ink-color-toolbar-dark: #27272a;
+$ink-color-text-dark: #f4f4f5;
+$ink-color-muted-dark: #a1a1aa;
+$ink-color-accent-dark: #2dd4bf;
+$ink-color-accent-soft-dark: rgb(45 212 191 / 0.15);
+$ink-color-shadow-dark: 0 10px 40px rgb(0 0 0 / 0.35);
+
+$ink-color-table-header: #f1f5f9;
+$ink-color-track-bar: #fffbeb;
+$ink-color-track-label: #92400e;
+$ink-color-track-chip-border: #fde68a;
+$ink-color-delete: #991b1b;
+$ink-color-comment: #fde047;
+$ink-color-warning: #fbbf24;
+$ink-color-error: #f87171;
+$ink-color-comments-surface: #fcfcfd;
+
+$ink-space-1: 0.25rem;
+$ink-space-2: 0.5rem;
+$ink-space-3: 0.75rem;
+$ink-button-size: 2rem;
+$ink-icon-size: 1rem;
+
+:root {
+  --ink-color-border: #{$ink-color-border};
+  --ink-color-bg: #{$ink-color-bg};
+  --ink-color-toolbar: #{$ink-color-toolbar};
+  --ink-color-text: #{$ink-color-text};
+  --ink-color-muted: #{$ink-color-muted};
+  --ink-color-accent: #{$ink-color-accent};
+  --ink-color-accent-soft: #{$ink-color-accent-soft};
+}

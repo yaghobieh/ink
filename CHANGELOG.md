@@ -1,6 +1,20 @@
 # Changelog
 
-## Unreleased — 1.1.3
+## Unreleased — 1.1.4
+
+### Added
+- Common components: `Button`, `Box`, `Field`, `Canvas`, `ContextMenu`, undo/redo SVG icons
+- Path aliases: `@common-components`, `@utils`, `@const`
+- SCSS pipeline (`_vars.scss`, `_mixins.scss`, `ink.scss`) with shared theme tokens
+- Right-click context menu (bold / italic / underline / clear / find)
+- Theming docs (`docs/theming.md`)
+
+### Changed
+- SignPad / FindReplace / ToolbarButton reuse common Button, Field, Canvas, Box
+- Default undo/redo icons are stroke SVGs (premium `icons` override still works)
+- Styles build compiles SCSS → `dist/styles.css` (CSS source removed)
+
+## 1.1.3
 
 ### Fixed
 - `keepInMemory` restores drafts on mount in controlled mode via `onChange`

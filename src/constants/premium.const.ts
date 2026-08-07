@@ -1,4 +1,4 @@
-import type { InkIconKey, InkPremiumFeature, InkThemeTokens } from '../types';
+import type { InkPremiumFeature, InkThemeTokens } from '../types';
 
 export const INK_PREMIUM_LICENSE_PREFIX = 'ink_prem_';
 
@@ -9,35 +9,6 @@ export const INK_PREMIUM_FEATURES: InkPremiumFeature[] = [
   'imageUpload',
   'wysiwyg',
 ];
-
-export const INK_DEFAULT_ICONS: Record<InkIconKey, string> = {
-  bold: 'B',
-  italic: 'I',
-  underline: 'U',
-  strikethrough: 'S',
-  bulletList: '•',
-  orderedList: '1.',
-  link: '🔗',
-  image: '🖼',
-  table: '▦',
-  signature: '✍',
-  findReplace: '⌕',
-  horizontalRule: '―',
-  undo: '↶',
-  redo: '↷',
-  trackChanges: '±',
-  comments: '💬',
-  ai: '✦',
-  clearFormat: '⌫',
-  alignLeft: '⫷',
-  alignCenter: '☰',
-  alignRight: '⫸',
-  alignJustify: '≡',
-  indent: '→',
-  outdent: '←',
-  blockquote: '“',
-  code: '</>',
-};
 
 export const INK_THEME_CSS_VARS: Record<keyof InkThemeTokens, string> = {
   border: '--ink-border',

@@ -5,3 +5,5 @@ export * from './typos.const';
 export * from './defaults.const';
 export * from './aiModels.const';
 export * from './premium.const';
+export * from './defaultIcons';
+export * from './contextMenu.const';

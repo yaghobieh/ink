@@ -1,16 +1,13 @@
+@use 'vars' as *;
+@use 'mixins' as *;
+@use 'components/common';
+
 .Ink-Editor {
-  --ink-border: #e5e7eb;
-  --ink-bg: #ffffff;
-  --ink-toolbar: #f8fafc;
-  --ink-text: #0f172a;
-  --ink-muted: #64748b;
-  --ink-accent: #0d9488;
-  --ink-accent-soft: #ccfbf1;
-  --ink-shadow: 0 10px 40px rgb(15 23 42 / 0.08);
-  --ink-radius: 1rem;
-  --ink-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  @include ink-theme-tokens;
+  --ink-radius: #{$ink-radius};
+  --ink-font-family: #{$ink-font-family};
   --ink-ai-accent: var(--ink-accent);
-  --ink-ai-surface: #f8fafc;
+  --ink-ai-surface: var(--ink-toolbar);
   --ink-ai-border: var(--ink-border);
   border: 1px solid var(--ink-border);
   border-radius: var(--ink-radius);
@@ -62,31 +59,20 @@
   background: var(--ink-toolbar);
 }
 
-.Ink-Editor__button,
+.Ink-Editor__button {
+  @include ink-button-base;
+}
+
 .Ink-Editor__select {
   border: 0;
   background: transparent;
   color: inherit;
   border-radius: 0.45rem;
   cursor: pointer;
-}
 
-.Ink-Editor__button {
-  min-width: 2rem;
-  height: 2rem;
-  padding: 0 0.4rem;
-  font-weight: 650;
-  font-size: 0.85rem;
-}
-
-.Ink-Editor__button:hover,
-.Ink-Editor__select:hover {
-  background: rgb(15 23 42 / 0.05);
-}
-
-.Ink-Editor__button--active {
-  background: var(--ink-accent-soft);
-  color: var(--ink-accent);
+  &:hover {
+    background: rgb(15 23 42 / 0.05);
+  }
 }
 
 .Ink-Editor__select {
@@ -604,14 +590,16 @@
 
 @media (prefers-color-scheme: dark) {
   .Ink-Editor {
-    --ink-border: #3f3f46;
-    --ink-bg: #18181b;
-    --ink-toolbar: #27272a;
-    --ink-text: #f4f4f5;
-    --ink-muted: #a1a1aa;
-    --ink-accent: #2dd4bf;
-    --ink-accent-soft: rgb(45 212 191 / 0.15);
-    --ink-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+    @include ink-theme-tokens(
+      $border: $ink-color-border-dark,
+      $bg: $ink-color-bg-dark,
+      $toolbar: $ink-color-toolbar-dark,
+      $text: $ink-color-text-dark,
+      $muted: $ink-color-muted-dark,
+      $accent: $ink-color-accent-dark,
+      $accent-soft: $ink-color-accent-soft-dark,
+      $shadow: $ink-color-shadow-dark
+    );
   }
 }
 
@@ -689,16 +677,7 @@
 }
 
 .Ink-FindReplace__field {
-  color: var(--ink-muted);
-}
-
-.Ink-FindReplace__field input {
-  border: 1px solid var(--ink-border);
-  border-radius: 0.4rem;
-  padding: 0.4rem 0.55rem;
-  background: var(--ink-bg);
-  color: var(--ink-text);
-  font: inherit;
+  @include ink-field;
 }
 
 .flex { display: flex; }

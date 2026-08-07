@@ -5,6 +5,7 @@ import {
   type FC,
   type ClipboardEvent,
   type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
 } from 'react';
 import type {
@@ -15,6 +16,16 @@ import type {
   ToolbarOption,
 } from '../../types';
 import {
+  CONTEXT_MENU_ID_BOLD,
+  CONTEXT_MENU_ID_CLEAR,
+  CONTEXT_MENU_ID_FIND,
+  CONTEXT_MENU_ID_ITALIC,
+  CONTEXT_MENU_ID_UNDERLINE,
+  CONTEXT_MENU_LABEL_BOLD,
+  CONTEXT_MENU_LABEL_CLEAR,
+  CONTEXT_MENU_LABEL_FIND,
+  CONTEXT_MENU_LABEL_ITALIC,
+  CONTEXT_MENU_LABEL_UNDERLINE,
   INK_BUTTON_CONFIG,
   INK_CLASS_BODY,
   INK_CLASS_CONTENT,
@@ -68,6 +79,7 @@ import {
   wrapInsertHtml,
   wrapSelectionAsComment,
 } from '../../utils';
+import { ContextMenu, type ContextMenuItem } from '@common-components';
 import {
   execCommand,
   fileToDataUrl,
@@ -174,6 +186,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
 
   const trackChanges = trackChangesProp ?? localTrackChanges;
   const comments = commentsProp ?? localComments;
@@ -416,6 +429,41 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
     setHtml(html);
   };
+
+  const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    if (disabled || readOnly) return;
+    event.preventDefault();
+    setContextMenu({ open: true, x: event.clientX, y: event.clientY });
+  };
+
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      id: CONTEXT_MENU_ID_BOLD,
+      label: CONTEXT_MENU_LABEL_BOLD,
+      onSelect: () => handleFormat('bold'),
+    },
+    {
+      id: CONTEXT_MENU_ID_ITALIC,
+      label: CONTEXT_MENU_LABEL_ITALIC,
+      onSelect: () => handleFormat('italic'),
+    },
+    {
+      id: CONTEXT_MENU_ID_UNDERLINE,
+      label: CONTEXT_MENU_LABEL_UNDERLINE,
+      onSelect: () => handleFormat('underline'),
+    },
+    {
+      id: CONTEXT_MENU_ID_CLEAR,
+      label: CONTEXT_MENU_LABEL_CLEAR,
+      onSelect: () => handleFormat('clearFormat'),
+    },
+    {
+      id: CONTEXT_MENU_ID_FIND,
+      label: CONTEXT_MENU_LABEL_FIND,
+      disabled: !features.findReplace,
+      onSelect: () => setFindReplaceOpen(true),
+    },
+  ];
 
   const handleAddComment = () => {
     if (disabled || readOnly || !features.comments) return;
@@ -841,6 +889,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onKeyUp={refreshFormats}
             onKeyDown={handleKeyDown}
             onMouseUp={refreshFormats}
+            onContextMenu={handleContextMenu}
             onPaste={(event) => {
               void handlePaste(event);
             }}
@@ -853,6 +902,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onSelect={applySlash}
             />
           ) : null}
+          <ContextMenu
+            open={contextMenu.open}
+            x={contextMenu.x}
+            y={contextMenu.y}
+            items={contextMenuItems}
+            onClose={() => setContextMenu((prev) => ({ ...prev, open: false }))}
+          />
         </div>
         {commentsOpen && features.comments ? (
           <CommentsPanel

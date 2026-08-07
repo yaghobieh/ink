@@ -1,0 +1,10 @@
+export const CONTEXT_MENU_ID_BOLD = 'bold';
+export const CONTEXT_MENU_ID_ITALIC = 'italic';
+export const CONTEXT_MENU_ID_UNDERLINE = 'underline';
+export const CONTEXT_MENU_ID_CLEAR = 'clearFormat';
+export const CONTEXT_MENU_ID_FIND = 'findReplace';
+export const CONTEXT_MENU_LABEL_BOLD = 'Bold';
+export const CONTEXT_MENU_LABEL_ITALIC = 'Italic';
+export const CONTEXT_MENU_LABEL_UNDERLINE = 'Underline';
+export const CONTEXT_MENU_LABEL_CLEAR = 'Clear format';
+export const CONTEXT_MENU_LABEL_FIND = 'Find and replace';

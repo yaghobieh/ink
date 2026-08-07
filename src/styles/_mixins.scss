@@ -1,0 +1,84 @@
+@forward 'vars';
+@use 'vars' as *;
+
+@mixin ink-theme-tokens(
+  $border: $ink-color-border,
+  $bg: $ink-color-bg,
+  $toolbar: $ink-color-toolbar,
+  $text: $ink-color-text,
+  $muted: $ink-color-muted,
+  $accent: $ink-color-accent,
+  $accent-soft: $ink-color-accent-soft,
+  $shadow: $ink-color-shadow
+) {
+  --ink-border: #{$border};
+  --ink-bg: #{$bg};
+  --ink-toolbar: #{$toolbar};
+  --ink-text: #{$text};
+  --ink-muted: #{$muted};
+  --ink-accent: #{$accent};
+  --ink-accent-soft: #{$accent-soft};
+  --ink-shadow: #{$shadow};
+}
+
+@mixin ink-flex($direction: row, $wrap: nowrap, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+
+@mixin ink-button-base {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  min-width: $ink-button-size;
+  height: $ink-button-size;
+  padding: 0 0.4rem;
+  font-weight: 650;
+  font-size: 0.85rem;
+
+  &:hover {
+    background: rgb(15 23 42 / 0.05);
+  }
+
+  &--active {
+    background: var(--ink-accent-soft);
+    color: var(--ink-accent);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+@mixin ink-field {
+  @include ink-flex($direction: column, $gap: $ink-space-1);
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+
+  input {
+    border: 1px solid var(--ink-border);
+    border-radius: 0.4rem;
+    padding: 0.4rem 0.55rem;
+    background: var(--ink-bg);
+    color: var(--ink-text);
+    font: inherit;
+  }
+}
+
+@mixin ink-box {
+  display: block;
+  box-sizing: border-box;
+}
+
+@mixin ink-panel {
+  @include ink-flex($direction: column, $gap: $ink-space-2);
+  padding: $ink-space-3;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-toolbar);
+  color: var(--ink-text);
+}
