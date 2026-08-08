@@ -9,6 +9,7 @@ export const CONTEXT_MENU_ID_SHOW_TOOLBAR = 'show-toolbar';
 export const CONTEXT_MENU_LABEL_SHOW_TOOLBAR = 'Show toolbar';
 
 export const TOOLBAR_SHOW_CONTROL_LABEL = 'Show toolbar';
+export const AGENT_BAR_PLACEHOLDER = 'Ask about this document or request a change…';
 export const TOOLBAR_SHOW_CONTROL_ARIA_LABEL = 'Show formatting toolbar';
 
 export const TOOLBAR_STORAGE_KEY_HIDDEN = 'ink-toolbar-hidden';

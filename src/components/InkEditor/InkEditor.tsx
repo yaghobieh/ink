@@ -112,6 +112,7 @@ import {
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
+  AGENT_BAR_PLACEHOLDER,
   TOOLBAR_SHOW_CONTROL_LABEL,
 } from '../../constants';
 import {
@@ -1538,6 +1539,11 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           onAcceptAll={() => trackChanges.forEach((change) => handleAcceptChange(change.id))}
           onRejectAll={() => trackChanges.forEach((change) => handleRejectChange(change.id))}
         />
+      ) : null}
+      {variant === 'agent' ? (
+        <div className="Ink-Editor__agent-bar" role="status">
+          {AGENT_BAR_PLACEHOLDER}
+        </div>
       ) : null}
       <div className={INK_CLASS_SHELL}>
         <div className={INK_CLASS_BODY}>
