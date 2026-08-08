@@ -1,6 +1,6 @@
 {
   "name": "@forgedevstack/ink",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "ForgeStack rich text editor for React — WYSIWYG with tables, track changes, comments, block handles, sign pad, and pluggable Ink AI (BYO LLM). The writing layer of ForgeStack.",
   "type": "module",
   "main": "./dist/index.cjs",
