@@ -13,7 +13,13 @@ export type InkFeatureName =
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 
-export type InkEditorVariant = 'classic' | 'document';
+export type InkEditorVariant =
+  | 'classic'
+  | 'document'
+  | 'simple'
+  | 'agent'
+  | 'docx'
+  | 'notion-like';
 
 export type InkEditorChrome = 'boxed' | 'borderless';
 

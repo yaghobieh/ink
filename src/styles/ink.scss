@@ -40,9 +40,101 @@
   padding: 0.4rem 0.6rem;
 }
 
-.Ink-Editor[data-variant='document'] {
+.Ink-Editor[data-variant='document'],
+.Ink-Editor[data-variant='docx'] {
   --ink-toolbar: #ffffff;
   box-shadow: 0 4px 24px rgb(15 23 42 / 0.06);
+}
+
+.Ink-Editor[data-variant='docx'] {
+  --ink-accent: #2b579a;
+  border-color: #d0d7de;
+  background: #f3f3f3;
+}
+
+.Ink-Editor[data-variant='docx'] .Ink-Editor__toolbar {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f3f7 100%);
+  border-bottom: 1px solid #c8d0d8;
+}
+
+.Ink-Editor[data-variant='docx'] .Ink-Editor__content {
+  max-width: 48rem;
+  margin: 1rem auto;
+  min-height: 22rem;
+  background: #ffffff;
+  border: 1px solid #d8dee6;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+  padding: 2.5rem 3rem;
+}
+
+.Ink-Editor[data-variant='simple'] {
+  --ink-toolbar: transparent;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.Ink-Editor[data-variant='simple'] .Ink-Editor__toolbar {
+  border-bottom: none;
+  padding-inline: 0;
+  gap: 0.25rem;
+}
+
+.Ink-Editor[data-variant='simple'] .Ink-Editor__content {
+  padding: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.Ink-Editor[data-variant='notion-like'] {
+  --ink-toolbar: transparent;
+  --ink-accent: #111827;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  background: #ffffff;
+}
+
+.Ink-Editor[data-variant='notion-like'] .Ink-Editor__toolbar {
+  border-bottom: none;
+  background: transparent;
+  opacity: 0.85;
+}
+
+.Ink-Editor[data-variant='notion-like'] .Ink-Editor__content {
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-block: 2rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.Ink-Editor[data-variant='agent'] {
+  --ink-toolbar: #f8fafc;
+  --ink-accent: #0f766e;
+  box-shadow: 0 8px 28px rgb(15 23 42 / 0.08);
+  border-color: rgb(15 118 110 / 0.25);
+}
+
+.Ink-Editor[data-variant='agent'] .Ink-Editor__shell {
+  position: relative;
+}
+
+.Ink-Editor[data-variant='agent'] .Ink-Editor__toolbar {
+  background: linear-gradient(180deg, #f0fdfa 0%, #f8fafc 100%);
+}
+
+.Ink-Editor__agent-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.75rem 1rem 1rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgb(15 118 110 / 0.25);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ecfdf5 0%, #ffffff 55%);
+  box-shadow: 0 8px 20px rgb(15 118 110 / 0.08);
+  color: #0f766e;
+  font-size: 0.9rem;
 }
 
 .Ink-Editor[data-disabled='true'] {

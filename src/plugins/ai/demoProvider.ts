@@ -111,12 +111,30 @@ const runDemo = async (request: InkAiRequest): Promise<InkAiResponse> => {
       };
     }
     case 'autocomplete': {
-      const prefix = prompt || plain;
-      const continuation = prefix.trim().length
-        ? ' and continue with a clear next phrase.'
-        : 'Start typing to see a demo completion.';
+      const prefix = (prompt || plain).trim();
+      const phraseHints: Array<{ match: RegExp; completion: string }> = [
+        { match: /\bhi[,]?\s*how$/i, completion: ' are you?' },
+        { match: /\bhow are$/i, completion: ' you today?' },
+        { match: /\bthank$/i, completion: ' you!' },
+        { match: /\bplease$/i, completion: ' review this draft.' },
+        { match: /\blet'?s$/i, completion: ' continue with the next section.' },
+        { match: /\bin conclusion$/i, completion: ', the key takeaway is clear.' },
+      ];
+      const hit = phraseHints.find((entry) => entry.match.test(prefix));
+      if (hit) {
+        return {
+          text: hit.completion,
+          meta: { provider: INK_AI_DEMO_PROVIDER_ID, model: INK_AI_DEMO_MODEL_ID },
+        };
+      }
+      if (!prefix.length) {
+        return {
+          text: 'Start typing to see a demo completion.',
+          meta: { provider: INK_AI_DEMO_PROVIDER_ID, model: INK_AI_DEMO_MODEL_ID },
+        };
+      }
       return {
-        text: continuation,
+        text: ' — continue with a clear next phrase.',
         meta: { provider: INK_AI_DEMO_PROVIDER_ID, model: INK_AI_DEMO_MODEL_ID },
       };
     }
