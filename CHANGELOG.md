@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.6
+
+### Added
+- Demo autocomplete phrase hints for common short prefixes (e.g. `Hi, How`)
+
+### Changed
+- Portal consumers should register OpenAI / ink-server providers for real ghost suggestions
+
+## 1.1.5
+
+### Note
+- Editor variants chrome shipped via `feature/1.1.6-editor-views` and released as **1.1.6**
+
 ## 1.1.4
 
 ### Added
