@@ -10,8 +10,12 @@
 
 ## 1.1.5
 
+### Added
+- Editor variants chrome (`simple` / `agent` / `docx` / `notion-like` shells)
+
 ### Note
-- Editor variants chrome shipped via `feature/1.1.6-editor-views` and released as **1.1.6**
+- npm: `@forgedevstack/ink@1.1.5` published to fill the version gap (dist-tag `historical`; `latest` remains 1.1.6)
+- Portal/CMS dashboard track continued into **1.1.6**
 
 ## 1.1.4
 
