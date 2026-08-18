@@ -21,6 +21,6 @@
 
 ## Sprint model
 
-Integration branch: `release/{sprint}`  
-Feature branches: `feature/ink-{n}` → PR into release  
+Integration branch: `release/{sprint}` (CMS now: `feature/1.1.7-cms-real`)  
+Ticket branches: `{feature|bug}/{PROJECT}-{n}` (e.g. `feature/INK-26`) → PR into integration  
 Sprint ship: merge release → `main`, close sprint, bump npm patch/minor.
