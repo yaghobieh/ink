@@ -35,6 +35,7 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   fontDropdown: 'Font',
   bulletList: 'Bullet list',
   orderedList: 'Numbered list',
+  checklist: 'Checklist',
   listDropdown: 'List',
   blockquote: 'Quote',
   code: 'Code',

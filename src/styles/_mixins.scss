@@ -21,6 +21,12 @@
   --ink-accent-soft: #{$accent-soft};
   --ink-shadow: #{$shadow};
   --ink-table-header: #{$table-header};
+  --ink-ai: #{$ink-color-ai};
+  --ink-ai-soft: #{$ink-color-ai-soft};
+  --ink-canvas: #{$ink-color-canvas};
+  --ink-border-strong: #{$ink-color-border-strong};
+  --ink-text-tertiary: #{$ink-color-text-tertiary};
+  --ink-font-mono: #{$ink-font-mono};
 }
 
 @mixin ink-flex($direction: row, $wrap: nowrap, $gap: 0) {
@@ -33,22 +39,34 @@
 @mixin ink-button-base {
   border: 0;
   background: transparent;
-  color: inherit;
-  border-radius: 0.45rem;
+  color: var(--ink-muted);
+  border-radius: 0.3125rem;
   cursor: pointer;
   min-width: $ink-button-size;
+  width: $ink-button-size;
   height: $ink-button-size;
-  padding: 0 0.4rem;
-  font-weight: 650;
-  font-size: 0.85rem;
+  padding: 0;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: $ink-icon-size;
+    height: $ink-icon-size;
+    display: block;
+  }
 
   &:hover {
     background: rgb(15 23 42 / 0.05);
+    color: var(--ink-text);
   }
 
   &--active {
     background: var(--ink-accent-soft);
     color: var(--ink-accent);
+    box-shadow: inset 0 0 0 1px var(--ink-accent);
   }
 
   &:disabled {

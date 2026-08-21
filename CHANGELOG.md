@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.1.7
+
+### Added
+- Slash menu search row, category groups, descriptions, and keyboard shortcuts
+- Slash inserts for paragraph, heading 3, quote, callout, code, and image
+- Status bar word count + synced label when `showCharCount` is on
+- Ask Ink AI toolbar pill
+- `⌘K` opens the AI panel
+- Paragraph / heading / font / list menus are a light boxed popover (white surface, Accent Soft hover, Ink Blue selected)
+- Checklist toolbar button and `/todo` slash insert
+- Format cluster uses letter glyphs B I U S in 28px buttons; active tools use accent fill + border
+- Thin-stroke toolbar icons for lists, image, link, table, and quote
+- Paragraph dropdown is a light boxed menu (Accent Soft hover, Ink Blue selected)
+- Slash menu selected row, enter shortcut, and Type / + ⌘K hint
+- Outline rail for document variant (`showOutline`, heading jump)
+- Status bar line/column and synced indicator
+- Premium `splitEditors` for extra document tabs ($19 pack and above)
+
+### Changed
+- Editor tokens match the redesign (accent `#2951C4`, AI teal, tighter toolbar groups)
+
 ## 1.1.6
 
 ### Added

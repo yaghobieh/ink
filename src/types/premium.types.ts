@@ -6,7 +6,8 @@ export type InkPremiumFeature =
   | 'theme'
   | 'richPaste'
   | 'imageUpload'
-  | 'wysiwyg';
+  | 'wysiwyg'
+  | 'splitEditors';
 
 export type InkPasteMode = 'plain' | 'rich';
 
@@ -18,6 +19,7 @@ export type InkIconKey = Extract<
   | 'strikethrough'
   | 'bulletList'
   | 'orderedList'
+  | 'checklist'
   | 'link'
   | 'image'
   | 'table'

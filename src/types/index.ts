@@ -7,6 +7,7 @@ export type {
   ToolbarColorPickerProps,
   TypoFixResult,
   SlashCommandItem,
+  SlashInsert,
 } from './ink.types';
 
 export type {
@@ -64,3 +65,5 @@ export type {
   InkImageUploadHandler,
   InkThemeStyle,
 } from './premium.types';
+
+export type { OutlineItem } from './outline.types';

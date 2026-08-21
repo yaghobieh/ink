@@ -11,7 +11,7 @@ export const INK_TABLE_MAX_COLS = 12;
 export const INK_HISTORY_MAX = 50;
 export const INK_COMMENT_HIGHLIGHT_COLOR = '#fde047';
 export const INK_BLOCK_HANDLE_OFFSET_PX = 28;
-export const INK_SLASH_MENU_MAX_ITEMS = 8;
+export const INK_SLASH_MENU_MAX_ITEMS = 16;
 export const INK_AI_PANEL_WIDTH_PX = 320;
 export const INK_COMMENTS_PANEL_WIDTH_PX = 300;
 export const INK_DEMO_AI_DELAY_MS = 180;
@@ -119,4 +119,8 @@ export const NUMBER_NINETY_NINE = 99;
 export const NUMBER_ONE_HUNDRED = 100;
 export const NUMBER_TWO_HUNDRED_FIFTY = 250;
 export const NUMBER_TWO_HUNDRED_FIFTY_FIVE = 255;
+export const INK_STYLE_MENU_GAP_PX = 6;
+export const INK_STYLE_MENU_MIN_WIDTH_PX = 180;
+export const INK_STYLE_MENU_ESTIMATED_HEIGHT_PX = 280;
+export const INK_STYLE_MENU_EDGE_PX = 8;
 
