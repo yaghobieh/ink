@@ -8,6 +8,7 @@ export const INK_PREMIUM_FEATURES: InkPremiumFeature[] = [
   'richPaste',
   'imageUpload',
   'wysiwyg',
+  'splitEditors',
 ];
 
 export const INK_THEME_CSS_VARS: Record<keyof InkThemeTokens, string> = {

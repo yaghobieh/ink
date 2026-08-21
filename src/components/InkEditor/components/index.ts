@@ -32,6 +32,8 @@ export type {
   InlineToolbarProps,
 } from './InlineToolbar';
 export { SlashMenu } from './SlashMenu';
+export { OutlineRail } from './OutlineRail';
+export type { OutlineRailProps } from './OutlineRail';
 export { TrackChangesBar } from './TrackChangesBar';
 export { SignPad } from './SignPad';
 export { FindReplace } from './FindReplace';

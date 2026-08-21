@@ -32,6 +32,7 @@ export type ToolbarOption =
   | 'fontDropdown'
   | 'bulletList'
   | 'orderedList'
+  | 'checklist'
   | 'listDropdown'
   | 'blockquote'
   | 'code'
@@ -105,6 +106,7 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onToolbarChange?: (items: ToolbarOption[]) => void;
   toolbarHidden?: boolean;
   onToolbarHiddenChange?: (hidden: boolean) => void;
+  showOutline?: boolean;
 }
 
 export interface ToolbarButtonProps {
@@ -113,11 +115,14 @@ export interface ToolbarButtonProps {
   active?: boolean;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
 export interface DropdownOption {
   value: string;
   label: string;
+  description?: string;
+  mark?: string;
 }
 
 export interface ToolbarDropdownProps {
@@ -141,9 +146,28 @@ export interface TypoFixResult {
   fixedCount: number;
 }
 
+export type SlashInsert =
+  | 'heading1'
+  | 'heading2'
+  | 'heading3'
+  | 'paragraph'
+  | 'bulletList'
+  | 'orderedList'
+  | 'checklist'
+  | 'table'
+  | 'ai'
+  | 'image'
+  | 'code'
+  | 'callout'
+  | 'quote';
+
 export interface SlashCommandItem {
   id: string;
   label: string;
   keywords: string[];
-  insert: 'heading1' | 'heading2' | 'bulletList' | 'orderedList' | 'table' | 'ai';
+  insert: SlashInsert;
+  description: string;
+  category: string;
+  shortcut: string;
+  mark: string;
 }
