@@ -8,4 +8,4 @@ export { Field } from './Field';
 export type { FieldProps } from './Field';
 export { ContextMenu } from './ContextMenu';
 export type { ContextMenuItem, ContextMenuProps } from './ContextMenu';
-export { UndoIcon, RedoIcon, GripIcon } from './icons';
+export { UndoIcon, RedoIcon, GripIcon, BulletListIcon, OrderedListIcon, ChecklistIcon, ImageToolIcon, LinkToolIcon, TableToolIcon, QuoteIcon } from './icons';

@@ -39,7 +39,8 @@ Agent will populate from `INK_BOARD_BOOTSTRAP.json` (Sprint 0 done work + Sprint
 | Item | Pattern |
 |---|---|
 | Release branch | `release/{version}` e.g. `release/1.1.4` — **must match sprint name** |
-| Feature branch | `feature/ink-{n}` or `feature/portal-…` |
+| Feature branch | `feature/{PROJECT}-{n}` e.g. `feature/INK-26` (board key, not hardcoded ink) |
+| Bug branch | `bug/{PROJECT}-{n}` e.g. `bug/INK-53` |
 | PR target | release branch (not main) |
 | Labels | `library` / `portal` / `backend` + `sprint-1.1.4` |
 | Start work | → In Progress |

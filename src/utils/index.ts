@@ -34,7 +34,10 @@ export {
   removeCommentMark,
 } from './comments.utils';
 export { InkHistoryStack } from './history.utils';
-export { filterSlashCommands, extractSlashQuery } from './slash.utils';
+export { filterSlashCommands, extractSlashQuery, groupSlashCommands } from './slash.utils';
+export type { SlashCommandGroup } from './slash.utils';
+export { countWords } from './words.utils';
+export { collectOutlineItems, getCaretLineCol, scrollOutlineHeading } from './outline.utils';
 export {
   resolveInkPremium,
   hasInkPremiumFeature,

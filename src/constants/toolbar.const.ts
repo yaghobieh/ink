@@ -1,3 +1,4 @@
+export const TOOLBAR_OPTION_CHECKLIST = 'checklist' as const;
 export const TOOLBAR_OPTION_SIGNATURE = 'signature' as const;
 export const TOOLBAR_OPTION_FIND_REPLACE = 'findReplace' as const;
 export const TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN = 'findReplaceDropdown' as const;

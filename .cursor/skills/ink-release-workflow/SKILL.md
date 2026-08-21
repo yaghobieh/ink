@@ -6,7 +6,7 @@ description: Ink release workflow — version bump, CHANGELOG, build, publish.
 # Ink release workflow
 
 1. Update `CHANGELOG.md`
-2. Branch `release/x.y.z`
+2. Branch `release/x.y.z`. Ticket work uses `{feature|bug}/{PROJECT}-{n}` (e.g. `feature/INK-26`).
 3. Create GitHub milestone + issues
 4. PR → merge to `main`
 5. First publish: keep version exact (e.g. `1.0.0`); later patch bumps via `publish.yml`

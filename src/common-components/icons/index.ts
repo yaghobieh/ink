@@ -1,3 +1,10 @@
 export { UndoIcon } from './UndoIcon';
 export { RedoIcon } from './RedoIcon';
 export { GripIcon } from './GripIcon';
+export { BulletListIcon } from './BulletListIcon';
+export { OrderedListIcon } from './OrderedListIcon';
+export { ChecklistIcon } from './ChecklistIcon';
+export { ImageToolIcon } from './ImageToolIcon';
+export { LinkToolIcon } from './LinkToolIcon';
+export { TableToolIcon } from './TableToolIcon';
+export { QuoteIcon } from './QuoteIcon';

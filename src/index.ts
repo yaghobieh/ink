@@ -55,6 +55,7 @@ export {
   INK_DEFAULT_TOOLBAR,
   INK_SIMPLE_TOOLBAR,
   INK_COLLAB_TOOLBAR,
+  INK_CHROME_TOOLBAR,
   INK_HEADING_OPTIONS,
   INK_FONT_OPTIONS,
   INK_LIST_OPTIONS,
@@ -87,6 +88,7 @@ export type {
   ToolbarOption,
   TypoFixResult,
   SlashCommandItem,
+  SlashInsert,
   InkAiCapability,
   InkAiRequest,
   InkAiResponse,
@@ -119,4 +121,5 @@ export type {
   InkPremiumConfig,
   InkResolvedPremium,
   InkImageUploadHandler,
+  OutlineItem,
 } from './types';

@@ -10,3 +10,4 @@ alwaysApply: true
 | **ink-release-workflow** | Version bump, CHANGELOG, build, publish |
 
 UI work follows ForgeStack Developer UI conventions. Publishing follows `@forgedevstack/*` CI pattern.
+Git branches from Jira: `{feature|bug}/{PROJECT}-{n}` (e.g. `feature/INK-26`). See `git-jira-branching.mdc`.

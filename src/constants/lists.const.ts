@@ -19,6 +19,7 @@ export const LIST_STYLE_LOWER_ALPHA = 'lower-alpha';
 
 export const LIST_CLASS_DASH = 'Ink-list--dash';
 export const LIST_CLASS_ALPHA = 'Ink-list--alpha';
+export const LIST_CLASS_CHECK = 'Ink-list--check';
 
 export const LIST_TAG_UL = 'UL';
 export const LIST_TAG_OL = 'OL';

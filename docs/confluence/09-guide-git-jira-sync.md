@@ -2,9 +2,9 @@
 
 **Tags:** library, portal
 
-1. GitHub issue title starts with `INK-X:` when linked to Jira.
-2. Branch `feature/ink-X` references the same number.
-3. PR body includes `Closes #GH` and `Jira: INK-X`.
+1. GitHub issue title starts with `{PROJECT}-{n}:` when linked to Jira (e.g. `INK-26:`, `CMS-35:`).
+2. Branch `{feature|bug}/{PROJECT}-{n}` uses the same key (`feature/INK-26`, `bug/CMS-22`).
+3. PR body includes `Closes #GH` and `Jira: {PROJECT}-{n}`.
 4. On PR merge to `release/*` → Jira **In Review** (or Done if policy says so).
 5. On `release/*` → `main` merge → close sprint issues; close linked GitHub issues; bump npm.
 

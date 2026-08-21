@@ -5,7 +5,8 @@
   "labels": ["library", "portal", "sprint-0", "sprint-1", "sprint-2"],
   "branching": {
     "release": "release/{sprint}",
-    "feature": "feature/ink-{issueNumber}",
+    "feature": "feature/{PROJECT}-{issueNumber}",
+    "bug": "bug/{PROJECT}-{issueNumber}",
     "prTarget": "release/{sprint}",
     "sprintMerge": "release/{sprint} -> main",
     "afterSprintMerge": ["close sprint", "npm version patch", "publish @forgedevstack/ink"]

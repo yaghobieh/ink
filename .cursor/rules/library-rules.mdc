@@ -8,4 +8,4 @@ globs: src/**/*.ts,src/**/*.tsx,src/**/*.css
 - Peer deps: React only for core; Angular optional peer.
 - Premium features gated via `resolveInkPremium` / `hasInkPremiumFeature`.
 - Do not name competitor products in user-facing strings or README marketing lines.
-- Branching: `feature/ink-{n}` → `release/{sprint}` → `main`.
+- Branching: `{feature|bug}/{PROJECT}-{n}` (e.g. `feature/INK-26`) → integration (`feature/1.1.7-cms-real` or `release/{sprint}`) → `main`. See `git-jira-branching.mdc`.

@@ -13,6 +13,7 @@ import type {
   InkCommentThread,
   InkEditorProps,
   InkTrackChange,
+  OutlineItem,
   SlashCommandItem,
   ToolbarOption,
 } from '../../types';
@@ -59,6 +60,7 @@ import {
   CONTEXT_MENU_LABEL_UNDERLINE,
   DIR_LTR,
   DIR_RTL,
+  EMPTY_STRING,
   FIND_REPLACE_DROPDOWN_TITLE,
   FIND_REPLACE_FOCUS_FIND,
   FIND_REPLACE_FOCUS_REPLACE,
@@ -70,7 +72,14 @@ import {
   INK_CLASS_BODY,
   INK_CLASS_CONTENT,
   INK_CLASS_DIVIDER,
+  INK_CALLOUT_HTML,
+  INK_CHECKLIST_HTML,
+  INK_CLASS_AI_PILL,
+  INK_CLASS_AI_PILL_DOT,
+  INK_CLASS_BUTTON_LABEL,
+  INK_CLASS_BUTTON_WIDE,
   INK_CLASS_FOOTER,
+  INK_CLASS_FOOTER_META,
   INK_CLASS_ROOT,
   INK_CLASS_SHELL,
   INK_CLASS_TOOLBAR,
@@ -82,9 +91,22 @@ import {
   INK_DEFAULT_HIGHLIGHT_COLOR,
   INK_DEFAULT_ICONS,
   INK_DEFAULT_TEXT_COLOR,
+  INK_CHROME_TOOLBAR,
   INK_DEFAULT_TOOLBAR,
   INK_DEFAULT_VARIANT,
   INK_FIND_REPLACE_OPTIONS,
+  INK_FOOTER_CHARS_LABEL,
+  INK_FOOTER_COL_LABEL,
+  INK_FOOTER_DOT,
+  INK_FOOTER_LINE_LABEL,
+  INK_FOOTER_SYNCED_LABEL,
+  INK_FOOTER_WORDS_LABEL,
+  INK_FORMAT_BLOCK_H1,
+  INK_FORMAT_BLOCK_H2,
+  INK_FORMAT_BLOCK_H3,
+  INK_FORMAT_BLOCK_P,
+  INK_FORMAT_BLOCK_PRE,
+  INK_FORMAT_BLOCK_QUOTE,
   INK_FONT_OPTIONS,
   INK_HEADING_OPTIONS,
   INK_LIST_OPTIONS,
@@ -93,17 +115,23 @@ import {
   INK_TABLE_DEFAULT_COLS,
   INK_TABLE_DEFAULT_ROWS,
   INK_AI_DEMO_PROVIDER_ID,
+  INK_VARIANT_DOCUMENT,
   KEY_ENTER,
   KEY_ESCAPE,
+  KEY_K,
   KEY_TAB,
   KEY_Z,
+  INK_AI_PILL_LABEL,
+  INK_CODE_LABEL,
   LIST_DROPDOWN_TITLE,
   LIST_VALUE_BULLET,
+  NUMBER_ONE,
   NUMBER_ZERO,
   TOOLBAR_CONTEXT_MENU_ID_CUSTOMIZE,
   TOOLBAR_CONTEXT_MENU_ID_HIDE,
   TOOLBAR_CONTEXT_MENU_LABEL_CUSTOMIZE,
   TOOLBAR_CONTEXT_MENU_LABEL_HIDE,
+  TOOLBAR_OPTION_CHECKLIST,
   TOOLBAR_OPTION_DIVIDER,
   TOOLBAR_OPTION_FIND_REPLACE,
   TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN,
@@ -132,6 +160,10 @@ import {
   createTrackChange,
   extractClipboardHtml,
   extractClipboardText,
+  countWords,
+  collectOutlineItems,
+  getCaretLineCol,
+  scrollOutlineHeading,
   extractSlashQuery,
   filterSlashCommands,
   getBlockElement,
@@ -196,6 +228,7 @@ import {
   getCaretPositionInRoot,
   getTextBeforeCaret,
   InlineToolbar,
+  OutlineRail,
   SignPad,
   SlashMenu,
   ToolbarButton,
@@ -235,7 +268,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     readOnly = false,
     minHeight = INK_MIN_HEIGHT,
     maxHeight,
-    toolbar = INK_DEFAULT_TOOLBAR,
+    toolbar: toolbarProp,
     className = '',
     testId,
     allowImagePaste = true,
@@ -270,10 +303,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     onToolbarChange,
     toolbarHidden: toolbarHiddenProp,
     onToolbarHiddenChange,
+    showOutline,
     style: styleProp,
     ...rest
   } = props;
 
+  const toolbar =
+    toolbarProp ?? (variant === INK_VARIANT_DOCUMENT ? INK_CHROME_TOOLBAR : INK_DEFAULT_TOOLBAR);
   const features = { ...INK_DEFAULT_FEATURES, ...featuresProp };
   const premium = resolveInkPremium(premiumProp);
   const canUseIcons = hasInkPremiumFeature(premium, 'icons');
@@ -290,7 +326,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const dragBlockRef = useRef<HTMLElement | null>(null);
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const [currentBlock, setCurrentBlock] = useState('p');
-  const [charCount, setCharCount] = useState(0);
+  const [charCount, setCharCount] = useState(NUMBER_ZERO);
+  const [wordCount, setWordCount] = useState(NUMBER_ZERO);
+  const [caretLine, setCaretLine] = useState(NUMBER_ONE);
+  const [caretCol, setCaretCol] = useState(NUMBER_ONE);
+  const [outlineItems, setOutlineItems] = useState<OutlineItem[]>([]);
+  const [activeOutlineIndex, setActiveOutlineIndex] = useState(NUMBER_ZERO);
+  const [slashQuery, setSlashQuery] = useState(EMPTY_STRING);
   const [textColorValue, setTextColorValue] = useState(INK_DEFAULT_TEXT_COLOR);
   const [highlightColorValue, setHighlightColorValue] = useState(INK_DEFAULT_HIGHLIGHT_COLOR);
   const [trackChangesEnabled, setTrackChangesEnabled] = useState(trackChangesEnabledProp ?? false);
@@ -348,6 +390,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const comments = commentsProp ?? localComments;
   const commentsOpen = showCommentsPanelProp ?? showCommentsPanel;
   const slashEnabled = slashCommands ?? features.slash;
+  const outlineEnabled = showOutline ?? variant === INK_VARIANT_DOCUMENT;
   const isToolbarHidden = toolbarHiddenProp ?? localToolbarHidden;
   const toolbarCatalog = toolbar;
   const customizableOptions = listCustomizableToolbarOptions(toolbarCatalog);
@@ -520,8 +563,16 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     onChange?.(html);
     if (keepInMemory) writeInkMemory(html, memoryKey);
     if (showCharCount && editorRef.current) {
-      setCharCount(editorRef.current.textContent?.length ?? 0);
+      const text = editorRef.current.textContent ?? EMPTY_STRING;
+      setCharCount(text.length);
+      setWordCount(countWords(text));
     }
+    if (outlineEnabled) {
+      setOutlineItems(collectOutlineItems(editorRef.current));
+    }
+    const caret = getCaretLineCol(editorRef.current);
+    setCaretLine(caret.line);
+    setCaretCol(caret.col);
   };
 
   const setHtml = (html: string) => {
@@ -616,6 +667,12 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     setCurrentList(detectListType());
     setSelectionHtml(getSelectionHtml());
     updateInlineToolbar();
+    const caret = getCaretLineCol(editorRef.current);
+    setCaretLine(caret.line);
+    setCaretCol(caret.col);
+    if (outlineEnabled) {
+      setOutlineItems(collectOutlineItems(editorRef.current));
+    }
     if (!editorRef.current || !features.blocks) return;
     const selection = window.getSelection();
     const anchor = selection?.anchorNode ?? null;
@@ -652,6 +709,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       const text = window.getSelection()?.anchorNode?.textContent ?? '';
       const query = extractSlashQuery(text);
       if (query !== null) {
+        setSlashQuery(query);
         setSlashItems(filterSlashCommands(query));
         const range = window.getSelection()?.getRangeAt(0);
         if (range && editorRef.current) {
@@ -663,6 +721,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           });
         }
       } else {
+        setSlashQuery(EMPTY_STRING);
         setSlashItems([]);
       }
     }
@@ -723,8 +782,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       handleInput();
       return;
     }
-    if (format === 'superscript' || format === 'subscript') {
-      execCommand(format);
+    if (format === TOOLBAR_OPTION_CHECKLIST) {
+      insertHTML(INK_CHECKLIST_HTML);
       handleInput();
       return;
     }
@@ -1109,6 +1168,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       setSlashItems([]);
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
     }
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === KEY_K) {
+      event.preventDefault();
+      if (features.ai && ai?.enabled) {
+        setShowAiPanel(true);
+      }
+      return;
+    }
     if ((event.metaKey || event.ctrlKey) && event.key === KEY_Z) {
       event.preventDefault();
       if (event.shiftKey) handleRedo();
@@ -1126,13 +1192,20 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         selection.anchorNode.textContent = cleaned;
       }
     }
+    setSlashQuery(EMPTY_STRING);
     setSlashItems([]);
     switch (item.insert) {
       case 'heading1':
-        execCommand('formatBlock', 'h1');
+        execCommand('formatBlock', INK_FORMAT_BLOCK_H1);
         break;
       case 'heading2':
-        execCommand('formatBlock', 'h2');
+        execCommand('formatBlock', INK_FORMAT_BLOCK_H2);
+        break;
+      case 'heading3':
+        execCommand('formatBlock', INK_FORMAT_BLOCK_H3);
+        break;
+      case 'paragraph':
+        execCommand('formatBlock', INK_FORMAT_BLOCK_P);
         break;
       case 'bulletList':
         execCommand('insertUnorderedList');
@@ -1140,8 +1213,23 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       case 'orderedList':
         execCommand('insertOrderedList');
         break;
+      case 'checklist':
+        insertHTML(INK_CHECKLIST_HTML);
+        break;
+      case 'quote':
+        execCommand('formatBlock', INK_FORMAT_BLOCK_QUOTE);
+        break;
+      case 'code':
+        execCommand('formatBlock', INK_FORMAT_BLOCK_PRE);
+        break;
+      case 'callout':
+        insertHTML(INK_CALLOUT_HTML);
+        break;
       case 'table':
         handleTable();
+        return;
+      case 'image':
+        void handleImage();
         return;
       case 'ai':
         setShowAiPanel(true);
@@ -1320,6 +1408,17 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === TOOLBAR_OPTION_CHECKLIST) {
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_CHECKLIST}
+          icon={icons.checklist}
+          title="Checklist"
+          disabled={disabled || readOnly}
+          onClick={() => handleFormat(TOOLBAR_OPTION_CHECKLIST)}
+        />
+      );
+    }
     if (item === 'table') {
       if (!features.table) return null;
       return (
@@ -1441,17 +1540,44 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === 'code') {
+      const config = INK_BUTTON_CONFIG.code;
+      return (
+        <ToolbarButton
+          key="code"
+          className={INK_CLASS_BUTTON_WIDE}
+          icon={
+            <>
+              {icons.code}
+              <span className={INK_CLASS_BUTTON_LABEL}>{INK_CODE_LABEL}</span>
+            </>
+          }
+          title={config.title}
+          active={activeFormats.has(item)}
+          disabled={disabled || readOnly}
+          onClick={() => handleFormat(item)}
+        />
+      );
+    }
     if (item === 'ai') {
       if (!features.ai || !ai?.enabled) return null;
       return (
-        <ToolbarButton
+        <button
           key="ai"
-          icon={icons.ai}
-          title="Ink AI"
-          active={showAiPanel}
+          type="button"
+          className={INK_CLASS_AI_PILL}
+          title={INK_AI_PILL_LABEL}
+          aria-label={INK_AI_PILL_LABEL}
+          aria-pressed={showAiPanel}
           disabled={disabled || readOnly}
+          onMouseDown={(event) => {
+            event.preventDefault();
+          }}
           onClick={() => setShowAiPanel((prev) => !prev)}
-        />
+        >
+          <span className={INK_CLASS_AI_PILL_DOT} aria-hidden="true" />
+          {INK_AI_PILL_LABEL}
+        </button>
       );
     }
     const config = INK_BUTTON_CONFIG[item];
@@ -1546,6 +1672,17 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         </div>
       ) : null}
       <div className={INK_CLASS_SHELL}>
+        {outlineEnabled ? (
+          <OutlineRail
+            items={outlineItems}
+            activeIndex={activeOutlineIndex}
+            onSelect={(index) => {
+              if (!editorRef.current) return;
+              scrollOutlineHeading(editorRef.current, index);
+              setActiveOutlineIndex(index);
+            }}
+          />
+        ) : null}
         <div className={INK_CLASS_BODY}>
           {features.blocks ? (
             <BlockHandles
@@ -1584,6 +1721,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               items={slashItems}
               top={slashPos.top}
               left={slashPos.left}
+              query={slashQuery}
               onSelect={applySlash}
             />
           ) : null}
@@ -1694,8 +1832,16 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       </div>
       {showCharCount ? (
         <div className={INK_CLASS_FOOTER}>
-          {charCount}
-          {charCountMax ? ` / ${charCountMax}` : ''}
+          <span>
+            {wordCount} {INK_FOOTER_WORDS_LABEL} {INK_FOOTER_DOT} {charCount}
+            {charCountMax ? ` / ${charCountMax}` : ''} {INK_FOOTER_CHARS_LABEL}
+          </span>
+          <span className={INK_CLASS_FOOTER_META}>
+            <span>
+              {INK_FOOTER_LINE_LABEL} {caretLine}, {INK_FOOTER_COL_LABEL} {caretCol}
+            </span>
+            <span className="Ink-Editor__footer-sync">{INK_FOOTER_SYNCED_LABEL}</span>
+          </span>
         </div>
       ) : null}
     </div>
