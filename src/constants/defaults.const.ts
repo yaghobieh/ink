@@ -20,6 +20,13 @@ import {
   TOOLBAR_OPTION_FONT_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
   TOOLBAR_OPTION_CHECKLIST,
+  TOOLBAR_OPTION_HTML_SOURCE,
+  TOOLBAR_OPTION_TITLES,
+  TOOLBAR_OPTION_EXCEL,
+  TOOLBAR_OPTION_GRAPH,
+  TOOLBAR_OPTION_OUTLINE,
+  TOOLBAR_OPTION_FULLSCREEN,
+  TOOLBAR_OPTION_THEME,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_OPTION_SUBSCRIPT,
@@ -48,6 +55,13 @@ export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'link',
   'image',
   'table',
+  TOOLBAR_OPTION_TITLES,
+  TOOLBAR_OPTION_EXCEL,
+  TOOLBAR_OPTION_GRAPH,
+  TOOLBAR_OPTION_OUTLINE,
+  TOOLBAR_OPTION_THEME,
+  TOOLBAR_OPTION_FULLSCREEN,
+  TOOLBAR_OPTION_HTML_SOURCE,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
@@ -79,6 +93,7 @@ export const INK_COLLAB_TOOLBAR: ToolbarOption[] = [
   'divider',
   TOOLBAR_OPTION_LIST_DROPDOWN,
   'table',
+  TOOLBAR_OPTION_HTML_SOURCE,
   'divider',
   'trackChanges',
   'comments',
@@ -104,7 +119,14 @@ export const INK_CHROME_TOOLBAR: ToolbarOption[] = [
   'image',
   'link',
   'table',
+  TOOLBAR_OPTION_TITLES,
+  TOOLBAR_OPTION_EXCEL,
+  TOOLBAR_OPTION_GRAPH,
+  TOOLBAR_OPTION_OUTLINE,
+  TOOLBAR_OPTION_THEME,
+  TOOLBAR_OPTION_FULLSCREEN,
   'code',
+  TOOLBAR_OPTION_HTML_SOURCE,
   'divider',
   'undo',
   'redo',
@@ -178,6 +200,51 @@ export const INK_CLASS_STYLE_DD = 'Ink-Editor__style-dd';
 export const INK_CLASS_STYLE_TRIGGER = 'Ink-Editor__style-dd-trigger';
 export const INK_CLASS_STYLE_MENU = 'Ink-Editor__style-menu';
 export const INK_CLASS_STYLE_MENU_PORTAL = 'Ink-Editor__style-menu--portal';
+export const INK_CLASS_STYLE_MENU_FORCED = 'Ink-Editor__style-menu--forced-light';
+export const INK_CLASS_SOURCE = 'Ink-Editor__source';
+export const INK_CLASS_CONTENT_HIDDEN = 'Ink-Editor__content--hidden';
+export const INK_CLASS_TABLE_PICKER = 'Ink-Editor__table-picker';
+export const INK_CLASS_TABLE_PICKER_GRID = 'Ink-Editor__table-picker-grid';
+export const INK_CLASS_TABLE_PICKER_CELL = 'Ink-Editor__table-picker-cell';
+export const INK_CLASS_TABLE_PICKER_CELL_ON = 'Ink-Editor__table-picker-cell--on';
+export const INK_CLASS_TABLE_PICKER_LABEL = 'Ink-Editor__table-picker-label';
+export const INK_CLASS_TABLE_RESIZE = 'Ink-table--resizing';
+export const INK_CLASS_TITLE = 'Ink-title';
+export const INK_CLASS_TITLE_GALLERY = 'Ink-Editor__title-gallery';
+export const INK_CLASS_TITLE_GRID = 'Ink-Editor__title-grid';
+export const INK_CLASS_TITLE_CELL = 'Ink-Editor__title-cell';
+export const INK_CLASS_EXCEL_PANEL = 'Ink-Editor__excel';
+export const INK_CLASS_EXCEL_GRID = 'Ink-Editor__excel-grid';
+export const INK_CLASS_EXCEL_CELL = 'Ink-Editor__excel-cell';
+export const INK_CLASS_EXCEL_ACTIONS = 'Ink-Editor__excel-actions';
+export const INK_CLASS_EXCEL_TITLE = 'Ink-Editor__excel-title';
+export const INK_CLASS_EXCEL_INSERT = 'Ink-Editor__excel-insert';
+export const INK_CLASS_GRAPH_PANEL = 'Ink-Editor__graph';
+export const INK_CLASS_GRAPH_TYPES = 'Ink-Editor__graph-types';
+export const INK_CLASS_GRAPH_PREVIEW = 'Ink-Editor__graph-preview';
+export const INK_CLASS_GRAPH_WRAP = 'Ink-graph';
+export const INK_CLASS_GRAPH_BLOCK = 'Ink-graph-block';
+export const INK_CLASS_TOOLBAR_HINT = 'Ink-Editor__toolbar-hint';
+export const INK_CLASS_TOOLBAR_ROW = 'Ink-Editor__toolbar-row';
+export const INK_CLASS_TOOLBAR_MEASURE = 'Ink-Editor__toolbar-measure';
+export const INK_CLASS_TOOLBAR_OVERFLOW = 'Ink-Editor__toolbar-overflow';
+export const INK_CLASS_TOOLBAR_MORE = 'Ink-Editor__toolbar-more';
+export const INK_CLASS_EXCEL_HEAD = 'Ink-Editor__excel-head';
+export const INK_CLASS_EXCEL_CORNER = 'Ink-Editor__excel-corner';
+export const INK_CLASS_EXCEL_COL_HOVER = 'Ink-Editor__excel-cell--col';
+export const INK_CLASS_EXCEL_ROW_HOVER = 'Ink-Editor__excel-cell--row';
+export const INK_ATTR_GRAPH_COLORS = 'data-ink-graph-colors';
+export const INK_ATTR_MORE = 'data-ink-more';
+export const EXCEL_COL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const INK_CLASS_PLUGIN_PIP = 'Ink-Editor__plugin-pip';
+export const INK_CLASS_TOOL_WRAP = 'Ink-Editor__tool';
+export const INK_CLASS_AI_PILL_INSTALLED = 'Ink-AiPill--installed';
+export const INK_CLASS_OUTLINE_TOGGLE = 'Ink-Outline__toggle';
+export const INK_CLASS_AI_TAB = 'Ink-Ai__tab';
+export const INK_CLASS_AI_TAB_ON = 'Ink-Ai__tab--on';
+export const INK_ATTR_GRAPH = 'data-ink-graph';
+export const INK_ATTR_GRAPH_POINTS = 'data-ink-graph-points';
+export const INK_ATTR_TITLE = 'data-ink-title';
 export const INK_CLASS_STYLE_OPTION = 'Ink-Editor__style-option';
 export const INK_CLASS_STYLE_OPTION_SEL = 'Ink-Editor__style-option--sel';
 export const INK_CLASS_STYLE_OPTION_MARK = 'Ink-Editor__style-option-mark';
@@ -203,6 +270,7 @@ export const INK_CLASS_CALLOUT = 'Ink-callout';
 export const SLASH_CATEGORY_BASIC = 'Blocks';
 export const SLASH_CATEGORY_MEDIA = 'Media';
 export const SLASH_CATEGORY_AI = 'AI';
+export const SLASH_CATEGORY_PLUGINS = 'Plugins';
 export const SLASH_ARIA_LABEL = 'Insert a block';
 export const SLASH_SEARCH_LABEL = '';
 export const INK_FORMAT_BLOCK_H1 = 'h1';
@@ -220,6 +288,8 @@ export const INK_CLASS_OUTLINE_LABEL = 'Ink-Outline__label';
 export const INK_CLASS_OUTLINE_ITEM = 'Ink-Outline__item';
 export const INK_CLASS_OUTLINE_ITEM_ACTIVE = 'Ink-Outline__item--active';
 export const INK_OUTLINE_LABEL = 'Outline';
+export const INK_OUTLINE_EMPTY = 'No headings yet';
+export const INK_OUTLINE_HIDE = 'Hide';
 export const INK_OUTLINE_HEADING_SELECTOR = 'h1, h2, h3';
 export const INK_VARIANT_DOCUMENT = 'document';
 export const INK_CLASS_BODY = 'Ink-Editor__body';
@@ -244,6 +314,13 @@ export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   signature: true,
   findReplace: true,
   horizontalRule: true,
+  htmlSource: true,
+  titles: true,
+  excel: true,
+  graph: true,
+  outline: true,
+  fullscreen: true,
+  theme: true,
 };
 export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
 export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;
@@ -388,6 +465,36 @@ export const INK_SLASH_COMMANDS: SlashCommandItem[] = [
     category: SLASH_CATEGORY_AI,
     shortcut: SLASH_GENERATE_TABLE_SHORTCUT,
     mark: SLASH_GENERATE_TABLE_MARK,
+  },
+  {
+    id: 'titles',
+    label: 'Title',
+    keywords: ['title', 'wordart', 'heading', 'style'],
+    insert: 'titles',
+    description: 'Styled title from the titles gallery.',
+    category: SLASH_CATEGORY_PLUGINS,
+    shortcut: '/ti',
+    mark: 'Aa',
+  },
+  {
+    id: 'excel',
+    label: 'Sheet',
+    keywords: ['excel', 'sheet', 'csv', 'spreadsheet'],
+    insert: 'excel',
+    description: 'Insert a sheet grid or import CSV.',
+    category: SLASH_CATEGORY_PLUGINS,
+    shortcut: '/ex',
+    mark: '⊞',
+  },
+  {
+    id: 'graph',
+    label: 'Graph',
+    keywords: ['graph', 'chart', 'bar', 'pie'],
+    insert: 'graph',
+    description: 'Insert a bar, line, or pie graph.',
+    category: SLASH_CATEGORY_PLUGINS,
+    shortcut: '/gr',
+    mark: '▦',
   },
 ];
 

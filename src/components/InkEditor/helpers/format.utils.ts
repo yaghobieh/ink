@@ -49,12 +49,33 @@ export const queryCommandState = (command: string): boolean =>
 export const queryCommandValue = (command: string): string =>
   document.queryCommandValue(command);
 
-export const insertLink = (url: string): boolean => {
+const LINK_PROTOCOL_HTTP = 'http://';
+const LINK_PROTOCOL_HTTPS = 'https://';
+const LINK_PROTOCOL_MAILTO = 'mailto:';
+const ENTITY_AMP = '&amp;';
+const ENTITY_LT = '&lt;';
+const ENTITY_GT = '&gt;';
+const ENTITY_QUOT = '&quot;';
+
+const escapeLinkText = (value: string): string =>
+  value
+    .replace(/&/g, ENTITY_AMP)
+    .replace(/</g, ENTITY_LT)
+    .replace(/>/g, ENTITY_GT)
+    .replace(/"/g, ENTITY_QUOT);
+
+export const insertLink = (url: string, fallbackText = ''): boolean => {
   if (!url) return false;
   const formattedUrl =
-    url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')
+    url.startsWith(LINK_PROTOCOL_HTTP) ||
+    url.startsWith(LINK_PROTOCOL_HTTPS) ||
+    url.startsWith(LINK_PROTOCOL_MAILTO)
       ? url
-      : `https://${url}`;
+      : `${LINK_PROTOCOL_HTTPS}${url}`;
+  const selection = window.getSelection();
+  if ((!selection || selection.isCollapsed) && fallbackText) {
+    return execCommand('insertHTML', `<a href="${formattedUrl}">${escapeLinkText(fallbackText)}</a>`);
+  }
   return execCommand('createLink', formattedUrl);
 };
 

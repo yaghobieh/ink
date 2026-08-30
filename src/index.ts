@@ -26,6 +26,7 @@ export {
   insertTableColumn,
   deleteTableRow,
   deleteTableColumn,
+  toggleTableHeaderRow,
   buildVisibleToolbarItems,
   captureSelectionInRoot,
   createInkId,
@@ -51,6 +52,30 @@ export {
   createOpenAiProvider,
   createInkServerAiProvider,
 } from './plugins/ai';
+export { inkPlugins, createInkPluginHost } from './plugins/host';
+export {
+  TITLE_PREVIEW_TEXT,
+  TITLE_STYLE_DEFAULT,
+  TITLE_STYLE_IDS,
+  buildTitleHtml,
+  CSV_ACCEPT,
+  createEmptyExcelGrid,
+  excelGridToTableHtml,
+  parseCsvText,
+  setExcelCell,
+  GRAPH_KIND_DEFAULT,
+  GRAPH_KIND_LABELS,
+  GRAPH_KINDS,
+  GRAPH_SAMPLE,
+  buildGraphHtml,
+  parseGraphColors,
+  INK_THEMES,
+  THEME_DEFAULT,
+  applyInkTheme,
+  createInkThemePlugin,
+  inkTheme,
+} from './plugins';
+export type { TitleStyleId, ExcelGrid, GraphColors, GraphKind, GraphPoint, InkThemeId } from './plugins';
 export {
   INK_DEFAULT_TOOLBAR,
   INK_SIMPLE_TOOLBAR,
@@ -122,4 +147,6 @@ export type {
   InkResolvedPremium,
   InkImageUploadHandler,
   OutlineItem,
+  InkHostPlugin,
+  InkHostPluginId,
 } from './types';

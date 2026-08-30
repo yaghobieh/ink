@@ -5,8 +5,10 @@ import {
   deleteTableRow,
   insertTableColumn,
   insertTableRow,
+  setTableColumnWidth,
+  toggleTableHeaderRow,
 } from './table.utils';
-import { TABLE_CLASS_NAME } from '../constants/table.const';
+import { TABLE_CLASS_NAME, TABLE_COLGROUP } from '../constants/table.const';
 
 describe('table.utils', () => {
   beforeEach(() => {
@@ -18,6 +20,27 @@ describe('table.utils', () => {
     expect(html).toContain(TABLE_CLASS_NAME);
     expect(html).toContain('<th');
     expect(html).toContain('<td');
+    expect(html).toContain(`<${TABLE_COLGROUP}>`);
+  });
+
+  it('toggles the header row on and off', () => {
+    document.body.innerHTML = buildTableHtml(2, 2);
+    const cell = document.querySelector('td') as HTMLTableCellElement;
+    const table = document.querySelector('table') as HTMLTableElement;
+    expect(table.tHead).not.toBeNull();
+    expect(toggleTableHeaderRow(cell)).toBe(true);
+    expect(table.tHead).toBeNull();
+    const next = document.querySelector('td') as HTMLTableCellElement;
+    expect(toggleTableHeaderRow(next)).toBe(true);
+    expect(table.tHead).not.toBeNull();
+  });
+
+  it('sets a column width on the colgroup', () => {
+    document.body.innerHTML = buildTableHtml(2, 2);
+    const table = document.querySelector('table') as HTMLTableElement;
+    setTableColumnWidth(table, 0, 120);
+    const col = table.querySelector('col') as HTMLTableColElement;
+    expect(col.style.width).toBe('120px');
   });
 
   it('inserts a row below the active cell', () => {

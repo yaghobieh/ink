@@ -61,6 +61,13 @@ export type ToolbarOption =
   | 'indent'
   | 'outdent'
   | 'clearFormat'
+  | 'htmlSource'
+  | 'titles'
+  | 'excel'
+  | 'graph'
+  | 'outline'
+  | 'fullscreen'
+  | 'theme'
   | 'divider';
 
 export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -107,11 +114,15 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   toolbarHidden?: boolean;
   onToolbarHiddenChange?: (hidden: boolean) => void;
   showOutline?: boolean;
+  onOutlineChange?: (open: boolean) => void;
 }
 
 export interface ToolbarButtonProps {
   icon: ReactNode;
   title: string;
+  hint?: string;
+  onHint?: (hint: string) => void;
+  pluginColor?: string;
   active?: boolean;
   onClick: () => void;
   disabled?: boolean;
@@ -159,7 +170,10 @@ export type SlashInsert =
   | 'image'
   | 'code'
   | 'callout'
-  | 'quote';
+  | 'quote'
+  | 'titles'
+  | 'excel'
+  | 'graph';
 
 export interface SlashCommandItem {
   id: string;

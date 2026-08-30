@@ -34,3 +34,5 @@ export const CONTEXT_MENU_LABEL_TABLE_COL_LEFT = 'Insert column left';
 export const CONTEXT_MENU_LABEL_TABLE_COL_RIGHT = 'Insert column right';
 export const CONTEXT_MENU_LABEL_TABLE_DELETE_ROW = 'Delete row';
 export const CONTEXT_MENU_LABEL_TABLE_DELETE_COL = 'Delete column';
+export const CONTEXT_MENU_ID_TABLE_HEADER = 'tableHeader';
+export const CONTEXT_MENU_LABEL_TABLE_HEADER = 'Toggle header row';

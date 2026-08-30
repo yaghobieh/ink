@@ -67,3 +67,4 @@ export type {
 } from './premium.types';
 
 export type { OutlineItem } from './outline.types';
+export type { InkHostPlugin, InkHostPluginId } from './plugin.types';

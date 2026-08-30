@@ -36,6 +36,7 @@ import {
   CONTEXT_MENU_ID_TABLE_COL_RIGHT,
   CONTEXT_MENU_ID_TABLE_DELETE_COL,
   CONTEXT_MENU_ID_TABLE_DELETE_ROW,
+  CONTEXT_MENU_ID_TABLE_HEADER,
   CONTEXT_MENU_ID_TABLE_ROW_ABOVE,
   CONTEXT_MENU_ID_TABLE_ROW_BELOW,
   CONTEXT_MENU_ID_UNDERLINE,
@@ -55,6 +56,7 @@ import {
   CONTEXT_MENU_LABEL_TABLE_COL_RIGHT,
   CONTEXT_MENU_LABEL_TABLE_DELETE_COL,
   CONTEXT_MENU_LABEL_TABLE_DELETE_ROW,
+  CONTEXT_MENU_LABEL_TABLE_HEADER,
   CONTEXT_MENU_LABEL_TABLE_ROW_ABOVE,
   CONTEXT_MENU_LABEL_TABLE_ROW_BELOW,
   CONTEXT_MENU_LABEL_UNDERLINE,
@@ -71,6 +73,8 @@ import {
   INK_CLASS_BLOCK_ACTIVE,
   INK_CLASS_BODY,
   INK_CLASS_CONTENT,
+  INK_CLASS_CONTENT_HIDDEN,
+  INK_CLASS_TABLE_RESIZE,
   INK_CLASS_DIVIDER,
   INK_CALLOUT_HTML,
   INK_CHECKLIST_HTML,
@@ -112,8 +116,11 @@ import {
   INK_LIST_OPTIONS,
   INK_MIN_HEIGHT,
   INK_PLACEHOLDER_DEFAULT,
+  INK_TABLE_COL_RESIZE_EDGE_PX,
   INK_TABLE_DEFAULT_COLS,
   INK_TABLE_DEFAULT_ROWS,
+  TABLE_CELL_SELECTOR,
+  TABLE_TAG,
   INK_AI_DEMO_PROVIDER_ID,
   INK_VARIANT_DOCUMENT,
   KEY_ENTER,
@@ -123,6 +130,43 @@ import {
   KEY_Z,
   INK_AI_PILL_LABEL,
   INK_CODE_LABEL,
+  INK_HTML_SOURCE_LABEL,
+  INK_HTML_SOURCE_TITLE,
+  INK_LINK_PROMPT,
+  INK_LINK_PROMPT_DEFAULT,
+  INK_TITLES_DEFAULT_TEXT,
+  INK_OUTLINE_TOGGLE_TITLE,
+  INK_CLASS_TOOLBAR_HINT,
+  INK_CLASS_TOOLBAR_ROW,
+  INK_CLASS_TOOLBAR_MEASURE,
+  INK_CLASS_TOOLBAR_OVERFLOW,
+  INK_ATTR_MORE,
+  INK_ATTR_GRAPH_COLORS,
+  INK_CLASS_AI_PILL_INSTALLED,
+  INK_FULLSCREEN_TITLE,
+  INK_FULLSCREEN_EXIT_TITLE,
+  INK_TOOLBAR_MORE_TITLE,
+  TOOLBAR_OPTION_FULLSCREEN,
+  TOOLBAR_OPTION_THEME,
+  CONTEXT_MENU_ID_GRAPH_COLORS,
+  CONTEXT_MENU_LABEL_GRAPH_COLORS,
+  INK_ATTR_GRAPH,
+  INK_ATTR_GRAPH_POINTS,
+  CONTEXT_MENU_ID_GRAPH_BAR,
+  CONTEXT_MENU_ID_GRAPH_LINE,
+  CONTEXT_MENU_ID_GRAPH_PIE,
+  CONTEXT_MENU_ID_GRAPH_EDIT,
+  CONTEXT_MENU_ID_GRAPH_AI,
+  CONTEXT_MENU_LABEL_GRAPH_BAR,
+  CONTEXT_MENU_LABEL_GRAPH_LINE,
+  CONTEXT_MENU_LABEL_GRAPH_PIE,
+  CONTEXT_MENU_LABEL_GRAPH_EDIT,
+  CONTEXT_MENU_LABEL_GRAPH_AI,
+  TOOLBAR_OPTION_HINTS,
+  TOOLBAR_OPTION_TITLES,
+  TOOLBAR_OPTION_EXCEL,
+  TOOLBAR_OPTION_GRAPH,
+  TOOLBAR_OPTION_OUTLINE,
   LIST_DROPDOWN_TITLE,
   LIST_VALUE_BULLET,
   NUMBER_ONE,
@@ -137,6 +181,7 @@ import {
   TOOLBAR_OPTION_FIND_REPLACE_DROPDOWN,
   TOOLBAR_OPTION_FONT_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
+  TOOLBAR_OPTION_HTML_SOURCE,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
@@ -150,9 +195,12 @@ import {
   buildVisibleToolbarItems,
   deleteTableColumn,
   deleteTableRow,
+  getColumnResizeIndex,
   getTableCellFromSelection,
   insertTableColumn,
   insertTableRow,
+  setTableColumnWidth,
+  toggleTableHeaderRow,
   clearBlockDragClasses,
   cn,
   createCommentThread,
@@ -193,7 +241,28 @@ import {
   wrapDeleteHtml,
   wrapInsertHtml,
   wrapSelectionAsComment,
+  captureSelectionInRoot,
+  restoreSelectionInRoot,
 } from '../../utils';
+import {
+  TITLE_STYLE_DEFAULT,
+  buildTitleHtml,
+  buildGraphHtml,
+  createEmptyExcelGrid,
+  excelGridToTableHtml,
+  GRAPH_KIND_DEFAULT,
+  GRAPH_SAMPLE,
+  getGraphBlock,
+  parseGraphColors,
+  parseGraphPoints,
+  replaceGraphBlock,
+  applyInkTheme,
+  THEME_DEFAULT,
+} from '../../plugins';
+import { inkPlugins } from '../../plugins/host';
+import type { GraphKind } from '../../plugins/graph';
+import type { InkThemeId } from '../../plugins/theme';
+import { useToolbarOverflow } from '../../hooks';
 import { Button, ContextMenu, type ContextMenuItem } from '@common-components';
 import type { FindReplaceFocusField } from './components/FindReplace/FindReplace.types';
 import {
@@ -225,12 +294,19 @@ import {
   BLOCK_HANDLES_DRAG_PAYLOAD,
   CommentsPanel,
   FindReplace,
+  HtmlSourcePanel,
+  ExcelSheetPanel,
+  GraphEditModal,
+  GraphPicker,
+  ThemePicker,
+  TitleGallery,
   getCaretPositionInRoot,
   getTextBeforeCaret,
   InlineToolbar,
   OutlineRail,
   SignPad,
   SlashMenu,
+  TableSizePicker,
   ToolbarButton,
   ToolbarColorPicker,
   ToolbarCustomize,
@@ -304,6 +380,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     toolbarHidden: toolbarHiddenProp,
     onToolbarHiddenChange,
     showOutline,
+    onOutlineChange,
     style: styleProp,
     ...rest
   } = props;
@@ -321,9 +398,11 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const themeStyle = canUseTheme ? themeTokensToStyle(theme) : {};
   const richPasteEnabled = canUseRichPaste && pasteMode === 'rich';
   const editorRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef(new InkHistoryStack(value ?? defaultValue));
   const lastEmittedHtmlRef = useRef<string | null>(null);
   const dragBlockRef = useRef<HTMLElement | null>(null);
+  const selectionTextRef = useRef(EMPTY_STRING);
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const [currentBlock, setCurrentBlock] = useState('p');
   const [charCount, setCharCount] = useState(NUMBER_ZERO);
@@ -357,6 +436,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
   const [currentFont, setCurrentFont] = useState(FONT_VALUE_SYSTEM);
@@ -390,7 +471,20 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const comments = commentsProp ?? localComments;
   const commentsOpen = showCommentsPanelProp ?? showCommentsPanel;
   const slashEnabled = slashCommands ?? features.slash;
-  const outlineEnabled = showOutline ?? variant === INK_VARIANT_DOCUMENT;
+  const [outlineOpen, setOutlineOpen] = useState(
+    () => showOutline ?? variant === INK_VARIANT_DOCUMENT,
+  );
+  const [toolbarHint, setToolbarHint] = useState(EMPTY_STRING);
+  const [graphContextActive, setGraphContextActive] = useState(false);
+  const graphBlockRef = useRef<HTMLElement | null>(null);
+  const [graphEditOpen, setGraphEditOpen] = useState(false);
+  const [graphEditMode, setGraphEditMode] = useState<'values' | 'colors'>('values');
+  const [graphEditPoints, setGraphEditPoints] = useState(GRAPH_SAMPLE);
+  const [graphEditColors, setGraphEditColors] = useState(() => parseGraphColors(null));
+  const [themeId, setThemeId] = useState<InkThemeId>(THEME_DEFAULT);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const outlineEnabled = Boolean(features.outline && outlineOpen);
+  const toolbarOverflow = useToolbarOverflow(visibleToolbar.length);
   const isToolbarHidden = toolbarHiddenProp ?? localToolbarHidden;
   const toolbarCatalog = toolbar;
   const customizableOptions = listCustomizableToolbarOptions(toolbarCatalog);
@@ -547,14 +641,33 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       lastEmittedHtmlRef.current = remembered;
       historyRef.current = new InkHistoryStack(remembered);
       onChange?.(remembered);
+      if (features.outline) {
+        setOutlineItems(collectOutlineItems(editorRef.current));
+      }
       return;
     }
-    if (value !== undefined) return;
+    if (value !== undefined) {
+      if (features.outline) {
+        setOutlineItems(collectOutlineItems(editorRef.current));
+      }
+      return;
+    }
     if (!defaultValue) return;
     editorRef.current.innerHTML = defaultValue;
     lastEmittedHtmlRef.current = defaultValue;
     historyRef.current = new InkHistoryStack(defaultValue);
     onChange?.(defaultValue);
+    if (features.outline) {
+      setOutlineItems(collectOutlineItems(editorRef.current));
+    }
+  }, []);
+
+  useEffect(() => {
+    const onFullscreen = () => {
+      setIsFullscreen(document.fullscreenElement === rootRef.current);
+    };
+    document.addEventListener('fullscreenchange', onFullscreen);
+    return () => document.removeEventListener('fullscreenchange', onFullscreen);
   }, []);
 
   const emitChange = (html: string) => {
@@ -567,7 +680,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       setCharCount(text.length);
       setWordCount(countWords(text));
     }
-    if (outlineEnabled) {
+    if (features.outline) {
       setOutlineItems(collectOutlineItems(editorRef.current));
     }
     const caret = getCaretLineCol(editorRef.current);
@@ -666,11 +779,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
     setCurrentList(detectListType());
     setSelectionHtml(getSelectionHtml());
+    const marked = window.getSelection()?.toString().trim();
+    if (marked) {
+      selectionTextRef.current = marked;
+    }
     updateInlineToolbar();
     const caret = getCaretLineCol(editorRef.current);
     setCaretLine(caret.line);
     setCaretCol(caret.col);
-    if (outlineEnabled) {
+    if (features.outline) {
       setOutlineItems(collectOutlineItems(editorRef.current));
     }
     if (!editorRef.current || !features.blocks) return;
@@ -731,6 +848,57 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       dismissAiAutocomplete();
     }
   };
+
+  useEffect(() => {
+    const root = editorRef.current;
+    if (!root || disabled || readOnly || !features.table) return undefined;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const cell = target.closest(TABLE_CELL_SELECTOR) as HTMLTableCellElement | null;
+      if (!cell || !root.contains(cell)) return;
+      const table = cell.closest(TABLE_TAG) as HTMLTableElement | null;
+      if (!table) return;
+      const columnIndex = getColumnResizeIndex(event.clientX, cell, INK_TABLE_COL_RESIZE_EDGE_PX);
+      if (columnIndex === null) return;
+      event.preventDefault();
+      const startX = event.clientX;
+      const startWidth = cell.getBoundingClientRect().width;
+      table.classList.add(INK_CLASS_TABLE_RESIZE);
+      const onMove = (moveEvent: PointerEvent) => {
+        setTableColumnWidth(table, columnIndex, startWidth + (moveEvent.clientX - startX));
+      };
+      const onUp = () => {
+        table.classList.remove(INK_CLASS_TABLE_RESIZE);
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        handleInput();
+      };
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const cell = target.closest(TABLE_CELL_SELECTOR) as HTMLTableCellElement | null;
+      const tables = root.querySelectorAll(TABLE_TAG);
+      tables.forEach((node) => {
+        if (node.classList.contains(INK_CLASS_TABLE_RESIZE)) return;
+        node.classList.remove(INK_CLASS_TABLE_RESIZE);
+      });
+      if (!cell || !root.contains(cell)) return;
+      const table = cell.closest(TABLE_TAG) as HTMLTableElement | null;
+      if (!table) return;
+      if (getColumnResizeIndex(event.clientX, cell, INK_TABLE_COL_RESIZE_EDGE_PX) === null) return;
+      table.classList.add(INK_CLASS_TABLE_RESIZE);
+    };
+    root.addEventListener('pointerdown', onPointerDown);
+    root.addEventListener('pointermove', onPointerMove);
+    return () => {
+      root.removeEventListener('pointerdown', onPointerDown);
+      root.removeEventListener('pointermove', onPointerMove);
+    };
+  }, [disabled, readOnly, features.table]);
 
   const acceptAiAutocomplete = () => {
     const text = aiAutocomplete.suggestion;
@@ -838,11 +1006,26 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
 
   const handleLink = () => {
     if (disabled || readOnly) return;
-    const url = window.prompt('Enter URL:', 'https://');
+    const saved = captureSelectionInRoot(editorRef.current);
+    const marked = window.getSelection()?.toString().trim() || selectionTextRef.current;
+    const url = window.prompt(INK_LINK_PROMPT, INK_LINK_PROMPT_DEFAULT);
     if (!url) return;
     focusEditor(editorRef.current);
-    insertLink(url);
+    restoreSelectionInRoot(editorRef.current, saved);
+    insertLink(url, marked);
     handleInput();
+  };
+
+  const insertPluginHtml = (html: string) => {
+    if (disabled || readOnly) return;
+    focusEditor(editorRef.current);
+    insertHTML(html);
+    handleInput();
+  };
+
+  const handleTitleStyle = (styleId: string) => {
+    const selected = window.getSelection()?.toString().trim() || selectionTextRef.current;
+    insertPluginHtml(buildTitleHtml(styleId, selected || INK_TITLES_DEFAULT_TEXT));
   };
 
   const resolveImageSrc = async (file: File): Promise<string> => {
@@ -868,10 +1051,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     input.click();
   };
 
-  const handleTable = () => {
+  const handleTable = (rows = tableRows, cols = tableCols) => {
     if (disabled || readOnly || !features.table) return;
     focusEditor(editorRef.current);
-    const html = buildTableHtml(tableRows, tableCols);
+    const html = buildTableHtml(rows, cols);
     if (trackChangesEnabled && features.trackChanges) {
       const change = createTrackChange('insert', html, author);
       updateTrackChanges([...trackChanges, change]);
@@ -906,8 +1089,73 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (disabled || readOnly) return;
     event.preventDefault();
     setToolbarContextMenu((prev) => (prev.open ? { ...prev, open: false } : prev));
+    const graphBlock = features.graph ? getGraphBlock(event.target) : null;
+    graphBlockRef.current = graphBlock;
+    setGraphContextActive(Boolean(graphBlock));
     setTableContextActive(Boolean(features.table && getTableCellFromSelection()));
     setContextMenu({ open: true, x: event.clientX, y: event.clientY });
+  };
+
+  const applyGraphKind = (kind: GraphKind) => {
+    const block = graphBlockRef.current;
+    if (!block) return;
+    const points = parseGraphPoints(block.getAttribute(INK_ATTR_GRAPH_POINTS));
+    replaceGraphBlock(block, kind, points.length ? points : GRAPH_SAMPLE);
+    graphBlockRef.current = null;
+    handleInput();
+  };
+
+  const openGraphEdit = (mode: 'values' | 'colors') => {
+    const block = graphBlockRef.current;
+    if (!block) return;
+    const current = parseGraphPoints(block.getAttribute(INK_ATTR_GRAPH_POINTS));
+    setGraphEditPoints(current.length ? current : GRAPH_SAMPLE);
+    setGraphEditColors(parseGraphColors(block.getAttribute(INK_ATTR_GRAPH_COLORS)));
+    setGraphEditMode(mode);
+    setGraphEditOpen(true);
+  };
+
+  const applyGraphEdit = (
+    points: typeof GRAPH_SAMPLE,
+    colors: ReturnType<typeof parseGraphColors>,
+  ) => {
+    const block = graphBlockRef.current;
+    if (!block) return;
+    const kind = (block.getAttribute(INK_ATTR_GRAPH) as GraphKind | null) ?? GRAPH_KIND_DEFAULT;
+    replaceGraphBlock(block, kind, points, colors);
+    setGraphEditOpen(false);
+    handleInput();
+  };
+
+  const toggleFullscreen = () => {
+    const root = rootRef.current;
+    if (!root || !features.fullscreen) return;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+    void root.requestFullscreen();
+  };
+
+  const askAiAboutGraph = () => {
+    const block = graphBlockRef.current;
+    if (block) {
+      const range = document.createRange();
+      range.selectNodeContents(block);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+    setShowAiPanel(true);
+  };
+
+  const toggleOutline = () => {
+    const next = !outlineOpen;
+    setOutlineOpen(next);
+    if (next && editorRef.current) {
+      setOutlineItems(collectOutlineItems(editorRef.current));
+    }
+    onOutlineChange?.(next);
   };
 
   const handleToolbarContextMenu = (event: MouseEvent<HTMLDivElement>) => {
@@ -986,10 +1234,52 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             label: CONTEXT_MENU_LABEL_TABLE_DELETE_COL,
             onSelect: () => runTableMutation((cell) => deleteTableColumn(cell)),
           },
+          {
+            id: CONTEXT_MENU_ID_TABLE_HEADER,
+            label: CONTEXT_MENU_LABEL_TABLE_HEADER,
+            onSelect: () => runTableMutation((cell) => toggleTableHeaderRow(cell)),
+          },
+        ]
+      : [];
+
+  const graphContextMenuItems: ContextMenuItem[] =
+    features.graph && graphContextActive
+      ? [
+          {
+            id: CONTEXT_MENU_ID_GRAPH_BAR,
+            label: CONTEXT_MENU_LABEL_GRAPH_BAR,
+            onSelect: () => applyGraphKind('bar'),
+          },
+          {
+            id: CONTEXT_MENU_ID_GRAPH_LINE,
+            label: CONTEXT_MENU_LABEL_GRAPH_LINE,
+            onSelect: () => applyGraphKind('line'),
+          },
+          {
+            id: CONTEXT_MENU_ID_GRAPH_PIE,
+            label: CONTEXT_MENU_LABEL_GRAPH_PIE,
+            onSelect: () => applyGraphKind('pie'),
+          },
+          {
+            id: CONTEXT_MENU_ID_GRAPH_EDIT,
+            label: CONTEXT_MENU_LABEL_GRAPH_EDIT,
+            onSelect: () => openGraphEdit('values'),
+          },
+          {
+            id: CONTEXT_MENU_ID_GRAPH_COLORS,
+            label: CONTEXT_MENU_LABEL_GRAPH_COLORS,
+            onSelect: () => openGraphEdit('colors'),
+          },
+          {
+            id: CONTEXT_MENU_ID_GRAPH_AI,
+            label: CONTEXT_MENU_LABEL_GRAPH_AI,
+            onSelect: askAiAboutGraph,
+          },
         ]
       : [];
 
   const contextMenuItems: ContextMenuItem[] = [
+    ...graphContextMenuItems,
     ...tableContextMenuItems,
     {
       id: CONTEXT_MENU_ID_BOLD,
@@ -1234,6 +1524,15 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       case 'ai':
         setShowAiPanel(true);
         break;
+      case 'titles':
+        insertHTML(buildTitleHtml(TITLE_STYLE_DEFAULT, selectionTextRef.current || INK_TITLES_DEFAULT_TEXT));
+        break;
+      case 'excel':
+        insertHTML(excelGridToTableHtml(createEmptyExcelGrid()));
+        break;
+      case 'graph':
+        insertHTML(buildGraphHtml(GRAPH_KIND_DEFAULT, GRAPH_SAMPLE));
+        break;
       default:
         break;
     }
@@ -1390,6 +1689,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key="link"
           icon={icons.link}
           title="Insert link"
+          hint={TOOLBAR_OPTION_HINTS.link}
+          onHint={setToolbarHint}
           disabled={disabled || readOnly}
           onClick={handleLink}
         />
@@ -1399,6 +1700,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return (
         <ToolbarButton
           key="image"
+          hint={TOOLBAR_OPTION_HINTS.image}
+          onHint={setToolbarHint}
           icon={icons.image}
           title="Insert image"
           disabled={disabled || readOnly}
@@ -1414,6 +1717,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key={TOOLBAR_OPTION_CHECKLIST}
           icon={icons.checklist}
           title="Checklist"
+          hint={TOOLBAR_OPTION_HINTS.checklist}
+          onHint={setToolbarHint}
           disabled={disabled || readOnly}
           onClick={() => handleFormat(TOOLBAR_OPTION_CHECKLIST)}
         />
@@ -1422,12 +1727,127 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     if (item === 'table') {
       if (!features.table) return null;
       return (
-        <ToolbarButton
+        <TableSizePicker
           key="table"
           icon={icons.table}
-          title="Insert table"
           disabled={disabled || readOnly}
-          onClick={handleTable}
+          onSelect={handleTable}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_TITLES) {
+      if (!features.titles) return null;
+      return (
+        <TitleGallery
+          key={TOOLBAR_OPTION_TITLES}
+          icon={icons.titles}
+          disabled={disabled || readOnly}
+          pluginColor={inkPlugins.get('titles')?.color}
+          hint={TOOLBAR_OPTION_HINTS.titles}
+          onHint={setToolbarHint}
+          onSelect={handleTitleStyle}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_EXCEL) {
+      if (!features.excel) return null;
+      return (
+        <ExcelSheetPanel
+          key={TOOLBAR_OPTION_EXCEL}
+          icon={icons.excel}
+          disabled={disabled || readOnly}
+          pluginColor={inkPlugins.get('excel')?.color}
+          hint={TOOLBAR_OPTION_HINTS.excel}
+          onHint={setToolbarHint}
+          onInsert={insertPluginHtml}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_GRAPH) {
+      if (!features.graph) return null;
+      return (
+        <GraphPicker
+          key={TOOLBAR_OPTION_GRAPH}
+          icon={icons.graph}
+          disabled={disabled || readOnly}
+          pluginColor={inkPlugins.get('graph')?.color}
+          hint={TOOLBAR_OPTION_HINTS.graph}
+          onHint={setToolbarHint}
+          onInsert={insertPluginHtml}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_THEME) {
+      if (!features.theme) return null;
+      return (
+        <ThemePicker
+          key={TOOLBAR_OPTION_THEME}
+          icon={icons.theme}
+          disabled={disabled}
+          pluginColor={inkPlugins.get('theme')?.color}
+          hint={TOOLBAR_OPTION_HINTS.theme}
+          onHint={setToolbarHint}
+          value={themeId}
+          onChange={(id) => {
+            setThemeId(id);
+            applyInkTheme(rootRef.current, id);
+          }}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_FULLSCREEN) {
+      if (!features.fullscreen) return null;
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_FULLSCREEN}
+          icon={icons.fullscreen}
+          title={isFullscreen ? INK_FULLSCREEN_EXIT_TITLE : INK_FULLSCREEN_TITLE}
+          hint={TOOLBAR_OPTION_HINTS.fullscreen}
+          onHint={setToolbarHint}
+          active={isFullscreen}
+          disabled={disabled}
+          onClick={toggleFullscreen}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_OUTLINE) {
+      if (!features.outline) return null;
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_OUTLINE}
+          icon={icons.outline}
+          title={INK_OUTLINE_TOGGLE_TITLE}
+          hint={TOOLBAR_OPTION_HINTS.outline}
+          onHint={setToolbarHint}
+          active={outlineOpen}
+          disabled={disabled}
+          onClick={toggleOutline}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_HTML_SOURCE) {
+      if (!features.htmlSource) return null;
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_HTML_SOURCE}
+          className={INK_CLASS_BUTTON_WIDE}
+          icon={<span className={INK_CLASS_BUTTON_LABEL}>{INK_HTML_SOURCE_LABEL}</span>}
+          title={INK_HTML_SOURCE_TITLE}
+          hint={TOOLBAR_OPTION_HINTS.htmlSource}
+          onHint={setToolbarHint}
+          active={sourceOpen}
+          disabled={disabled}
+          onClick={() => {
+            if (sourceOpen) {
+              if (!readOnly) {
+                setHtml(sourceHtml);
+              }
+              setSourceOpen(false);
+              return;
+            }
+            setSourceHtml(editorRef.current?.innerHTML ?? value ?? EMPTY_STRING);
+            setSourceOpen(true);
+          }}
         />
       );
     }
@@ -1438,6 +1858,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key={TOOLBAR_OPTION_SIGNATURE}
           icon={icons.signature}
           title="Sign pad"
+          hint={TOOLBAR_OPTION_HINTS.signature}
+          onHint={setToolbarHint}
           active={signPadOpen}
           disabled={disabled || readOnly}
           onClick={() => setSignPadOpen(true)}
@@ -1451,6 +1873,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key={TOOLBAR_OPTION_FIND_REPLACE}
           icon={icons.findReplace}
           title="Find and replace"
+          hint={TOOLBAR_OPTION_HINTS.findReplace}
+          onHint={setToolbarHint}
           active={findReplaceOpen}
           disabled={disabled || readOnly}
           onClick={() => {
@@ -1480,6 +1904,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key={TOOLBAR_OPTION_HORIZONTAL_RULE}
           icon={icons.horizontalRule}
           title="Horizontal rule"
+          hint={TOOLBAR_OPTION_HINTS.horizontalRule}
+          onHint={setToolbarHint}
           disabled={disabled || readOnly}
           onClick={() => {
             focusEditor(editorRef.current);
@@ -1495,6 +1921,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key="undo"
           icon={icons.undo}
           title="Undo"
+          hint={TOOLBAR_OPTION_HINTS.undo}
+          onHint={setToolbarHint}
           disabled={disabled || readOnly}
           onClick={handleUndo}
         />
@@ -1506,6 +1934,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key="redo"
           icon={icons.redo}
           title="Redo"
+          hint={TOOLBAR_OPTION_HINTS.redo}
+          onHint={setToolbarHint}
           disabled={disabled || readOnly}
           onClick={handleRedo}
         />
@@ -1518,6 +1948,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key="trackChanges"
           icon={icons.trackChanges}
           title="Track changes"
+          hint={TOOLBAR_OPTION_HINTS.trackChanges}
+          onHint={setToolbarHint}
           active={trackChangesEnabled}
           disabled={disabled || readOnly}
           onClick={() => setTrackEnabled(!trackChangesEnabled)}
@@ -1531,6 +1963,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           key="comments"
           icon={icons.comments}
           title="Comments"
+          hint={TOOLBAR_OPTION_HINTS.comments}
+          onHint={setToolbarHint}
           active={commentsOpen}
           disabled={disabled || readOnly}
           onClick={() => {
@@ -1553,6 +1987,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             </>
           }
           title={config.title}
+          hint={TOOLBAR_OPTION_HINTS.code}
+          onHint={setToolbarHint}
           active={activeFormats.has(item)}
           disabled={disabled || readOnly}
           onClick={() => handleFormat(item)}
@@ -1561,15 +1997,25 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
     if (item === 'ai') {
       if (!features.ai || !ai?.enabled) return null;
+      const aiPlugin = inkPlugins.get('ai');
       return (
         <button
           key="ai"
           type="button"
-          className={INK_CLASS_AI_PILL}
+          className={
+            aiPlugin ? `${INK_CLASS_AI_PILL} ${INK_CLASS_AI_PILL_INSTALLED}` : INK_CLASS_AI_PILL
+          }
           title={INK_AI_PILL_LABEL}
+          style={
+            aiPlugin
+              ? { ['--ink-plugin-color' as string]: aiPlugin.color }
+              : undefined
+          }
           aria-label={INK_AI_PILL_LABEL}
           aria-pressed={showAiPanel}
           disabled={disabled || readOnly}
+          onMouseEnter={() => setToolbarHint(TOOLBAR_OPTION_HINTS.ai)}
+          onMouseLeave={() => setToolbarHint(EMPTY_STRING)}
           onMouseDown={(event) => {
             event.preventDefault();
           }}
@@ -1587,6 +2033,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         key={item}
         icon={icons[item as keyof typeof icons] ?? item.slice(0, 1).toUpperCase()}
         title={config.title}
+        hint={TOOLBAR_OPTION_HINTS[item]}
+        onHint={setToolbarHint}
         active={activeFormats.has(item)}
         disabled={disabled || readOnly}
         onClick={() => handleFormat(item)}
@@ -1598,8 +2046,12 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const maxHeightValue = typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight;
   const aiOpen = Boolean(ai?.enabled && showAiPanel);
 
+  const primaryToolbar = visibleToolbar.slice(NUMBER_ZERO, toolbarOverflow.fitCount);
+  const overflowToolbar = visibleToolbar.slice(toolbarOverflow.fitCount);
+
   return (
     <div
+      ref={rootRef}
       className={cn(INK_CLASS_ROOT, className)}
       data-testid={testId}
       data-disabled={disabled || undefined}
@@ -1627,8 +2079,38 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           role="toolbar"
           aria-label="Ink formatting toolbar"
           onContextMenu={handleToolbarContextMenu}
+          onDoubleClick={toggleFullscreen}
+          onMouseOver={(event) => {
+            const host = (event.target as HTMLElement).closest('button');
+            if (!(host instanceof HTMLElement)) return;
+            const next = host.getAttribute('title') || host.getAttribute('aria-label') || EMPTY_STRING;
+            if (next) setToolbarHint(next);
+          }}
+          onMouseLeave={() => setToolbarHint(EMPTY_STRING)}
         >
-          {visibleToolbar.map(renderToolbarItem)}
+          <div className={INK_CLASS_TOOLBAR_MEASURE} ref={toolbarOverflow.measureRef} aria-hidden>
+            {visibleToolbar.map(renderToolbarItem)}
+          </div>
+          <div className={INK_CLASS_TOOLBAR_ROW} ref={toolbarOverflow.rowRef}>
+            {primaryToolbar.map(renderToolbarItem)}
+            {overflowToolbar.length > NUMBER_ZERO ? (
+              <span {...{ [INK_ATTR_MORE]: '' }}>
+                <ToolbarButton
+                  icon="⋯"
+                  title={INK_TOOLBAR_MORE_TITLE}
+                  hint={INK_TOOLBAR_MORE_TITLE}
+                  onHint={setToolbarHint}
+                  active={toolbarOverflow.overflowOpen}
+                  disabled={disabled}
+                  onClick={() => toolbarOverflow.setOverflowOpen((current) => !current)}
+                />
+              </span>
+            ) : null}
+          </div>
+          {toolbarOverflow.overflowOpen && overflowToolbar.length > NUMBER_ZERO ? (
+            <div className={INK_CLASS_TOOLBAR_OVERFLOW}>{overflowToolbar.map(renderToolbarItem)}</div>
+          ) : null}
+          {toolbarHint ? <p className={INK_CLASS_TOOLBAR_HINT}>{toolbarHint}</p> : null}
         </div>
       )}
       <ToolbarCustomize
@@ -1637,6 +2119,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         visibleItems={visibleToolbar}
         onToggle={handleToolbarItemToggle}
         onClose={() => setCustomizeOpen(false)}
+      />
+      <GraphEditModal
+        open={graphEditOpen}
+        mode={graphEditMode}
+        points={graphEditPoints}
+        colors={graphEditColors}
+        onClose={() => setGraphEditOpen(false)}
+        onApply={applyGraphEdit}
       />
       <SignPad
         open={signPadOpen}
@@ -1676,6 +2166,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           <OutlineRail
             items={outlineItems}
             activeIndex={activeOutlineIndex}
+            onHide={toggleOutline}
             onSelect={(index) => {
               if (!editorRef.current) return;
               scrollOutlineHeading(editorRef.current, index);
@@ -1695,8 +2186,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           ) : null}
           <div
             ref={editorRef}
-            className={INK_CLASS_CONTENT}
-            contentEditable={!disabled && !readOnly}
+            className={sourceOpen ? `${INK_CLASS_CONTENT} ${INK_CLASS_CONTENT_HIDDEN}` : INK_CLASS_CONTENT}
+            contentEditable={!disabled && !readOnly && !sourceOpen}
             role="textbox"
             aria-multiline="true"
             aria-placeholder={placeholder}
@@ -1716,6 +2207,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               void handlePaste(event);
             }}
           />
+          {sourceOpen ? (
+            <HtmlSourcePanel
+              value={sourceHtml}
+              onChange={setSourceHtml}
+              disabled={disabled || readOnly}
+              minHeight={minHeightValue}
+            />
+          ) : null}
           {slashEnabled ? (
             <SlashMenu
               items={slashItems}
