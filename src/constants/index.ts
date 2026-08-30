@@ -16,3 +16,4 @@ export * from './premium.const';
 export * from './defaultIcons';
 export * from './contextMenu.const';
 export * from './table.const';
+export * from './plugins.const';

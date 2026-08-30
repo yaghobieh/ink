@@ -16,7 +16,15 @@
 ## Install
 
 ```bash
-npm install @forgedevstack/ink
+npx i @forgedevstack/ink
+npx @forgedevstack/ink --plugin titles graph theme excel
+```
+
+```bash
+npx @forgedevstack/ink --plugin titles
+npx @forgedevstack/ink --plugin graph
+npx @forgedevstack/ink --plugin theme
+npx @forgedevstack/ink --plugin excel
 ```
 
 ```tsx

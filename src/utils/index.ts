@@ -8,6 +8,10 @@ export {
   insertTableColumn,
   deleteTableRow,
   deleteTableColumn,
+  toggleTableHeaderRow,
+  getColumnResizeIndex,
+  setTableColumnWidth,
+  ensureTableColgroup,
 } from './table.utils';
 export {
   getBlockElement,

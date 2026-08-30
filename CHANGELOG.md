@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased]
+
+## 1.1.8
+
+### Added
+- Sheet panel options between the grid and Insert (add/remove row and column, clear, import)
+- `npx @forgedevstack/ink --plugin titles|graph|theme|excel` installer
+- Responsive toolbar overflow (`⋯`) so extra tools open on a second row
+- Fill-screen mode (toolbar, double-click the bar, or Lab next to Share)
+- Graph color editing and Bear Modal for graph values
+- Sheet grid column/row hover like a spreadsheet
+- Theming plugin (`theme`) — paper, snow, ink, dark — portal dark mode no longer restyles the editor
+- Toolbar hover hint row and colored pips on installed plugins
+- Outline toolbar toggle (`outline`)
+- Graph context menu: bar / line / pie, edit values, Ask Ink AI
+- Plugin host `inkPlugins` plus standalone Titles and Graph packages
+- HTML source view toggle (`htmlSource` toolbar option and `features.htmlSource`)
+- Table size picker (hover grid) for insert
+- Table column resize from the cell edge
+- Context menu: toggle header row
+- Titles plugin: 30 Word-era title styles in a gallery (`titles`)
+- Sheet plugin: grid editor and CSV import (`excel`)
+- Graph plugin: bar, line, and pie inserts (`graph`)
+
+### Fixed
+- Sheet and Graph toolbar buttons no longer stretch the row or force overflow scroll
+- Font and list dropdowns keep light tokens when the host page is dark (`data-color-mode` + forced-light menu)
+- Linking selected text keeps the range after the URL prompt
+- Ink AI tabs no longer overlap
+- Outline lists titles and can be shown or hidden
+
 ## 1.1.7
 
 ### Added

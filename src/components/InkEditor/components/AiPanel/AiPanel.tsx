@@ -1,6 +1,12 @@
 import { useState, type FC, type FormEvent } from 'react';
 import {
   INK_AI_DEMO_PROVIDER_ID,
+  INK_AI_TAB_ACTIONS,
+  INK_AI_TAB_CHAT,
+  INK_AI_TAB_REVIEW,
+  INK_AI_TAB_TRANSLATE,
+  INK_CLASS_AI_TAB,
+  INK_CLASS_AI_TAB_ON,
   INK_QUICK_ACTIONS,
   INK_TRANSLATE_LANGUAGES,
 } from '../../../../constants';
@@ -123,16 +129,23 @@ export const AiPanel: FC<AiPanelProps> = (props) => {
         ) : null}
       </div>
       <div className="Ink-Ai__tabs" role="tablist">
-        {(['chat', 'actions', 'review', 'translate'] as AiTab[]).map((item) => (
+        {(
+          [
+            ['chat', INK_AI_TAB_CHAT],
+            ['actions', INK_AI_TAB_ACTIONS],
+            ['review', INK_AI_TAB_REVIEW],
+            ['translate', INK_AI_TAB_TRANSLATE],
+          ] as Array<[AiTab, string]>
+        ).map(([item, label]) => (
           <button
             key={item}
             type="button"
             role="tab"
-            className={`Ink-Editor__button${tab === item ? ' Ink-Editor__button--active' : ''}`}
+            className={`${INK_CLASS_AI_TAB}${tab === item ? ` ${INK_CLASS_AI_TAB_ON}` : ''}`}
             aria-selected={tab === item}
             onClick={() => setTab(item)}
           >
-            {item}
+            {label}
           </button>
         ))}
       </div>

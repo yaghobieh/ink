@@ -44,6 +44,13 @@ export type InkIconKey = Extract<
   | 'outdent'
   | 'blockquote'
   | 'code'
+  | 'htmlSource'
+  | 'titles'
+  | 'excel'
+  | 'graph'
+  | 'outline'
+  | 'fullscreen'
+  | 'theme'
 >;
 
 export type InkIconMap = Partial<Record<InkIconKey, ReactNode>>;

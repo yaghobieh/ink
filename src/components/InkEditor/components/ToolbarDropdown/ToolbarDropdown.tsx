@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, type FC, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  COLOR_MODE_LIGHT,
   EMPTY_STRING,
   INK_CLASS_STYLE_CHEV,
   INK_CLASS_STYLE_CHECK,
   INK_CLASS_STYLE_DD,
   INK_CLASS_STYLE_MENU,
+  INK_CLASS_STYLE_MENU_FORCED,
   INK_CLASS_STYLE_MENU_PORTAL,
   INK_CLASS_STYLE_OPTION,
   INK_CLASS_STYLE_OPTION_SEL,
@@ -97,7 +99,8 @@ export const ToolbarDropdown: FC<ToolbarDropdownProps> = (props) => {
         ? createPortal(
             <div
               ref={menuRef}
-              className={`${INK_CLASS_STYLE_MENU} ${INK_CLASS_STYLE_MENU_PORTAL}`}
+              className={`${INK_CLASS_STYLE_MENU} ${INK_CLASS_STYLE_MENU_PORTAL} ${INK_CLASS_STYLE_MENU_FORCED}`}
+              data-color-mode={COLOR_MODE_LIGHT}
               role="listbox"
               aria-label={title}
               style={{ top: menuPosition.top, left: menuPosition.left, minWidth: menuPosition.minWidth }}

@@ -4,6 +4,7 @@
 @use 'components/inline-toolbar';
 
 .Ink-Editor {
+  color-scheme: light;
   @include ink-theme-tokens;
   --ink-radius: #{$ink-radius};
   --ink-font-family: #{$ink-font-family};
@@ -190,16 +191,77 @@
 }
 
 .Ink-Editor__toolbar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  padding: 0.35rem 0.65rem;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-toolbar);
+  overflow: visible;
+  min-height: 2.35rem;
+}
+
+.Ink-Editor__toolbar-row {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.35rem 0.75rem;
-  border-bottom: 1px solid var(--ink-border);
-  background: var(--ink-toolbar);
-  overflow-x: auto;
-  overflow-y: visible;
-  min-height: 2.5rem;
+  gap: 0.35rem 0.4rem;
+  min-width: 0;
+}
+
+.Ink-Editor__toolbar-measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
+  height: 0;
+  overflow: hidden;
+}
+
+.Ink-Editor__toolbar-overflow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
+  padding-top: 0.15rem;
+}
+
+.Ink-Editor__toolbar-hint {
+  position: absolute;
+  left: 0.65rem;
+  right: 0.65rem;
+  bottom: -1.05rem;
+  z-index: 3;
+  width: auto;
+  margin: 0;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  background: var(--ink-bg);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.08);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  color: var(--ink-text-tertiary);
+  pointer-events: none;
+}
+
+.Ink-Editor__tool {
+  position: relative;
+  display: inline-flex;
+}
+
+.Ink-Editor__plugin-pip {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--ink-bg);
 }
 
 .Ink-Editor__toolbar-show {
@@ -303,12 +365,19 @@
   z-index: 30;
   min-width: 11.25rem;
   padding: 0.3rem;
-  background: #ffffff;
-  border: 1px solid #e1e4ea;
+  background: $ink-color-bg;
+  border: 1px solid $ink-color-border;
   border-radius: 0.5rem;
   box-shadow: 0 0.75rem 2rem rgb(23 27 36 / 0.12);
   overflow: hidden;
-  color: #171b24;
+  color: $ink-color-text;
+}
+
+.Ink-Editor__style-menu--forced-light {
+  color-scheme: light;
+  isolation: isolate;
+  background: $ink-color-bg;
+  color: $ink-color-text;
 }
 
 .Ink-Editor__style-menu--portal {
@@ -334,24 +403,24 @@
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #171b24;
+  color: $ink-color-text;
   cursor: pointer;
   border-radius: 0.375rem;
 }
 
 .Ink-Editor__style-option:hover {
-  background: #eaf0fe;
-  color: #171b24;
+  background: $ink-color-accent-soft;
+  color: $ink-color-text;
 }
 
 .Ink-Editor__style-option--sel {
-  background: #2951c4;
-  color: #ffffff;
+  background: $ink-color-accent;
+  color: $ink-color-bg;
 }
 
 .Ink-Editor__style-option--sel:hover {
-  background: #2951c4;
-  color: #ffffff;
+  background: $ink-color-accent;
+  color: $ink-color-bg;
 }
 
 .Ink-Editor__style-check {
@@ -566,6 +635,10 @@
   flex-shrink: 0;
 }
 
+.Ink-AiPill--installed {
+  box-shadow: inset 0 -2px 0 var(--ink-plugin-color, var(--ink-ai));
+}
+
 .Ink-Editor__button--wide {
   width: auto;
   min-width: 0;
@@ -610,6 +683,66 @@
   color: var(--ink-text);
   font-weight: 650;
   text-align: left;
+}
+
+.Ink-Editor__content .Ink-table th,
+.Ink-Editor__content .Ink-table td {
+  cursor: text;
+}
+
+.Ink-Editor__content .Ink-table--resizing,
+.Ink-Editor__content .Ink-table--resizing th,
+.Ink-Editor__content .Ink-table--resizing td {
+  cursor: col-resize;
+}
+
+.Ink-Editor__source {
+  display: block;
+  width: 100%;
+  min-height: 12rem;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 0;
+  padding: 1rem 1.15rem;
+  background: var(--ink-canvas, $ink-color-canvas);
+  color: var(--ink-text);
+  font-family: $ink-font-mono;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  outline: none;
+}
+
+.Ink-Editor__content--hidden {
+  display: none;
+}
+
+.Ink-Editor__table-picker-grid {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.35rem;
+}
+
+.Ink-Editor__table-picker-cell {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid $ink-color-border;
+  background: $ink-color-bg;
+  border-radius: 0.125rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.Ink-Editor__table-picker-cell--on {
+  background: $ink-color-accent-soft;
+  border-color: $ink-color-accent;
+}
+
+.Ink-Editor__table-picker-label {
+  padding: 0.25rem 0.45rem 0.45rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $ink-color-text;
 }
 
 .Ink-Editor__content .Ink-tc-insert {
@@ -672,6 +805,10 @@
 }
 
 .Ink-Outline__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
   font-family: $ink-font-mono;
   font-size: 0.625rem;
   letter-spacing: 0.06em;
@@ -679,6 +816,15 @@
   color: $ink-color-text-tertiary;
   padding: 0 0.375rem;
   margin-bottom: 0.25rem;
+}
+
+.Ink-Outline__toggle {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.1rem 0.25rem;
 }
 
 .Ink-Outline__item {
@@ -1056,8 +1202,8 @@
 }
 
 .Ink-Ai {
-  width: 320px;
-  flex: 0 0 320px;
+  width: 22rem;
+  flex: 0 0 22rem;
   border-left: 1px solid var(--ink-ai-border, var(--ink-border));
   background: var(--ink-ai-surface, #f8fafc);
   display: flex;
@@ -1086,9 +1232,32 @@
 .Ink-Ai__tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem;
-  padding: 0.4rem 0.55rem;
+  gap: 0.35rem;
+  padding: 0.45rem 0.55rem;
   border-bottom: 1px solid var(--ink-ai-border, var(--ink-border));
+}
+
+.Ink-Ai__tab {
+  flex: 1 1 4.5rem;
+  min-width: 4.5rem;
+  width: auto;
+  height: auto;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--ink-border);
+  border-radius: 0.4rem;
+  background: #fff;
+  color: var(--ink-text);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.Ink-Ai__tab--on {
+  border-color: var(--ink-accent);
+  background: var(--ink-accent-soft);
+  color: var(--ink-accent);
 }
 
 .Ink-Ai__body {
@@ -1256,20 +1425,47 @@
   );
 }
 
-@media (prefers-color-scheme: dark) {
-  .Ink-Editor:not([data-color-mode]) {
-    @include ink-theme-tokens(
-      $border: $ink-color-border-dark,
-      $bg: $ink-color-bg-dark,
-      $toolbar: $ink-color-toolbar-dark,
-      $text: $ink-color-text-dark,
-      $muted: $ink-color-muted-dark,
-      $accent: $ink-color-accent-dark,
-      $accent-soft: $ink-color-accent-soft-dark,
-      $shadow: $ink-color-shadow-dark,
-      $table-header: $ink-color-table-header-dark
-    );
-  }
+.Ink-Editor[data-ink-theme='snow'] {
+  --ink-border: #e5e7eb;
+  --ink-bg: #ffffff;
+  --ink-toolbar: #f9fafb;
+  --ink-text: #111827;
+  --ink-muted: #6b7280;
+  --ink-accent: #0f766e;
+  --ink-accent-soft: #ccfbf1;
+}
+
+.Ink-Editor[data-ink-theme='ink'] {
+  --ink-border: #d7dbe3;
+  --ink-bg: #fbfcfe;
+  --ink-toolbar: #ffffff;
+  --ink-text: #171b24;
+  --ink-muted: #5c6370;
+  --ink-accent: #2951c4;
+  --ink-accent-soft: #eaf0fe;
+}
+
+.Ink-Editor[data-ink-theme='dark'] {
+  color-scheme: dark;
+  @include ink-theme-tokens(
+    $border: $ink-color-border-dark,
+    $bg: $ink-color-bg-dark,
+    $toolbar: $ink-color-toolbar-dark,
+    $text: $ink-color-text-dark,
+    $muted: $ink-color-muted-dark,
+    $accent: $ink-color-accent-dark,
+    $accent-soft: $ink-color-accent-soft-dark,
+    $shadow: $ink-color-shadow-dark,
+    $table-header: $ink-color-table-header-dark
+  );
+}
+
+.Ink-Editor:fullscreen {
+  width: 100%;
+  height: 100%;
+  background: var(--ink-bg);
+  padding: 1rem 1.25rem;
+  box-sizing: border-box;
 }
 
 .ink-theme-snow .Ink-Editor,
@@ -1348,6 +1544,374 @@
 
 .Ink-FindReplace__field {
   @include ink-field;
+}
+
+.Ink-Editor__title-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 5.5rem);
+  gap: 0.35rem;
+  padding: 0.45rem;
+}
+
+.Ink-Editor__title-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.25rem;
+  border: 1px solid $ink-color-border;
+  border-radius: 0.25rem;
+  background: $ink-color-bg;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.Ink-Editor__title-cell:hover {
+  border-color: $ink-color-accent;
+  background: $ink-color-accent-soft;
+}
+
+.Ink-Editor__title-cell .Ink-title {
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.Ink-Editor__content .Ink-title,
+.Ink-title {
+  margin: 0.75rem 0;
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+
+.Ink-title--t01 {
+  color: transparent;
+  -webkit-text-stroke: 2px #111111;
+}
+
+.Ink-title--t02 {
+  color: #111111;
+  transform: skewX(-12deg);
+}
+
+.Ink-title--t03 {
+  color: #111111;
+  transform: perspective(240px) rotateX(28deg);
+}
+
+.Ink-title--t04 {
+  color: #111111;
+  display: inline-block;
+  transform: skewY(-8deg) scaleY(1.15);
+}
+
+.Ink-title--t05 {
+  color: #111111;
+  transform: perspective(240px) rotateX(-28deg);
+}
+
+.Ink-title--t06 {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: #111111;
+  letter-spacing: 0.12em;
+}
+
+.Ink-title--t07 {
+  color: #ffffff;
+  text-shadow: 3px 3px 0 #8a8a8a;
+}
+
+.Ink-title--t08 {
+  color: #7ec8e3;
+  -webkit-text-stroke: 2px #1d4e89;
+}
+
+.Ink-title--t09 {
+  color: #7b2cbf;
+  text-shadow: 0 0 8px #4cc9f0;
+}
+
+.Ink-title--t10 {
+  background: linear-gradient(180deg, #f4f4f4 0%, #9aa0a6 48%, #e8e8e8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 1px 1px 0 #6b7280;
+}
+
+.Ink-title--t11 {
+  color: #0b3d91;
+  text-shadow: 4px 4px 0 #c41e3a;
+}
+
+.Ink-title--t12 {
+  writing-mode: vertical-rl;
+  color: #c41e3a;
+  letter-spacing: 0.12em;
+}
+
+.Ink-title--t13 {
+  background: linear-gradient(90deg, #f5d76e 0%, #e67e22 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.Ink-title--t14 {
+  background: linear-gradient(90deg, #e91e63 0%, #6a1b9a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.Ink-title--t15 {
+  color: transparent;
+  -webkit-text-stroke: 2px #2e7d32;
+}
+
+.Ink-title--t16 {
+  background: linear-gradient(90deg, #e53935, #fb8c00, #fdd835, #43a047, #1e88e5, #8e24aa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transform: skewX(-10deg);
+}
+
+.Ink-title--t17 {
+  color: #90caf9;
+  -webkit-text-stroke: 1px #1565c0;
+}
+
+.Ink-title--t18 {
+  writing-mode: vertical-rl;
+  color: #b0b0b0;
+  letter-spacing: 0.12em;
+}
+
+.Ink-title--t19 {
+  color: #c9a227;
+  text-shadow:
+    1px 1px 0 #8d6e2f,
+    2px 2px 0 #6d4c1f,
+    3px 3px 0 #4e3423;
+}
+
+.Ink-title--t20 {
+  color: #1565c0;
+  transform: perspective(180px) rotateY(-28deg);
+  text-shadow: 2px 2px 0 #0d47a1, 4px 4px 0 #08306b;
+}
+
+.Ink-title--t21 {
+  color: #ef6c00;
+  transform: perspective(180px) rotateY(32deg);
+  text-shadow: -3px 2px 0 #bf360c;
+}
+
+.Ink-title--t22 {
+  color: #00acc1;
+  text-shadow:
+    1px 1px 0 #006064,
+    2px 2px 0 #004d40,
+    3px 3px 0 #00363a;
+}
+
+.Ink-title--t23 {
+  color: #ffee58;
+  text-shadow: 4px 4px 0 #1565c0;
+}
+
+.Ink-title--t24 {
+  writing-mode: vertical-rl;
+  color: #2e7d32;
+  letter-spacing: 0.12em;
+}
+
+.Ink-title--t25 {
+  color: #cfd8dc;
+  transform: perspective(200px) rotateX(40deg);
+  text-shadow: 0 6px 0 #78909c;
+}
+
+.Ink-title--t26 {
+  color: #1b5e20;
+  transform: perspective(200px) rotateX(-36deg);
+  text-shadow: 0 5px 0 #0d3310;
+}
+
+.Ink-title--t27 {
+  color: #ffffff;
+  text-shadow: 2px 3px 0 #9e9e9e, 4px 6px 8px rgb(0 0 0 / 0.25);
+}
+
+.Ink-title--t28 {
+  color: #ff6d00;
+  transform: perspective(160px) rotateX(-18deg) scale(1.08);
+  text-shadow: 0 8px 0 #e65100;
+}
+
+.Ink-title--t29 {
+  color: #1976d2;
+  text-shadow:
+    1px 0 0 #c62828,
+    2px 0 0 #b71c1c,
+    3px 0 0 #8e0000,
+    4px 0 0 #6a0000;
+}
+
+.Ink-title--t30 {
+  writing-mode: vertical-rl;
+  color: #6d4c41;
+  letter-spacing: 0.12em;
+}
+
+.Ink-Editor__style-menu.Ink-Editor__excel {
+  min-width: 22rem;
+  max-width: min(36rem, calc(100vw - 1rem));
+  max-height: none;
+  overflow: visible;
+}
+
+.Ink-Editor__excel-title {
+  padding: 0.35rem 0.5rem 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $ink-color-muted;
+}
+
+.Ink-Editor__excel-grid {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.35rem 0.45rem;
+  overflow: visible;
+}
+
+.Ink-Editor__excel-cell {
+  min-width: 3.5rem;
+  border: 1px solid $ink-color-border;
+  border-radius: 0.2rem;
+  padding: 0.3rem 0.4rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: $ink-color-text;
+  background: $ink-color-bg;
+}
+
+.Ink-Editor__excel-head,
+.Ink-Editor__excel-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: $ink-color-muted;
+  background: $ink-color-toolbar;
+  border: 1px solid $ink-color-border;
+  border-radius: 0.2rem;
+}
+
+.Ink-Editor__excel-cell--col,
+.Ink-Editor__excel-head.Ink-Editor__excel-cell--col {
+  background: $ink-color-accent-soft;
+}
+
+.Ink-Editor__excel-cell--row,
+.Ink-Editor__excel-head.Ink-Editor__excel-cell--row {
+  box-shadow: inset 0 0 0 1px $ink-color-accent;
+}
+
+.Ink-GraphModal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.Ink-GraphModal__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.Ink-GraphModal__row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid $ink-color-border;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+}
+
+.Ink-Editor__excel-actions,
+.Ink-Editor__graph-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.35rem 0.45rem 0.55rem;
+}
+
+.Ink-Editor__excel-actions {
+  width: 100%;
+}
+
+.Ink-Editor__excel-actions button {
+  flex: 1 1 calc(50% - 0.2rem);
+}
+
+.Ink-Editor__excel-actions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.Ink-Editor__excel-actions .Ink-Editor__excel-insert {
+  flex: 1 1 100%;
+}
+
+.Ink-Editor__excel-actions button,
+.Ink-Editor__graph-types button,
+.Ink-Editor__graph button {
+  border: 1px solid $ink-color-border;
+  border-radius: 0.3rem;
+  background: $ink-color-bg;
+  color: $ink-color-text;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+}
+
+.Ink-Editor__excel-actions button:hover,
+.Ink-Editor__graph-types button:hover,
+.Ink-Editor__graph button:hover,
+.Ink-Editor__graph-types button[aria-pressed='true'] {
+  border-color: $ink-color-accent;
+  background: $ink-color-accent-soft;
+  color: $ink-color-accent;
+}
+
+.Ink-Editor__graph {
+  min-width: 21rem;
+}
+
+.Ink-Editor__graph-preview {
+  padding: 0.25rem 0.45rem;
+}
+
+.Ink-Editor__content .Ink-graph,
+.Ink-graph {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem 0;
+}
+
+.Ink-graph-block {
+  margin: 0.75rem 0;
 }
 
 .flex { display: flex; }

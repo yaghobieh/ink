@@ -1,5 +1,6 @@
 import {
   EMPTY_STRING,
+  INK_ATTR_TITLE,
   INK_OUTLINE_HEADING_SELECTOR,
   NUMBER_ONE,
   NUMBER_THREE,
@@ -8,19 +9,26 @@ import {
 } from '../constants';
 import type { OutlineItem } from '../types';
 
+const OUTLINE_NODE_SELECTOR = `${INK_OUTLINE_HEADING_SELECTOR}, [${INK_ATTR_TITLE}]`;
+
 const HEADING_LEVEL_FROM_TAG: Record<string, OutlineItem['level']> = {
   H1: NUMBER_ONE,
   H2: NUMBER_TWO,
   H3: NUMBER_THREE,
 };
 
+const outlineLevel = (node: HTMLElement): OutlineItem['level'] | null => {
+  if (node.hasAttribute(INK_ATTR_TITLE)) return NUMBER_ONE;
+  return HEADING_LEVEL_FROM_TAG[node.tagName] ?? null;
+};
+
 export const collectOutlineItems = (root: HTMLElement | null): OutlineItem[] => {
   if (!root) return [];
-  const headings = root.querySelectorAll(INK_OUTLINE_HEADING_SELECTOR);
+  const nodes = root.querySelectorAll(OUTLINE_NODE_SELECTOR);
   const items: OutlineItem[] = [];
-  headings.forEach((node, index) => {
+  nodes.forEach((node, index) => {
     if (!(node instanceof HTMLElement)) return;
-    const level = HEADING_LEVEL_FROM_TAG[node.tagName];
+    const level = outlineLevel(node);
     if (!level) return;
     const text = (node.textContent ?? EMPTY_STRING).trim();
     if (!text) return;
@@ -30,8 +38,8 @@ export const collectOutlineItems = (root: HTMLElement | null): OutlineItem[] => 
 };
 
 export const scrollOutlineHeading = (root: HTMLElement, index: number): void => {
-  const headings = root.querySelectorAll(INK_OUTLINE_HEADING_SELECTOR);
-  const target = headings.item(index);
+  const nodes = root.querySelectorAll(OUTLINE_NODE_SELECTOR);
+  const target = nodes.item(index);
   if (!(target instanceof HTMLElement)) return;
   target.scrollIntoView({ block: 'center', behavior: 'smooth' });
 };

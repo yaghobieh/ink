@@ -51,4 +51,11 @@ export const INK_DEFAULT_ICONS: Record<InkIconKey, ReactNode> = {
   outdent: '←',
   blockquote: <QuoteIcon />,
   code: '</>',
+  htmlSource: '</>',
+  titles: 'Aa',
+  excel: '⊞',
+  graph: '▦',
+  outline: '☰',
+  fullscreen: '⛶',
+  theme: '◐',
 };

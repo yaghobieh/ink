@@ -9,7 +9,14 @@ export type InkFeatureName =
   | 'typoAutoFix'
   | 'signature'
   | 'findReplace'
-  | 'horizontalRule';
+  | 'horizontalRule'
+  | 'htmlSource'
+  | 'titles'
+  | 'excel'
+  | 'graph'
+  | 'outline'
+  | 'fullscreen'
+  | 'theme';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 
