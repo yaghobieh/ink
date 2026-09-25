@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { InkAiConfig } from './ai.types';
+import type { InkCollaborationConfig } from './collab.types';
 import type { InkCommentThread, InkCommentsChangeHandler } from './comments.types';
 import type {
   InkColorMode,
@@ -115,6 +116,7 @@ export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onToolbarHiddenChange?: (hidden: boolean) => void;
   showOutline?: boolean;
   onOutlineChange?: (open: boolean) => void;
+  collaboration?: InkCollaborationConfig;
 }
 
 export interface ToolbarButtonProps {

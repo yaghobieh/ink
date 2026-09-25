@@ -68,3 +68,18 @@ export type {
 
 export type { OutlineItem } from './outline.types';
 export type { InkHostPlugin, InkHostPluginId } from './plugin.types';
+export type {
+  InkCollaborator,
+  InkCollaboratorCursor,
+  InkCollaboratorCursorSelection,
+  InkCollaboratorRole,
+  InkCollaboratorStatus,
+  InkCollaborationConfig,
+} from './collab.types';
+export type {
+  InkDocument,
+  InkFolder,
+  InkSplitMode,
+  InkTabsProps,
+  InkWorkspaceProps,
+} from './workspace.types';
