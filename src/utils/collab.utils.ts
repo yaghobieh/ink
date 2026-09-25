@@ -1,48 +1,49 @@
 import type {
   InkCollaborator,
   InkCollaboratorRole,
-} from '../types/collab.types';
-
-const COLLAB_COLORS = [
-  '#3B82F6', // Blue
-  '#10B981', // Emerald
-  '#8B5CF6', // Purple
-  '#F59E0B', // Amber
-  '#EC4899', // Pink
-  '#06B6D4', // Cyan
-  '#F97316', // Orange
-];
+} from '@/types';
+import {
+  COLLAB_THEME_COLORS,
+  DEFAULT_INITIAL,
+  ID_PREFIX_COLLAB,
+  INK_ROLE_EDITOR,
+  INK_STATUS_OFFLINE,
+  NUMBER_ZERO,
+  NUMBER_TWO,
+  NUMBER_SEVEN,
+  NUMBER_THIRTY_SIX,
+} from '@const';
 
 export const getCollaboratorInitials = (name: string): string => {
   const clean = name.trim();
-  if (!clean) return '?';
+  if (!clean) return DEFAULT_INITIAL;
   const parts = clean.split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts.length >= NUMBER_TWO) {
+    return (parts[NUMBER_ZERO][NUMBER_ZERO] + parts[1][NUMBER_ZERO]).toUpperCase();
   }
-  return parts[0][0].toUpperCase();
+  return parts[NUMBER_ZERO][NUMBER_ZERO].toUpperCase();
 };
 
 export const filterActiveCollaborators = (
   collaborators: InkCollaborator[]
 ): InkCollaborator[] => {
   return (collaborators || []).filter(
-    (c) => c.status !== 'offline'
+    (collaborator) => collaborator.status !== INK_STATUS_OFFLINE
   );
 };
 
 export const createDefaultCollaborator = (
   name: string,
-  role: InkCollaboratorRole = 'editor'
+  role: InkCollaboratorRole = INK_ROLE_EDITOR
 ): InkCollaborator => {
   const colorIndex = Math.abs(
-    name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  ) % COLLAB_COLORS.length;
+    name.split('').reduce((accumulator, char) => accumulator + char.charCodeAt(NUMBER_ZERO), NUMBER_ZERO)
+  ) % COLLAB_THEME_COLORS.length;
 
   return {
-    id: `collab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    id: `${ID_PREFIX_COLLAB}-${Date.now()}-${Math.random().toString(NUMBER_THIRTY_SIX).slice(NUMBER_TWO, NUMBER_SEVEN)}`,
     name,
-    color: COLLAB_COLORS[colorIndex],
+    color: COLLAB_THEME_COLORS[colorIndex],
     role,
     status: 'active',
     lastActive: Date.now(),

@@ -38,3 +38,23 @@ export interface InkCollaborationConfig {
   maxAvatars?: number;
   serverUrl?: string;
 }
+
+export interface UseInkCollaborationOptions {
+  roomId?: string;
+  user?: InkCollaborator;
+  initialCollaborators?: InkCollaborator[];
+  serverUrl?: string;
+  simulateDemo?: boolean;
+}
+
+export interface UseInkCollaborationReturn {
+  collaborators: InkCollaborator[];
+  isConnected: boolean;
+  broadcastCursor: (cursor: InkCollaboratorCursor) => void;
+  broadcastSelection: (start: number, end: number, text?: string) => void;
+  addCollaborator: (collaborator: InkCollaborator) => void;
+  removeCollaborator: (id: string) => void;
+  updateCollaboratorStatus: (id: string, status: InkCollaboratorStatus) => void;
+  setCollaborators: (collaborators: InkCollaborator[] | ((prev: InkCollaborator[]) => InkCollaborator[])) => void;
+}
+

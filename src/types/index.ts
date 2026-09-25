@@ -75,6 +75,8 @@ export type {
   InkCollaboratorRole,
   InkCollaboratorStatus,
   InkCollaborationConfig,
+  UseInkCollaborationOptions,
+  UseInkCollaborationReturn,
 } from './collab.types';
 export type {
   InkDocument,

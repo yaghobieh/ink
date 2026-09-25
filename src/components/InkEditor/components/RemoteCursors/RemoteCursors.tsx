@@ -1,38 +1,50 @@
 import React from 'react';
-import type { InkCollaborator } from '../../../../types/collab.types';
-
-export interface RemoteCursorsProps {
-  collaborators: InkCollaborator[];
-  className?: string;
-}
+import type { RemoteCursorsProps } from './RemoteCursors.types';
+import {
+  REMOTE_CURSOR_LINE_HEIGHT_PX,
+  REMOTE_CURSOR_TOP_OFFSET_PX,
+  REMOTE_CURSOR_MIN_TOP_PX,
+  REMOTE_CURSOR_CHAR_WIDTH_PX,
+  REMOTE_CURSOR_LEFT_OFFSET_PX,
+  REMOTE_CURSOR_MIN_LEFT_PX,
+} from './RemoteCursors.const';
+import { NUMBER_ONE, NUMBER_ZERO, EMPTY_STRING } from '@const';
+import { cn } from '@utils';
 
 export const RemoteCursors: React.FC<RemoteCursorsProps> = ({
   collaborators,
-  className = '',
-}) => {
+  className = EMPTY_STRING,
+}: RemoteCursorsProps) => {
   const activeCollaborators = (collaborators || []).filter(
-    (c) => c.cursor && (c.cursor.offset !== undefined || c.cursor.line !== undefined)
+    (collaborator) =>
+      collaborator.cursor &&
+      (collaborator.cursor.offset !== undefined || collaborator.cursor.line !== undefined)
   );
 
-  if (activeCollaborators.length === 0) {
+  if (activeCollaborators.length === NUMBER_ZERO) {
     return null;
   }
 
   return (
     <div
-      className={`ink-remote-cursors-layer ${className}`.trim()}
+      className={cn('ink-remote-cursors-layer', className)}
       aria-hidden="true"
     >
-      {activeCollaborators.map((c) => {
-        const line = c.cursor?.line ?? 1;
-        const col = c.cursor?.col ?? 0;
-        // Approximate visual coordinates based on line height (28px) and char width (8.5px) or relative block placement
-        const top = Math.max(12, (line - 1) * 28 + 14);
-        const left = Math.max(16, col * 8.5 + 24);
+      {activeCollaborators.map((collaborator) => {
+        const line = collaborator.cursor?.line ?? NUMBER_ONE;
+        const col = collaborator.cursor?.col ?? NUMBER_ZERO;
+        const top = Math.max(
+          REMOTE_CURSOR_MIN_TOP_PX,
+          (line - NUMBER_ONE) * REMOTE_CURSOR_LINE_HEIGHT_PX + REMOTE_CURSOR_TOP_OFFSET_PX
+        );
+        const left = Math.max(
+          REMOTE_CURSOR_MIN_LEFT_PX,
+          col * REMOTE_CURSOR_CHAR_WIDTH_PX + REMOTE_CURSOR_LEFT_OFFSET_PX
+        );
 
         return (
           <div
-            key={c.id}
+            key={collaborator.id}
             className="ink-remote-cursor-item"
             style={{
               top: `${top}px`,
@@ -41,13 +53,13 @@ export const RemoteCursors: React.FC<RemoteCursorsProps> = ({
           >
             <div
               className="ink-remote-cursor-caret"
-              style={{ backgroundColor: c.color }}
+              style={{ backgroundColor: collaborator.color }}
             />
             <div
               className="ink-remote-cursor-tag"
-              style={{ backgroundColor: c.color }}
+              style={{ backgroundColor: collaborator.color }}
             >
-              {c.name}
+              {collaborator.name}
             </div>
           </div>
         );
