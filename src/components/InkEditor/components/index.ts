@@ -53,3 +53,7 @@ export { GraphEditModal } from './GraphEditModal';
 export type { GraphEditModalProps, GraphEditMode } from './GraphEditModal';
 export { ThemePicker } from './ThemePicker';
 export type { ThemePickerProps } from './ThemePicker';
+export { PresenceStack } from './PresenceStack';
+export type { PresenceStackProps } from './PresenceStack';
+export { RemoteCursors } from './RemoteCursors';
+export type { RemoteCursorsProps } from './RemoteCursors';

@@ -17,3 +17,5 @@ export * from './defaultIcons';
 export * from './contextMenu.const';
 export * from './table.const';
 export * from './plugins.const';
+export * from './collab.const';
+export * from './workspace.const';

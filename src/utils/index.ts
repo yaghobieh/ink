@@ -80,3 +80,13 @@ export {
   writeToolbarHidden,
   writeToolbarItems,
 } from './toolbarStorage.utils';
+export {
+  getCollaboratorInitials,
+  filterActiveCollaborators,
+  createDefaultCollaborator,
+} from './collab.utils';
+export {
+  createDefaultDocument,
+  filterDocuments,
+  sortDocuments,
+} from './workspace.utils';

@@ -1,4 +1,4 @@
-export { InkEditor } from './components';
+export { InkEditor, InkTabs, InkWorkspace } from './components';
 export {
   Box,
   Button,
@@ -43,6 +43,12 @@ export {
   themeTokensToStyle,
   sanitizePastedHtml,
   withPreservedSelection,
+  getCollaboratorInitials,
+  filterActiveCollaborators,
+  createDefaultCollaborator,
+  createDefaultDocument,
+  filterDocuments,
+  sortDocuments,
 } from './utils';
 export type { SavedSelection } from './utils';
 export {
@@ -149,4 +155,21 @@ export type {
   OutlineItem,
   InkHostPlugin,
   InkHostPluginId,
+  InkCollaborator,
+  InkCollaboratorCursor,
+  InkCollaboratorCursorSelection,
+  InkCollaboratorRole,
+  InkCollaboratorStatus,
+  InkCollaborationConfig,
+  InkDocument,
+  InkFolder,
+  InkSplitMode,
+  InkTabsProps,
+  InkWorkspaceProps,
 } from './types';
+export { useInkCollaboration } from './hooks';
+export type {
+  UseInkCollaborationOptions,
+  UseInkCollaborationReturn,
+} from './hooks';
+

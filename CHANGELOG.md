@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## 1.1.9
+
+### Added
+- **Multi-Document Tabs (`InkTabs`)** (INK-77): Switch between multiple open document buffers, preserve isolated undo/redo history, dirty state indicator dot (●), and inline tab rename/close actions.
+- **Workspace Document Tree & File Explorer (`InkWorkspace`)** (INK-78): Collapsible sidebar tree with document search, folder hierarchy, document create/rename/duplicate/delete, and status counters.
+- **Real-Time Presence & Remote Collaborators** (INK-79): Avatar presence stack in the toolbar, remote colored collaborator carets and selection overlays with name tags, and `useInkCollaboration` hook.
+- **Split-Screen Dual Buffer View** (INK-80): Side-by-side (vertical) or stacked (horizontal) split editing to view and edit two documents simultaneously.
+- **Portal Workspace & Collaboration Integration** (INK-81): Multi-document workspace demo and live collaboration playground.
+
 ## 1.1.8
 
 ### Added

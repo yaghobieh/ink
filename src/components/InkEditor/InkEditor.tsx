@@ -312,6 +312,8 @@ import {
   ToolbarCustomize,
   ToolbarDropdown,
   TrackChangesBar,
+  PresenceStack,
+  RemoteCursors,
   clampInlineToolbarPosition,
   selectionIsInsideElement,
   INLINE_TOOLBAR_EDGE_PADDING_PX,
@@ -381,6 +383,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     onToolbarHiddenChange,
     showOutline,
     onOutlineChange,
+    collaboration,
     style: styleProp,
     ...rest
   } = props;
@@ -2093,6 +2096,12 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           </div>
           <div className={INK_CLASS_TOOLBAR_ROW} ref={toolbarOverflow.rowRef}>
             {primaryToolbar.map(renderToolbarItem)}
+            {collaboration?.collaborators && collaboration.showPresenceStack !== false ? (
+              <PresenceStack
+                collaborators={collaboration.collaborators}
+                maxAvatars={collaboration.maxAvatars || 4}
+              />
+            ) : null}
             {overflowToolbar.length > NUMBER_ZERO ? (
               <span {...{ [INK_ATTR_MORE]: '' }}>
                 <ToolbarButton
@@ -2183,6 +2192,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onMoveDown={() => moveActiveBlock('down')}
               onDragStart={handleBlockDragStart}
             />
+          ) : null}
+          {collaboration?.collaborators && collaboration.showRemoteCursors !== false ? (
+            <RemoteCursors collaborators={collaboration.collaborators} />
           ) : null}
           <div
             ref={editorRef}
