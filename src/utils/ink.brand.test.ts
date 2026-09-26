@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import fs from 'node:fs';
-import path from 'node:path';
+
+declare const require: (module: string) => any;
+declare const __dirname: string;
 
 describe('brand assets test', () => {
+  const fs = require('fs');
+  const path = require('path');
   const assetsDir = path.resolve(__dirname, '../../assets');
 
   it('contains valid ink logo file with PNG header', () => {
