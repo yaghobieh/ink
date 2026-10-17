@@ -186,6 +186,7 @@ import {
   TOOLBAR_OPTION_EXPORT_MARKDOWN,
   TOOLBAR_OPTION_EXPORT_DOCX,
   TOOLBAR_OPTION_EXPORT_PDF,
+  TOOLBAR_OPTION_VERSIONS,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
@@ -242,6 +243,8 @@ import {
   reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
+  listVersions,
+  saveVersion,
   readInkMemory,
   readToolbarHidden,
   readToolbarItems,
@@ -333,6 +336,7 @@ import {
   ToolbarCustomize,
   ToolbarDropdown,
   TrackChangesBar,
+  VersionHistory,
   PresenceStack,
   RemoteCursors,
   clampInlineToolbarPosition,
@@ -462,6 +466,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const [sourceOpen, setSourceOpen] = useState(false);
+  const [versionsOpen, setVersionsOpen] = useState(false);
+  const [versions, setVersions] = useState(() => listVersions(memoryKey));
+  const [compareHtml, setCompareHtml] = useState('');
   const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
@@ -1930,6 +1937,24 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === TOOLBAR_OPTION_VERSIONS) {
+      if (!features.versionHistory) return null;
+      return (
+        <ToolbarButton
+          key={TOOLBAR_OPTION_VERSIONS}
+          icon="V"
+          title="Version history"
+          hint={TOOLBAR_OPTION_HINTS.versions}
+          onHint={setToolbarHint}
+          active={versionsOpen}
+          disabled={disabled}
+          onClick={() => {
+            setVersions(listVersions(memoryKey));
+            setVersionsOpen((open) => !open);
+          }}
+        />
+      );
+    }
     if (item === TOOLBAR_OPTION_HTML_SOURCE) {
       if (!features.htmlSource) return null;
       return (
@@ -2312,6 +2337,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               });
             }}
           />
+          {compareHtml ? (
+            <div className="Ink-Versions__compare" aria-label="Previous version">
+              <button type="button" className="Ink-Editor__button" onClick={() => setCompareHtml('')}>
+                Close compare
+              </button>
+              <div dangerouslySetInnerHTML={{ __html: compareHtml }} />
+            </div>
+          ) : null}
           <div
             ref={editorRef}
             className={sourceOpen ? `${INK_CLASS_CONTENT} ${INK_CLASS_CONTENT_HIDDEN}` : INK_CLASS_CONTENT}
@@ -2413,6 +2446,22 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onClose={() => setToolbarContextMenu((prev) => ({ ...prev, open: false }))}
           />
         </div>
+        {versionsOpen && features.versionHistory ? (
+          <VersionHistory
+            versions={versions}
+            onClose={() => setVersionsOpen(false)}
+            onSave={() => {
+              if (!editorRef.current) return;
+              saveVersion(memoryKey, editorRef.current.innerHTML);
+              setVersions(listVersions(memoryKey));
+            }}
+            onRestore={(version) => {
+              setHtml(version.html);
+              setCompareHtml('');
+            }}
+            onCompare={(version) => setCompareHtml(version.html)}
+          />
+        ) : null}
         {commentsOpen && features.comments ? (
           <CommentsPanel
             comments={comments}

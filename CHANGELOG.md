@@ -7,6 +7,7 @@
 - Markdown import and export (FORGE-167), plus `# `, `## `, `### `, `> `, and `1. ` shortcuts.
 - Word and PDF export (FORGE-169). Word downloads a `.docx`. PDF opens the browser print dialog.
 - Word and Google Docs paste cleanup (FORGE-170). Headings, links, tables, and lists stay. Office styles are dropped.
+- Local version history (FORGE-171). Save a named snapshot, restore it, or compare it beside the current document.
 
 ## 1.1.9
 
