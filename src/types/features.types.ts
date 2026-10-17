@@ -16,7 +16,8 @@ export type InkFeatureName =
   | 'graph'
   | 'outline'
   | 'fullscreen'
-  | 'theme';
+  | 'theme'
+  | 'mentions';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 

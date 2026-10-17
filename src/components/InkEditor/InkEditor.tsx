@@ -226,6 +226,10 @@ import {
   reorderBlockBefore,
   rejectTrackChangeInHtml,
   removeCommentMark,
+  buildMentionHtml,
+  deleteMentionQuery,
+  extractMentionQuery,
+  filterMentionPeople,
   readInkMemory,
   readToolbarHidden,
   readToolbarItems,
@@ -312,6 +316,7 @@ import {
   ToolbarCustomize,
   ToolbarDropdown,
   TrackChangesBar,
+  MentionMenu,
   PresenceStack,
   RemoteCursors,
   clampInlineToolbarPosition,
@@ -440,6 +445,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const [sourceOpen, setSourceOpen] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState<string | null>(null);
+  const [mentionPos, setMentionPos] = useState({ top: NUMBER_ZERO, left: NUMBER_ZERO });
   const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
@@ -782,6 +789,16 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     }
     setCurrentList(detectListType());
     setSelectionHtml(getSelectionHtml());
+    if (features.mentions && editorRef.current) {
+      const query = extractMentionQuery(getTextBeforeCaret(editorRef.current));
+      setMentionQuery(query);
+      if (query !== null) {
+        const caret = getCaretPositionInRoot(editorRef.current);
+        if (caret) setMentionPos({ top: caret.top, left: caret.left });
+      }
+    } else if (mentionQuery !== null) {
+      setMentionQuery(null);
+    }
     const marked = window.getSelection()?.toString().trim();
     if (marked) {
       selectionTextRef.current = marked;
@@ -2225,6 +2242,26 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onChange={setSourceHtml}
               disabled={disabled || readOnly}
               minHeight={minHeightValue}
+            />
+          ) : null}
+          {features.mentions ? (
+            <MentionMenu
+              open={mentionQuery !== null}
+              top={mentionPos.top}
+              left={mentionPos.left}
+              people={filterMentionPeople(
+                collaboration?.collaborators && collaboration.collaborators.length > 0
+                  ? collaboration.collaborators.map((person) => ({ id: person.id, label: person.name }))
+                  : [{ id: author, label: author }],
+                mentionQuery ?? '',
+              )}
+              onSelect={(person) => {
+                if (mentionQuery === null) return;
+                deleteMentionQuery(mentionQuery);
+                insertHTML(buildMentionHtml(person.id, person.label));
+                setMentionQuery(null);
+                handleInput();
+              }}
             />
           ) : null}
           {slashEnabled ? (

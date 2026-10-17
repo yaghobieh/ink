@@ -63,6 +63,12 @@ export {
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
 export {
+  buildMentionHtml,
+  deleteMentionQuery,
+  extractMentionQuery,
+  filterMentionPeople,
+} from './mentions.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

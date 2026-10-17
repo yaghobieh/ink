@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- @mentions (FORGE-172). Typing `@` lists collaborators and inserts a mention chip.
+
 ## 1.1.9
 
 ### Added

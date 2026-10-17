@@ -2445,6 +2445,27 @@
   position: relative;
 }
 
+.Ink-Mentions {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  min-width: 10rem;
+  padding: 0.25rem;
+  border: 1px solid var(--ink-border);
+  border-radius: var(--ink-radius, 0.5rem);
+  background: var(--ink-bg, #fff);
+  box-shadow: var(--ink-shadow, 0 8px 24px rgba(15, 23, 42, 0.12));
+}
+
+.Ink-Mentions__item {
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;
