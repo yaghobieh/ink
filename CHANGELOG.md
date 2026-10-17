@@ -5,6 +5,7 @@
 ### Added
 - Selection AI bubble (FORGE-168): Improve, Shorter, Longer, Fix, Tone, and Translate on a text selection, then apply the suggestion.
 - Markdown import and export (FORGE-167), plus `# `, `## `, `### `, `> `, and `1. ` shortcuts.
+- Word and PDF export (FORGE-169). Word downloads a `.docx`. PDF opens the browser print dialog.
 
 ## 1.1.9
 

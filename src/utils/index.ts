@@ -71,6 +71,14 @@ export {
   MARKDOWN_MIME,
 } from './markdown.utils';
 export {
+  buildDocx,
+  buildPrintDocument,
+  downloadBytes,
+  printHtmlDocument,
+  DOCX_FILENAME,
+  DOCX_MIME,
+} from './exportDocument.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

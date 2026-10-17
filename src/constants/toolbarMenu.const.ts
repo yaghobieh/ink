@@ -73,6 +73,8 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   theme: 'Theme',
   importMarkdown: 'Import Markdown',
   exportMarkdown: 'Export Markdown',
+  exportDocx: 'Export Word',
+  exportPdf: 'Export PDF',
   divider: 'Divider',
 };
 
@@ -130,6 +132,8 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   theme: 'Editor paper theme',
   importMarkdown: 'Import a Markdown file',
   exportMarkdown: 'Download this document as Markdown',
+  exportDocx: 'Download a Word document',
+  exportPdf: 'Print or save as PDF',
   divider: '',
 };
 

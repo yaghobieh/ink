@@ -18,3 +18,5 @@ export const TOOLBAR_OPTION_FULLSCREEN = 'fullscreen' as const;
 export const TOOLBAR_OPTION_THEME = 'theme' as const;
 export const TOOLBAR_OPTION_IMPORT_MARKDOWN = 'importMarkdown' as const;
 export const TOOLBAR_OPTION_EXPORT_MARKDOWN = 'exportMarkdown' as const;
+export const TOOLBAR_OPTION_EXPORT_DOCX = 'exportDocx' as const;
+export const TOOLBAR_OPTION_EXPORT_PDF = 'exportPdf' as const;

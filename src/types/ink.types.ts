@@ -71,6 +71,8 @@ export type ToolbarOption =
   | 'theme'
   | 'importMarkdown'
   | 'exportMarkdown'
+  | 'exportDocx'
+  | 'exportPdf'
   | 'divider';
 
 export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
