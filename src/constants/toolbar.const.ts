@@ -21,3 +21,5 @@ export const TOOLBAR_OPTION_EXPORT_MARKDOWN = 'exportMarkdown' as const;
 export const TOOLBAR_OPTION_EXPORT_DOCX = 'exportDocx' as const;
 export const TOOLBAR_OPTION_EXPORT_PDF = 'exportPdf' as const;
 export const TOOLBAR_OPTION_VERSIONS = 'versions' as const;
+export const TOOLBAR_OPTION_FORMAT_PAINTER = 'formatPainter' as const;
+export const TOOLBAR_OPTION_CHANGE_CASE = 'changeCase' as const;

@@ -2524,6 +2524,13 @@
   border-bottom: 1px solid var(--ink-border);
 }
 
+.Ink-CaseMenu {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--ink-border);
+}
+
 .Ink-figure {
   margin: 0.75rem 0;
 }

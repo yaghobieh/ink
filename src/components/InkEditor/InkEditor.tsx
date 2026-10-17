@@ -9,6 +9,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
+import type { PaintedFormat } from '../../utils/formatPainter.utils';
 import type {
   InkCommentThread,
   InkEditorProps,
@@ -187,6 +188,8 @@ import {
   TOOLBAR_OPTION_EXPORT_DOCX,
   TOOLBAR_OPTION_EXPORT_PDF,
   TOOLBAR_OPTION_VERSIONS,
+  TOOLBAR_OPTION_FORMAT_PAINTER,
+  TOOLBAR_OPTION_CHANGE_CASE,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
@@ -250,6 +253,9 @@ import {
   filterMentionPeople,
   scrollToComment,
   setCommentResolvedMark,
+  applyCaseToSelection,
+  applyPaintedFormat,
+  readPaintedFormat,
   readInkMemory,
   readToolbarHidden,
   readToolbarItems,
@@ -479,6 +485,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [mentionPos, setMentionPos] = useState({ top: NUMBER_ZERO, left: NUMBER_ZERO });
   const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
+  const [paintedFormat, setPaintedFormat] = useState<PaintedFormat | null>(null);
+  const [caseOpen, setCaseOpen] = useState(false);
   const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
@@ -1975,6 +1983,28 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === TOOLBAR_OPTION_FORMAT_PAINTER || item === TOOLBAR_OPTION_CHANGE_CASE) {
+      if (!features.formatPainter) return null;
+      const painter = item === TOOLBAR_OPTION_FORMAT_PAINTER;
+      return (
+        <ToolbarButton
+          key={item}
+          icon={painter ? 'P' : 'Aa'}
+          title={painter ? 'Format painter' : 'Change case'}
+          hint={TOOLBAR_OPTION_HINTS[item]}
+          onHint={setToolbarHint}
+          active={painter ? Boolean(paintedFormat) : caseOpen}
+          disabled={disabled || readOnly}
+          onClick={() => {
+            if (painter) {
+              setPaintedFormat(paintedFormat ? null : readPaintedFormat());
+              return;
+            }
+            setCaseOpen((open) => !open);
+          }}
+        />
+      );
+    }
     if (item === TOOLBAR_OPTION_HTML_SOURCE) {
       if (!features.htmlSource) return null;
       return (
@@ -2379,7 +2409,14 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onBlur={handleBlur}
             onKeyUp={refreshFormats}
             onKeyDown={handleKeyDown}
-            onMouseUp={refreshFormats}
+            onMouseUp={() => {
+              if (paintedFormat) {
+                applyPaintedFormat(paintedFormat);
+                setPaintedFormat(null);
+                handleInput();
+              }
+              refreshFormats();
+            }}
             onContextMenu={handleContextMenu}
             onDragOver={handleContentDragOver}
             onDrop={handleContentDrop}
@@ -2426,6 +2463,43 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onChange={handleInput}
               onClose={() => setSelectedImage(null)}
             />
+          ) : null}
+          {caseOpen ? (
+            <div className="Ink-CaseMenu" role="menu" aria-label="Change case">
+              <button
+                type="button"
+                className="Ink-Editor__button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  applyCaseToSelection('upper');
+                  handleInput();
+                }}
+              >
+                UPPER
+              </button>
+              <button
+                type="button"
+                className="Ink-Editor__button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  applyCaseToSelection('lower');
+                  handleInput();
+                }}
+              >
+                lower
+              </button>
+              <button
+                type="button"
+                className="Ink-Editor__button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  applyCaseToSelection('title');
+                  handleInput();
+                }}
+              >
+                Title Case
+              </button>
+            </div>
           ) : null}
           {slashEnabled ? (
             <SlashMenu

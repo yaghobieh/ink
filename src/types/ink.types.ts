@@ -74,6 +74,8 @@ export type ToolbarOption =
   | 'exportDocx'
   | 'exportPdf'
   | 'versions'
+  | 'formatPainter'
+  | 'changeCase'
   | 'divider';
 
 export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {

@@ -20,7 +20,8 @@ export type InkFeatureName =
   | 'markdown'
   | 'export'
   | 'versionHistory'
-  | 'mentions';
+  | 'mentions'
+  | 'formatPainter';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 

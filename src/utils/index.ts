@@ -91,6 +91,12 @@ export {
   filterMentionPeople,
 } from './mentions.utils';
 export {
+  applyCaseToSelection,
+  applyPaintedFormat,
+  readPaintedFormat,
+} from './formatPainter.utils';
+export type { CaseMode, PaintedFormat } from './formatPainter.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

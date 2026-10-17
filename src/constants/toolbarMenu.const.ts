@@ -76,6 +76,8 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   exportDocx: 'Export Word',
   exportPdf: 'Export PDF',
   versions: 'Version history',
+  formatPainter: 'Format painter',
+  changeCase: 'Change case',
   divider: 'Divider',
 };
 
@@ -136,6 +138,8 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   exportDocx: 'Download a Word document',
   exportPdf: 'Print or save as PDF',
   versions: 'Save, restore, or compare a snapshot',
+  formatPainter: 'Copy formatting onto the next selection',
+  changeCase: 'UPPER, lower, or Title Case',
   divider: '',
 };
 
