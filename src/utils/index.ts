@@ -63,6 +63,14 @@ export {
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
 export {
+  buildDocx,
+  buildPrintDocument,
+  downloadBytes,
+  printHtmlDocument,
+  DOCX_FILENAME,
+  DOCX_MIME,
+} from './exportDocument.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

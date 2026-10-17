@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Word and PDF export (FORGE-169). Word downloads a `.docx`. PDF opens the browser print dialog.
+
 ## 1.1.9
 
 ### Added

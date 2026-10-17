@@ -71,6 +71,8 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   outline: 'Outline',
   fullscreen: 'Fullscreen',
   theme: 'Theme',
+  exportDocx: 'Export Word',
+  exportPdf: 'Export PDF',
   divider: 'Divider',
 };
 
@@ -126,6 +128,8 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   outline: 'Show or hide the outline rail',
   fullscreen: 'Fill the screen with the editor',
   theme: 'Editor paper theme',
+  exportDocx: 'Download a Word document',
+  exportPdf: 'Print or save as PDF',
   divider: '',
 };
 

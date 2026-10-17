@@ -182,6 +182,8 @@ import {
   TOOLBAR_OPTION_FONT_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
   TOOLBAR_OPTION_HTML_SOURCE,
+  TOOLBAR_OPTION_EXPORT_DOCX,
+  TOOLBAR_OPTION_EXPORT_PDF,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
@@ -208,6 +210,11 @@ import {
   createTrackChange,
   extractClipboardHtml,
   extractClipboardText,
+  buildDocx,
+  downloadBytes,
+  printHtmlDocument,
+  DOCX_FILENAME,
+  DOCX_MIME,
   countWords,
   collectOutlineItems,
   getCaretLineCol,
@@ -1825,6 +1832,28 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           active={outlineOpen}
           disabled={disabled}
           onClick={toggleOutline}
+        />
+      );
+    }
+    if (item === TOOLBAR_OPTION_EXPORT_DOCX || item === TOOLBAR_OPTION_EXPORT_PDF) {
+      if (!features.export) return null;
+      const asPdf = item === TOOLBAR_OPTION_EXPORT_PDF;
+      return (
+        <ToolbarButton
+          key={item}
+          icon={asPdf ? 'PDF' : 'W'}
+          title={asPdf ? 'Export PDF' : 'Export Word'}
+          hint={TOOLBAR_OPTION_HINTS[item]}
+          onHint={setToolbarHint}
+          disabled={disabled}
+          onClick={() => {
+            const html = editorRef.current?.innerHTML ?? '';
+            if (asPdf) {
+              printHtmlDocument(html);
+              return;
+            }
+            downloadBytes(DOCX_FILENAME, buildDocx(html), DOCX_MIME);
+          }}
         />
       );
     }
