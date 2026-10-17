@@ -1,8 +1,44 @@
+import { NUMBER_ZERO } from '@/constants/numbers';
 import type { InkAiCapability, InkAiResponse } from '../../../../types';
 import {
   AI_SELECTION_ACTIONS,
+  AI_SELECTION_EDGE_PX,
+  AI_SELECTION_ESTIMATED_HEIGHT_PX,
+  AI_SELECTION_ESTIMATED_WIDTH_PX,
+  AI_SELECTION_GAP_PX,
   AI_SELECTION_TRANSLATE_LANGUAGE,
 } from './AiSelectionBubble.const';
+
+export interface AiSelectionAnchor {
+  top: number;
+  left: number;
+  bottom: number;
+  width: number;
+}
+
+export interface AiSelectionViewport {
+  width: number;
+  height: number;
+}
+
+export const placeAiSelectionBubble = (
+  selectionRect: AiSelectionAnchor,
+  viewport: AiSelectionViewport,
+): { top: number; left: number } => {
+  const below = selectionRect.bottom + AI_SELECTION_GAP_PX;
+  const above = selectionRect.top - AI_SELECTION_ESTIMATED_HEIGHT_PX - AI_SELECTION_GAP_PX;
+  const fitsBelow = below + AI_SELECTION_ESTIMATED_HEIGHT_PX <= viewport.height - AI_SELECTION_EDGE_PX;
+  const top = fitsBelow ? below : Math.max(AI_SELECTION_EDGE_PX, above);
+  const maxLeft = Math.max(
+    AI_SELECTION_EDGE_PX,
+    viewport.width - AI_SELECTION_ESTIMATED_WIDTH_PX - AI_SELECTION_EDGE_PX,
+  );
+  const left = Math.min(Math.max(selectionRect.left, AI_SELECTION_EDGE_PX), maxLeft);
+  return {
+    top: Number.isFinite(top) ? top : NUMBER_ZERO,
+    left: Number.isFinite(left) ? left : NUMBER_ZERO,
+  };
+};
 
 const escapeHtml = (value: string): string =>
   value

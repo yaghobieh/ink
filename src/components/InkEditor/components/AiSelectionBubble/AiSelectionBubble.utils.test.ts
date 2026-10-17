@@ -3,6 +3,7 @@ import {
   capabilityForSelectionAction,
   htmlFromAiResponse,
   optionsForSelectionAction,
+  placeAiSelectionBubble,
 } from './AiSelectionBubble.utils';
 
 describe('AiSelectionBubble.utils', () => {
@@ -29,6 +30,22 @@ describe('AiSelectionBubble.utils', () => {
         },
       }),
     ).toBe('<p>next</p>');
+  });
+
+  it('anchors the bubble under the selection and keeps it inside the viewport', () => {
+    expect(
+      placeAiSelectionBubble(
+        { top: 120, left: 80, bottom: 140, width: 160 },
+        { width: 1000, height: 800 },
+      ),
+    ).toEqual({ top: 148, left: 80 });
+
+    expect(
+      placeAiSelectionBubble(
+        { top: 40, left: 900, bottom: 780, width: 40 },
+        { width: 1000, height: 800 },
+      ).left,
+    ).toBe(544);
   });
 
   it('wraps a review suggestion when no html is returned', () => {
