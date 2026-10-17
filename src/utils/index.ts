@@ -11,6 +11,10 @@ export {
   toggleTableHeaderRow,
   getColumnResizeIndex,
   setTableColumnWidth,
+  mergeTableCellRight,
+  splitTableCell,
+  setTableCellBackground,
+  setTableCellVerticalAlign,
   ensureTableColgroup,
 } from './table.utils';
 export {

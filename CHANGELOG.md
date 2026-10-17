@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Table cell merge, split, background, and vertical align (FORGE-176) from the table context menu.
+
 ## 1.1.9
 
 ### Added
