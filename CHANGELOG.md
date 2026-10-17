@@ -10,6 +10,7 @@
 - Local version history (FORGE-171). Save a named snapshot, restore it, or compare it beside the current document.
 - @mentions (FORGE-172). Typing `@` lists collaborators and inserts a mention chip.
 - Image resize, alignment, alt text, and caption (FORGE-173). Click an image to edit it.
+- Comment resolve keeps the highlight, can be reopened, and clicking a thread scrolls to it (FORGE-174).
 
 ## 1.1.9
 

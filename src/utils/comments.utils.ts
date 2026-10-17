@@ -36,6 +36,31 @@ export const wrapSelectionAsComment = (highlightId: string): boolean => {
   }
 };
 
+export const COMMENT_RESOLVED_CLASS = 'Ink-comment-mark--resolved';
+
+export const findCommentMark = (root: ParentNode, highlightId: string): HTMLElement | null => {
+  const mark = root.querySelector(`mark[data-ink-comment="${highlightId}"]`);
+  return mark instanceof HTMLElement ? mark : null;
+};
+
+export const scrollToComment = (root: ParentNode, highlightId: string): boolean => {
+  const mark = findCommentMark(root, highlightId);
+  if (!mark) return false;
+  mark.scrollIntoView({ block: 'center' });
+  return true;
+};
+
+export const setCommentResolvedMark = (
+  root: ParentNode,
+  highlightId: string,
+  resolved: boolean,
+): boolean => {
+  const mark = findCommentMark(root, highlightId);
+  if (!mark) return false;
+  mark.classList.toggle(COMMENT_RESOLVED_CLASS, resolved);
+  return true;
+};
+
 export const removeCommentMark = (html: string, highlightId: string): string => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(`<div>${html}</div>`, 'text/html');
