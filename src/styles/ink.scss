@@ -2445,6 +2445,13 @@
   position: relative;
 }
 
+.Ink-CaseMenu {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--ink-border);
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;

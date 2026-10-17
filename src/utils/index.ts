@@ -63,6 +63,12 @@ export {
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
 export {
+  applyCaseToSelection,
+  applyPaintedFormat,
+  readPaintedFormat,
+} from './formatPainter.utils';
+export type { CaseMode, PaintedFormat } from './formatPainter.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

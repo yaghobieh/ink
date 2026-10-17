@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Format painter and change case (FORGE-175). Copy bold, italic, and underline onto the next selection, or switch the selection to UPPER, lower, or Title Case.
+
 ## 1.1.9
 
 ### Added

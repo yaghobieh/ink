@@ -71,6 +71,8 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   outline: 'Outline',
   fullscreen: 'Fullscreen',
   theme: 'Theme',
+  formatPainter: 'Format painter',
+  changeCase: 'Change case',
   divider: 'Divider',
 };
 
@@ -126,6 +128,8 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   outline: 'Show or hide the outline rail',
   fullscreen: 'Fill the screen with the editor',
   theme: 'Editor paper theme',
+  formatPainter: 'Copy formatting onto the next selection',
+  changeCase: 'UPPER, lower, or Title Case',
   divider: '',
 };
 

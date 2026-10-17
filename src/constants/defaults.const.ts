@@ -27,6 +27,8 @@ import {
   TOOLBAR_OPTION_OUTLINE,
   TOOLBAR_OPTION_FULLSCREEN,
   TOOLBAR_OPTION_THEME,
+  TOOLBAR_OPTION_FORMAT_PAINTER,
+  TOOLBAR_OPTION_CHANGE_CASE,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_OPTION_SUBSCRIPT,
@@ -74,6 +76,8 @@ export const INK_DEFAULT_TOOLBAR: ToolbarOption[] = [
   'ai',
   'divider',
   'clearFormat',
+  TOOLBAR_OPTION_FORMAT_PAINTER,
+  TOOLBAR_OPTION_CHANGE_CASE,
 ];
 
 export const INK_SIMPLE_TOOLBAR: ToolbarOption[] = [
@@ -321,6 +325,7 @@ export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   outline: true,
   fullscreen: true,
   theme: true,
+  formatPainter: true,
 };
 export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
 export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;
