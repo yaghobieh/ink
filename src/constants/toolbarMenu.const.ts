@@ -71,6 +71,8 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   outline: 'Outline',
   fullscreen: 'Fullscreen',
   theme: 'Theme',
+  importMarkdown: 'Import Markdown',
+  exportMarkdown: 'Export Markdown',
   divider: 'Divider',
 };
 
@@ -126,6 +128,8 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   outline: 'Show or hide the outline rail',
   fullscreen: 'Fill the screen with the editor',
   theme: 'Editor paper theme',
+  importMarkdown: 'Import a Markdown file',
+  exportMarkdown: 'Download this document as Markdown',
   divider: '',
 };
 

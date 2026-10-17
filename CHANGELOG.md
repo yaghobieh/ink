@@ -4,6 +4,7 @@
 
 ### Added
 - Selection AI bubble (FORGE-168): Improve, Shorter, Longer, Fix, Tone, and Translate on a text selection, then apply the suggestion.
+- Markdown import and export (FORGE-167), plus `# `, `## `, `### `, `> `, and `1. ` shortcuts.
 
 ## 1.1.9
 

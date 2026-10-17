@@ -16,3 +16,5 @@ export const TOOLBAR_OPTION_GRAPH = 'graph' as const;
 export const TOOLBAR_OPTION_OUTLINE = 'outline' as const;
 export const TOOLBAR_OPTION_FULLSCREEN = 'fullscreen' as const;
 export const TOOLBAR_OPTION_THEME = 'theme' as const;
+export const TOOLBAR_OPTION_IMPORT_MARKDOWN = 'importMarkdown' as const;
+export const TOOLBAR_OPTION_EXPORT_MARKDOWN = 'exportMarkdown' as const;

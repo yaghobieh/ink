@@ -245,6 +245,38 @@ export const setBlockDirection = (
   return true;
 };
 
+const MARKDOWN_BLOCK_PREFIXES: Array<{ prefix: string; command: string; value?: string }> = [
+  { prefix: '###', command: 'formatBlock', value: 'h3' },
+  { prefix: '##', command: 'formatBlock', value: 'h2' },
+  { prefix: '#', command: 'formatBlock', value: 'h1' },
+  { prefix: '>', command: 'formatBlock', value: 'blockquote' },
+  { prefix: '1.', command: COMMAND_ORDERED_LIST },
+];
+
+export const tryConvertMarkdownBlockPrefix = (event: KeyboardEvent): boolean => {
+  if (event.key !== LIST_MARKDOWN_SPACE) return false;
+  const selection = window.getSelection();
+  if (!selection || !selection.isCollapsed || selection.rangeCount === NUMBER_ZERO) return false;
+  const node = selection.anchorNode;
+  if (!node || node.nodeType !== NODE_TYPE_TEXT) return false;
+  const text = node.textContent ?? '';
+  const offset = selection.anchorOffset;
+  const before = text.slice(NUMBER_ZERO, offset);
+  const match = MARKDOWN_BLOCK_PREFIXES.find((item) => before.endsWith(item.prefix));
+  if (!match) return false;
+  const prefixStart = offset - match.prefix.length;
+  const charBefore = prefixStart > NUMBER_ZERO ? before[prefixStart - 1] : '';
+  if (charBefore && charBefore !== '\n') return false;
+  event.preventDefault();
+  const range = selection.getRangeAt(NUMBER_ZERO);
+  range.setStart(node, prefixStart);
+  range.setEnd(node, offset);
+  range.deleteContents();
+  if (match.value) execCommand(match.command, match.value);
+  else execCommand(match.command);
+  return true;
+};
+
 export const tryConvertMarkdownListPrefix = (event: KeyboardEvent): boolean => {
   if (event.key !== LIST_MARKDOWN_SPACE) return false;
   const selection = window.getSelection();
