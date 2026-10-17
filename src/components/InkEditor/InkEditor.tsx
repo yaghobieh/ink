@@ -342,6 +342,7 @@ import {
   TrackChangesBar,
   VersionHistory,
   MentionMenu,
+  ImageFrame,
   PresenceStack,
   RemoteCursors,
   clampInlineToolbarPosition,
@@ -476,6 +477,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [compareHtml, setCompareHtml] = useState('');
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [mentionPos, setMentionPos] = useState({ top: NUMBER_ZERO, left: NUMBER_ZERO });
+  const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
   const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
@@ -2381,6 +2383,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onDragOver={handleContentDragOver}
             onDrop={handleContentDrop}
             onDragEnd={handleContentDragEnd}
+            onClick={(event) => {
+              const target = event.target;
+              setSelectedImage(target instanceof HTMLImageElement ? target : null);
+            }}
             onPaste={(event) => {
               void handlePaste(event);
             }}
@@ -2411,6 +2417,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
                 setMentionQuery(null);
                 handleInput();
               }}
+            />
+          ) : null}
+          {selectedImage ? (
+            <ImageFrame
+              image={selectedImage}
+              onChange={handleInput}
+              onClose={() => setSelectedImage(null)}
             />
           ) : null}
           {slashEnabled ? (

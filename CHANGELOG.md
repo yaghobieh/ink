@@ -9,6 +9,7 @@
 - Word and Google Docs paste cleanup (FORGE-170). Headings, links, tables, and lists stay. Office styles are dropped.
 - Local version history (FORGE-171). Save a named snapshot, restore it, or compare it beside the current document.
 - @mentions (FORGE-172). Typing `@` lists collaborators and inserts a mention chip.
+- Image resize, alignment, alt text, and caption (FORGE-173). Click an image to edit it.
 
 ## 1.1.9
 
