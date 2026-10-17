@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 1.2.0
 
 ### Added
 - Selection AI bubble (FORGE-168): Improve, Shorter, Longer, Fix, Tone, and Translate on a text selection, then apply the suggestion.
@@ -13,6 +13,9 @@
 - Comment resolve keeps the highlight, can be reopened, and clicking a thread scrolls to it (FORGE-174).
 - Format painter and change case (FORGE-175). Copy bold, italic, and underline onto the next selection, or switch the selection to UPPER, lower, or Title Case.
 - Table cell merge, split, background, and vertical align (FORGE-176) from the table context menu.
+
+### Fixed
+- Selection AI menu sits on the highlighted sentence instead of dropping to the bottom of the selection.
 
 ## 1.1.9
 

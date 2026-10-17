@@ -13,6 +13,7 @@ export const AI_SELECTION_GAP_PX = NUMBER_EIGHT;
 export const AI_SELECTION_EDGE_PX = NUMBER_EIGHT;
 export const AI_SELECTION_ESTIMATED_HEIGHT_PX = NUMBER_FORTY;
 export const AI_SELECTION_ESTIMATED_WIDTH_PX = 448;
+export const AI_SELECTION_LINE_CAP_PX = 28;
 
 export const AI_SELECTION_ACTIONS: ReadonlyArray<{
   id: string;

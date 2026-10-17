@@ -821,7 +821,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       return;
     }
     const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
+    const lineRects = Array.from(range.getClientRects()).filter(
+      (item) => item.width > 0 || item.height > 0,
+    );
+    const rect = lineRects[0] ?? range.getBoundingClientRect();
     if (rect.width === 0 && rect.height === 0) {
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
       return;

@@ -24,7 +24,7 @@ export const AiSelectionBubble: FC<AiSelectionBubbleProps> = (props) => {
   return createPortal(
     <div
       className={AI_SELECTION_BUBBLE_CLASS}
-      style={{ top, left }}
+      style={{ position: 'fixed', top, left }}
       role="toolbar"
       aria-label={AI_SELECTION_BUBBLE_ARIA_LABEL}
       onPointerDown={(event) => event.stopPropagation()}

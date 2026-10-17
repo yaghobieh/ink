@@ -44,8 +44,8 @@ describe('AiSelectionBubble.utils', () => {
       placeAiSelectionBubble(
         { top: 40, left: 900, bottom: 780, width: 40 },
         { width: 1000, height: 800 },
-      ).left,
-    ).toBe(544);
+      ),
+    ).toEqual({ top: 76, left: 544 });
   });
 
   it('wraps a review suggestion when no html is returned', () => {

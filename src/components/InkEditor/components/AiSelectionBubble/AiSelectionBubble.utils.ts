@@ -6,6 +6,7 @@ import {
   AI_SELECTION_ESTIMATED_HEIGHT_PX,
   AI_SELECTION_ESTIMATED_WIDTH_PX,
   AI_SELECTION_GAP_PX,
+  AI_SELECTION_LINE_CAP_PX,
   AI_SELECTION_TRANSLATE_LANGUAGE,
 } from './AiSelectionBubble.const';
 
@@ -25,7 +26,12 @@ export const placeAiSelectionBubble = (
   selectionRect: AiSelectionAnchor,
   viewport: AiSelectionViewport,
 ): { top: number; left: number } => {
-  const below = selectionRect.bottom + AI_SELECTION_GAP_PX;
+  const selectionHeight = selectionRect.bottom - selectionRect.top;
+  const lineBottom =
+    selectionHeight > AI_SELECTION_ESTIMATED_HEIGHT_PX
+      ? selectionRect.top + AI_SELECTION_LINE_CAP_PX
+      : selectionRect.bottom;
+  const below = lineBottom + AI_SELECTION_GAP_PX;
   const above = selectionRect.top - AI_SELECTION_ESTIMATED_HEIGHT_PX - AI_SELECTION_GAP_PX;
   const fitsBelow = below + AI_SELECTION_ESTIMATED_HEIGHT_PX <= viewport.height - AI_SELECTION_EDGE_PX;
   const top = fitsBelow ? below : Math.max(AI_SELECTION_EDGE_PX, above);
