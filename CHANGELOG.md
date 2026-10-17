@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Word and Google Docs paste cleanup (FORGE-170). Headings, links, tables, and lists stay. Office styles are dropped.
+
 ## 1.1.9
 
 ### Added

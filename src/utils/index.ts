@@ -51,6 +51,8 @@ export {
 export { mintInkPremiumLicenseKey } from './license.utils';
 export {
   sanitizePastedHtml,
+  cleanOfficeHtml,
+  isOfficeHtml,
   extractClipboardHtml,
   extractClipboardText,
 } from './paste.utils';
