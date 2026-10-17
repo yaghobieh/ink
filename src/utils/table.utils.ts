@@ -202,6 +202,46 @@ export const getColumnResizeIndex = (
   return getCellIndex(cell);
 };
 
+export const CELL_BACKGROUND = '#e0e7ff';
+export const CELL_ALIGN_TOP = 'top';
+export const CELL_ALIGN_MIDDLE = 'middle';
+export const CELL_ALIGN_BOTTOM = 'bottom';
+
+export const mergeTableCellRight = (cell: HTMLTableCellElement): boolean => {
+  const next = cell.nextElementSibling;
+  if (!(next instanceof HTMLTableCellElement)) return false;
+  cell.colSpan += next.colSpan;
+  if (next.textContent?.trim()) {
+    cell.append(document.createTextNode(' '));
+    cell.append(...Array.from(next.childNodes));
+  }
+  next.remove();
+  return true;
+};
+
+export const splitTableCell = (cell: HTMLTableCellElement): boolean => {
+  if (cell.colSpan <= 1) return false;
+  cell.colSpan -= 1;
+  const sibling = document.createElement(cell.tagName.toLowerCase());
+  sibling.innerHTML = '<br>';
+  cell.after(sibling);
+  return true;
+};
+
+export const setTableCellBackground = (cell: HTMLTableCellElement): boolean => {
+  const current = cell.style.backgroundColor;
+  cell.style.backgroundColor = current ? '' : CELL_BACKGROUND;
+  return true;
+};
+
+export const setTableCellVerticalAlign = (cell: HTMLTableCellElement): boolean => {
+  const order = [CELL_ALIGN_TOP, CELL_ALIGN_MIDDLE, CELL_ALIGN_BOTTOM];
+  const current = cell.style.verticalAlign;
+  const index = order.indexOf(current as (typeof order)[number]);
+  cell.style.verticalAlign = order[(index + 1) % order.length] ?? CELL_ALIGN_TOP;
+  return true;
+};
+
 export const setTableColumnWidth = (
   table: HTMLTableElement,
   columnIndex: number,

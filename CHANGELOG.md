@@ -12,6 +12,7 @@
 - Image resize, alignment, alt text, and caption (FORGE-173). Click an image to edit it.
 - Comment resolve keeps the highlight, can be reopened, and clicking a thread scrolls to it (FORGE-174).
 - Format painter and change case (FORGE-175). Copy bold, italic, and underline onto the next selection, or switch the selection to UPPER, lower, or Title Case.
+- Table cell merge, split, background, and vertical align (FORGE-176) from the table context menu.
 
 ## 1.1.9
 

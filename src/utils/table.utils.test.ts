@@ -5,7 +5,11 @@ import {
   deleteTableRow,
   insertTableColumn,
   insertTableRow,
+  mergeTableCellRight,
+  setTableCellBackground,
+  setTableCellVerticalAlign,
   setTableColumnWidth,
+  splitTableCell,
   toggleTableHeaderRow,
 } from './table.utils';
 import { TABLE_CLASS_NAME, TABLE_COLGROUP } from '../constants/table.const';
@@ -72,5 +76,26 @@ describe('table.utils', () => {
     const nextCell = document.querySelector('td') as HTMLTableCellElement;
     expect(deleteTableColumn(nextCell)).toBe(true);
     expect(table.rows[0]?.cells.length).toBe(colsBefore - 1);
+  });
+
+  it('merges a cell with the cell on its right and can split it again', () => {
+    document.body.innerHTML = buildTableHtml(2, 2);
+    const cell = document.querySelector('td') as HTMLTableCellElement;
+    const row = cell.parentElement as HTMLTableRowElement;
+    expect(mergeTableCellRight(cell)).toBe(true);
+    expect(cell.colSpan).toBe(2);
+    expect(row.cells.length).toBe(1);
+    expect(splitTableCell(cell)).toBe(true);
+    expect(cell.colSpan).toBe(1);
+    expect(row.cells.length).toBe(2);
+  });
+
+  it('sets cell background and cycles vertical alignment', () => {
+    document.body.innerHTML = buildTableHtml(2, 2);
+    const cell = document.querySelector('td') as HTMLTableCellElement;
+    expect(setTableCellBackground(cell)).toBe(true);
+    expect(cell.style.backgroundColor).not.toBe('');
+    expect(setTableCellVerticalAlign(cell)).toBe(true);
+    expect(cell.style.verticalAlign).toBe('top');
   });
 });
