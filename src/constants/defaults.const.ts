@@ -334,6 +334,7 @@ export const INK_DEFAULT_FEATURES: InkFeaturesConfig = {
   markdown: true,
   export: true,
   versionHistory: true,
+  mentions: true,
 };
 export const INK_TABLE_DEFAULT_ROWS = INK_DEFAULT_TABLE_ROWS;
 export const INK_TABLE_DEFAULT_COLS = INK_DEFAULT_TABLE_COLS;

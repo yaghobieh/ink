@@ -44,6 +44,7 @@ export type { OutlineRailProps } from './OutlineRail';
 export { TrackChangesBar } from './TrackChangesBar';
 export { VersionHistory } from './VersionHistory';
 export type { VersionHistoryProps } from './VersionHistory';
+export { MentionMenu } from './MentionMenu';
 export { SignPad } from './SignPad';
 export { FindReplace } from './FindReplace';
 export { ToolbarCustomize } from './ToolbarCustomize';

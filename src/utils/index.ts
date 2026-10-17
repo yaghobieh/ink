@@ -83,6 +83,12 @@ export {
   DOCX_MIME,
 } from './exportDocument.utils';
 export {
+  buildMentionHtml,
+  deleteMentionQuery,
+  extractMentionQuery,
+  filterMentionPeople,
+} from './mentions.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,

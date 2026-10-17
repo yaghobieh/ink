@@ -19,7 +19,8 @@ export type InkFeatureName =
   | 'theme'
   | 'markdown'
   | 'export'
-  | 'versionHistory';
+  | 'versionHistory'
+  | 'mentions';
 
 export type InkFeaturesConfig = Partial<Record<InkFeatureName, boolean>>;
 

@@ -2453,6 +2453,13 @@
   gap: 0.25rem;
   max-width: 28rem;
   padding: 0.35rem;
+.Ink-Mentions {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  min-width: 10rem;
+  padding: 0.25rem;
   border: 1px solid var(--ink-border);
   border-radius: var(--ink-radius, 0.5rem);
   background: var(--ink-bg, #fff);
@@ -2492,6 +2499,12 @@
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--ink-border);
   background: var(--ink-bg-subtle, #f8fafc);
+.Ink-Mentions__item {
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
 }
 
 .ink-workspace-editor-wrapper .Ink-Editor {
