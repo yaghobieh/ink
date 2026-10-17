@@ -36,6 +36,8 @@ export {
   createCommentThread,
   wrapSelectionAsComment,
   removeCommentMark,
+  scrollToComment,
+  setCommentResolvedMark,
 } from './comments.utils';
 export { InkHistoryStack } from './history.utils';
 export { filterSlashCommands, extractSlashQuery, groupSlashCommands } from './slash.utils';

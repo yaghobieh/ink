@@ -6,11 +6,13 @@ export interface CommentsPanelProps {
   author: string;
   onAddReply: (threadId: string, body: string) => void;
   onResolve: (threadId: string) => void;
+  onReopen: (threadId: string) => void;
+  onFocus: (threadId: string) => void;
   onClose?: () => void;
 }
 
 export const CommentsPanel: FC<CommentsPanelProps> = (props) => {
-  const { comments, author, onAddReply, onResolve, onClose } = props;
+  const { comments, author, onAddReply, onResolve, onReopen, onFocus, onClose } = props;
   const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   const handleReply = (event: FormEvent, threadId: string) => {
@@ -39,6 +41,7 @@ export const CommentsPanel: FC<CommentsPanelProps> = (props) => {
             <article
               key={thread.id}
               className={`Ink-Comments__thread${thread.resolved ? ' Ink-Comments__thread--resolved' : ''}`}
+              onClick={() => onFocus(thread.id)}
             >
               <header className="Ink-Comments__meta">
                 <span>{thread.author}</span>
@@ -76,7 +79,9 @@ export const CommentsPanel: FC<CommentsPanelProps> = (props) => {
                   </button>
                 </form>
               ) : (
-                <p className="Ink-Comments__resolved">Resolved</p>
+                <button type="button" className="Ink-Editor__button" onClick={() => onReopen(thread.id)}>
+                  Reopen
+                </button>
               )}
             </article>
           ))

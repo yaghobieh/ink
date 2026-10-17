@@ -225,7 +225,8 @@ import {
   reorderBlockAfter,
   reorderBlockBefore,
   rejectTrackChangeInHtml,
-  removeCommentMark,
+  scrollToComment,
+  setCommentResolvedMark,
   readInkMemory,
   readToolbarHidden,
   readToolbarItems,
@@ -2288,6 +2289,22 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             comments={comments}
             author={author}
             onClose={() => setCommentsOpen(false)}
+            onFocus={(threadId) => {
+              const thread = comments.find((item) => item.id === threadId);
+              if (thread && editorRef.current) scrollToComment(editorRef.current, thread.highlightId);
+            }}
+            onReopen={(threadId) => {
+              const thread = comments.find((item) => item.id === threadId);
+              updateComments(
+                comments.map((item) =>
+                  item.id === threadId ? { ...item, resolved: false } : item,
+                ),
+              );
+              if (thread && editorRef.current) {
+                setCommentResolvedMark(editorRef.current, thread.highlightId, false);
+                handleInput();
+              }
+            }}
             onResolve={(threadId) => {
               const thread = comments.find((item) => item.id === threadId);
               updateComments(
@@ -2296,7 +2313,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
                 ),
               );
               if (thread && editorRef.current) {
-                setHtml(removeCommentMark(editorRef.current.innerHTML, thread.highlightId));
+                setCommentResolvedMark(editorRef.current, thread.highlightId, true);
+                handleInput();
               }
             }}
             onAddReply={(threadId, body) => {

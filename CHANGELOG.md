@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Comment resolve keeps the highlight, can be reopened, and clicking a thread scrolls to it (FORGE-174).
+
 ## 1.1.9
 
 ### Added

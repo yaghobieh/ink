@@ -2445,6 +2445,11 @@
   position: relative;
 }
 
+.Ink-comment-mark--resolved {
+  background-color: transparent;
+  box-shadow: inset 0 -2px 0 var(--ink-muted, #94a3b8);
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;
