@@ -1,6 +1,9 @@
-import type { FC } from 'react';
+import type { FC, PointerEvent } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AI_SELECTION_ACTIONS,
+  AI_SELECTION_ACTION_ACTIVE_CLASS,
+  AI_SELECTION_ACTION_CLASS,
   AI_SELECTION_APPLY_LABEL,
   AI_SELECTION_BUBBLE_ARIA_LABEL,
   AI_SELECTION_BUBBLE_CLASS,
@@ -9,24 +12,30 @@ import {
 } from './AiSelectionBubble.const';
 import type { AiSelectionBubbleProps } from './AiSelectionBubble.types';
 
+const keepSelection = (event: PointerEvent<HTMLButtonElement>) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
 export const AiSelectionBubble: FC<AiSelectionBubbleProps> = (props) => {
   const { open, top, left, busy, preview, onAction, onApply, onDismiss } = props;
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div
       className={AI_SELECTION_BUBBLE_CLASS}
       style={{ top, left }}
       role="toolbar"
       aria-label={AI_SELECTION_BUBBLE_ARIA_LABEL}
+      onPointerDown={(event) => event.stopPropagation()}
     >
       {AI_SELECTION_ACTIONS.map((action) => (
         <button
           key={action.id}
           type="button"
-          className="Ink-Editor__button"
+          className={AI_SELECTION_ACTION_CLASS}
           disabled={busy}
-          onMouseDown={(event) => event.preventDefault()}
+          onPointerDown={keepSelection}
           onClick={() => onAction(action.id)}
         >
           {action.label}
@@ -37,22 +46,23 @@ export const AiSelectionBubble: FC<AiSelectionBubbleProps> = (props) => {
         <>
           <button
             type="button"
-            className="Ink-Editor__button Ink-Editor__button--active"
-            onMouseDown={(event) => event.preventDefault()}
+            className={`${AI_SELECTION_ACTION_CLASS} ${AI_SELECTION_ACTION_ACTIVE_CLASS}`}
+            onPointerDown={keepSelection}
             onClick={onApply}
           >
             {AI_SELECTION_APPLY_LABEL}
           </button>
           <button
             type="button"
-            className="Ink-Editor__button"
-            onMouseDown={(event) => event.preventDefault()}
+            className={AI_SELECTION_ACTION_CLASS}
+            onPointerDown={keepSelection}
             onClick={onDismiss}
           >
             {AI_SELECTION_DISMISS_LABEL}
           </button>
         </>
       ) : null}
-    </div>
+    </div>,
+    document.body,
   );
 };

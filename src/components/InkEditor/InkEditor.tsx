@@ -289,6 +289,7 @@ import {
   capabilityForSelectionAction,
   htmlFromAiResponse,
   optionsForSelectionAction,
+  placeAiSelectionBubble,
   AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT,
   AI_AUTOCOMPLETE_DEBOUNCE_MS,
   AiPanel,
@@ -465,6 +466,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   });
   const [aiSelectionBusy, setAiSelectionBusy] = useState(false);
   const [aiSelectionPreview, setAiSelectionPreview] = useState('');
+  const [aiSelectionPos, setAiSelectionPos] = useState({ top: NUMBER_ZERO, left: NUMBER_ZERO });
   const [visibleToolbar, setVisibleToolbar] = useState<ToolbarOption[]>(
     () => readToolbarItems(keepInMemory, memoryKey) ?? toolbar,
   );
@@ -769,15 +771,22 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       setInlineToolbar((prev) => (prev.open ? { ...prev, open: false } : prev));
       return;
     }
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
     const position = clampInlineToolbarPosition({
       selectionRect: rect,
       toolbarWidth: INLINE_TOOLBAR_ESTIMATED_WIDTH_PX,
       toolbarHeight: INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX,
-      viewport: { width: window.innerWidth, height: window.innerHeight },
+      viewport,
       gap: INLINE_TOOLBAR_GAP_PX,
       edgePadding: INLINE_TOOLBAR_EDGE_PADDING_PX,
     });
     setInlineToolbar({ open: true, top: position.top, left: position.left });
+    setAiSelectionPos(
+      placeAiSelectionBubble(
+        { top: rect.top, left: rect.left, bottom: rect.bottom, width: rect.width },
+        viewport,
+      ),
+    );
   };
 
   const refreshFormats = () => {
@@ -2301,8 +2310,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           {features.ai && ai?.enabled ? (
             <AiSelectionBubble
               open={inlineToolbar.open && Boolean(selectionHtml)}
-              top={inlineToolbar.top + INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX}
-              left={inlineToolbar.left}
+              top={aiSelectionPos.top}
+              left={aiSelectionPos.left}
               busy={aiSelectionBusy}
               preview={aiSelectionPreview}
               onAction={(actionId) => {

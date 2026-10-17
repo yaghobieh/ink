@@ -8,6 +8,7 @@ export {
   capabilityForSelectionAction,
   htmlFromAiResponse,
   optionsForSelectionAction,
+  placeAiSelectionBubble,
 } from './AiSelectionBubble';
 export type { AiSelectionBubbleProps } from './AiSelectionBubble';
 export {
