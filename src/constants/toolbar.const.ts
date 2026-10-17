@@ -16,3 +16,4 @@ export const TOOLBAR_OPTION_GRAPH = 'graph' as const;
 export const TOOLBAR_OPTION_OUTLINE = 'outline' as const;
 export const TOOLBAR_OPTION_FULLSCREEN = 'fullscreen' as const;
 export const TOOLBAR_OPTION_THEME = 'theme' as const;
+export const TOOLBAR_OPTION_VERSIONS = 'versions' as const;

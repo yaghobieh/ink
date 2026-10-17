@@ -62,6 +62,8 @@ export {
 } from './memory.utils';
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
+export { listVersions, saveVersion } from './versions.utils';
+export type { InkDocumentVersion } from './versions.utils';
 export {
   captureSelectionInRoot,
   restoreSelectionInRoot,

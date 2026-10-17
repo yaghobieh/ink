@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Local version history (FORGE-171). Save a named snapshot, restore it, or compare it beside the current document.
+
 ## 1.1.9
 
 ### Added

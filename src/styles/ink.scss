@@ -2445,6 +2445,35 @@
   position: relative;
 }
 
+.Ink-Versions {
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+  border-left: 1px solid var(--ink-border);
+  background: var(--ink-bg, #fff);
+}
+
+.Ink-Versions__header,
+.Ink-Versions__actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.Ink-Versions__item,
+.Ink-Versions__empty,
+.Ink-Versions__header {
+  padding: 0.5rem 0.75rem;
+}
+
+.Ink-Versions__compare {
+  max-height: 10rem;
+  overflow: auto;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--ink-border);
+  background: var(--ink-bg-subtle, #f8fafc);
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;

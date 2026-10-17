@@ -69,6 +69,7 @@ export type ToolbarOption =
   | 'outline'
   | 'fullscreen'
   | 'theme'
+  | 'versions'
   | 'divider';
 
 export interface InkEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {

@@ -71,6 +71,7 @@ export const TOOLBAR_OPTION_LABELS: Record<ToolbarOption, string> = {
   outline: 'Outline',
   fullscreen: 'Fullscreen',
   theme: 'Theme',
+  versions: 'Version history',
   divider: 'Divider',
 };
 
@@ -126,6 +127,7 @@ export const TOOLBAR_OPTION_HINTS: Record<ToolbarOption, string> = {
   outline: 'Show or hide the outline rail',
   fullscreen: 'Fill the screen with the editor',
   theme: 'Editor paper theme',
+  versions: 'Save, restore, or compare a snapshot',
   divider: '',
 };
 
