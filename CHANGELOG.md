@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Markdown import and export (FORGE-167), plus `# `, `## `, `### `, `> `, and `1. ` shortcuts.
+
 ## 1.1.9
 
 ### Added

@@ -182,6 +182,8 @@ import {
   TOOLBAR_OPTION_FONT_DROPDOWN,
   TOOLBAR_OPTION_HORIZONTAL_RULE,
   TOOLBAR_OPTION_HTML_SOURCE,
+  TOOLBAR_OPTION_IMPORT_MARKDOWN,
+  TOOLBAR_OPTION_EXPORT_MARKDOWN,
   TOOLBAR_OPTION_LIST_DROPDOWN,
   TOOLBAR_OPTION_SIGNATURE,
   TOOLBAR_SHOW_CONTROL_ARIA_LABEL,
@@ -208,6 +210,12 @@ import {
   createTrackChange,
   extractClipboardHtml,
   extractClipboardText,
+  downloadTextFile,
+  htmlToMarkdown,
+  markdownToHtml,
+  MARKDOWN_ACCEPT,
+  MARKDOWN_EXPORT_FILENAME,
+  MARKDOWN_MIME,
   countWords,
   collectOutlineItems,
   getCaretLineCol,
@@ -280,6 +288,7 @@ import {
   setBlockDirection,
   setHighlightColor,
   setTextColor,
+  tryConvertMarkdownBlockPrefix,
   tryConvertMarkdownListPrefix,
 } from './helpers';
 import { inkAi } from '../../plugins/ai';
@@ -401,6 +410,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const themeStyle = canUseTheme ? themeTokensToStyle(theme) : {};
   const richPasteEnabled = canUseRichPaste && pasteMode === 'rich';
   const editorRef = useRef<HTMLDivElement>(null);
+  const markdownInputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef(new InkHistoryStack(value ?? defaultValue));
   const lastEmittedHtmlRef = useRef<string | null>(null);
@@ -1448,7 +1458,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
       dismissAiAutocomplete();
       return;
     }
-    if (tryConvertMarkdownListPrefix(event.nativeEvent)) {
+    if (tryConvertMarkdownBlockPrefix(event.nativeEvent) || tryConvertMarkdownListPrefix(event.nativeEvent)) {
       handleInput();
       return;
     }
@@ -1828,6 +1838,32 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
         />
       );
     }
+    if (item === TOOLBAR_OPTION_IMPORT_MARKDOWN || item === TOOLBAR_OPTION_EXPORT_MARKDOWN) {
+      if (!features.markdown) return null;
+      const exporting = item === TOOLBAR_OPTION_EXPORT_MARKDOWN;
+      return (
+        <ToolbarButton
+          key={item}
+          icon={exporting ? 'Md' : 'In'}
+          title={exporting ? 'Export Markdown' : 'Import Markdown'}
+          hint={TOOLBAR_OPTION_HINTS[item]}
+          onHint={setToolbarHint}
+          disabled={disabled || (exporting ? false : readOnly)}
+          onClick={() => {
+            if (exporting) {
+              if (!editorRef.current) return;
+              downloadTextFile(
+                MARKDOWN_EXPORT_FILENAME,
+                htmlToMarkdown(editorRef.current.innerHTML),
+                MARKDOWN_MIME,
+              );
+              return;
+            }
+            markdownInputRef.current?.click();
+          }}
+        />
+      );
+    }
     if (item === TOOLBAR_OPTION_HTML_SOURCE) {
       if (!features.htmlSource) return null;
       return (
@@ -2196,6 +2232,20 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
           {collaboration?.collaborators && collaboration.showRemoteCursors !== false ? (
             <RemoteCursors collaborators={collaboration.collaborators} />
           ) : null}
+          <input
+            ref={markdownInputRef}
+            type="file"
+            accept={MARKDOWN_ACCEPT}
+            hidden
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = '';
+              if (!file) return;
+              void file.text().then((text) => {
+                setHtml(markdownToHtml(text));
+              });
+            }}
+          />
           <div
             ref={editorRef}
             className={sourceOpen ? `${INK_CLASS_CONTENT} ${INK_CLASS_CONTENT_HIDDEN}` : INK_CLASS_CONTENT}

@@ -16,6 +16,7 @@ export {
   setBlockDirection,
   clearFormatDeep,
   stripSelectionColors,
+  tryConvertMarkdownBlockPrefix,
   tryConvertMarkdownListPrefix,
   isSelectionInListItem,
 } from './format.utils';

@@ -63,6 +63,14 @@ export {
 export { isLocalStorageAvailable } from './storage.utils';
 export { replaceInHtml, countOccurrences } from './findReplace.utils';
 export {
+  downloadTextFile,
+  htmlToMarkdown,
+  markdownToHtml,
+  MARKDOWN_ACCEPT,
+  MARKDOWN_EXPORT_FILENAME,
+  MARKDOWN_MIME,
+} from './markdown.utils';
+export {
   captureSelectionInRoot,
   restoreSelectionInRoot,
   withPreservedSelection,
