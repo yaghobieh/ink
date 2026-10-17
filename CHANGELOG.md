@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Selection AI bubble (FORGE-168): Improve, Shorter, Longer, Fix, Tone, and Translate on a text selection, then apply the suggestion.
+
 ## 1.1.9
 
 ### Added

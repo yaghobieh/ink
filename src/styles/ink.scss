@@ -2445,6 +2445,26 @@
   position: relative;
 }
 
+.Ink-AiSelection {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-width: 28rem;
+  padding: 0.35rem;
+  border: 1px solid var(--ink-border);
+  border-radius: var(--ink-radius, 0.5rem);
+  background: var(--ink-bg, #fff);
+  box-shadow: var(--ink-shadow, 0 8px 24px rgba(15, 23, 42, 0.12));
+}
+
+.Ink-AiSelection__status {
+  align-self: center;
+  color: var(--ink-muted, #64748b);
+  font-size: 0.75rem;
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;

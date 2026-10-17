@@ -285,6 +285,10 @@ import {
 import { inkAi } from '../../plugins/ai';
 import {
   AiAutocomplete,
+  AiSelectionBubble,
+  capabilityForSelectionAction,
+  htmlFromAiResponse,
+  optionsForSelectionAction,
   AI_AUTOCOMPLETE_COMMAND_INSERT_TEXT,
   AI_AUTOCOMPLETE_DEBOUNCE_MS,
   AiPanel,
@@ -459,6 +463,8 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     top: NUMBER_ZERO,
     left: NUMBER_ZERO,
   });
+  const [aiSelectionBusy, setAiSelectionBusy] = useState(false);
+  const [aiSelectionPreview, setAiSelectionPreview] = useState('');
   const [visibleToolbar, setVisibleToolbar] = useState<ToolbarOption[]>(
     () => readToolbarItems(keepInMemory, memoryKey) ?? toolbar,
   );
@@ -1438,6 +1444,35 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     handleFormat(action);
   };
 
+  const runSelectionAi = async (actionId: string) => {
+    const capability = capabilityForSelectionAction(actionId);
+    if (!capability || !editorRef.current || !selectionHtml) return;
+    setAiSelectionBusy(true);
+    setAiSelectionPreview('');
+    try {
+      const response = await inkAi.runProvider(ai?.providerId || INK_AI_DEMO_PROVIDER_ID, {
+        capability,
+        html: editorRef.current.innerHTML,
+        selectionHtml,
+        options: optionsForSelectionAction(actionId),
+        modelId: ai?.modelId,
+      });
+      setAiSelectionPreview(htmlFromAiResponse(response));
+    } catch {
+      setAiSelectionPreview('');
+    } finally {
+      setAiSelectionBusy(false);
+    }
+  };
+
+  const applySelectionAi = () => {
+    if (!aiSelectionPreview) return;
+    focusEditor(editorRef.current);
+    insertHTML(aiSelectionPreview);
+    setAiSelectionPreview('');
+    handleInput();
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === KEY_TAB && aiAutocomplete.visible && aiAutocomplete.suggestion) {
       event.preventDefault();
@@ -2263,6 +2298,20 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onLink={handleLink}
             onClose={() => setInlineToolbar((prev) => ({ ...prev, open: false }))}
           />
+          {features.ai && ai?.enabled ? (
+            <AiSelectionBubble
+              open={inlineToolbar.open && Boolean(selectionHtml)}
+              top={inlineToolbar.top + INLINE_TOOLBAR_ESTIMATED_HEIGHT_PX}
+              left={inlineToolbar.left}
+              busy={aiSelectionBusy}
+              preview={aiSelectionPreview}
+              onAction={(actionId) => {
+                void runSelectionAi(actionId);
+              }}
+              onApply={applySelectionAi}
+              onDismiss={() => setAiSelectionPreview('')}
+            />
+          ) : null}
           <ContextMenu
             open={contextMenu.open}
             x={contextMenu.x}

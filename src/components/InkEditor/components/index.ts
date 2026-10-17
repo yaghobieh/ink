@@ -3,6 +3,13 @@ export { ToolbarDropdown } from './ToolbarDropdown';
 export { ToolbarColorPicker } from './ToolbarColorPicker';
 export { CommentsPanel } from './CommentsPanel';
 export { AiPanel } from './AiPanel';
+export { AiSelectionBubble } from './AiSelectionBubble';
+export {
+  capabilityForSelectionAction,
+  htmlFromAiResponse,
+  optionsForSelectionAction,
+} from './AiSelectionBubble';
+export type { AiSelectionBubbleProps } from './AiSelectionBubble';
 export {
   AiAutocomplete,
   AI_AUTOCOMPLETE_DEBOUNCE_MS,
