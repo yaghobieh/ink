@@ -223,6 +223,7 @@ import {
   printHtmlDocument,
   DOCX_FILENAME,
   DOCX_MIME,
+  isOfficeHtml,
   countWords,
   collectOutlineItems,
   getCaretLineCol,
@@ -1417,8 +1418,9 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
     const clipboard = event.clipboardData;
     if (!clipboard) return;
 
-    if (richPasteEnabled) {
-      const html = extractClipboardHtml(clipboard);
+    const clipboardHtml = extractClipboardHtml(clipboard);
+    if (richPasteEnabled || isOfficeHtml(clipboardHtml)) {
+      const html = clipboardHtml;
       if (html) {
         event.preventDefault();
         const clean = sanitizePastedHtml(html);
