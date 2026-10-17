@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Image resize, alignment, alt text, and caption (FORGE-173). Click an image to edit it.
+
 ## 1.1.9
 
 ### Added

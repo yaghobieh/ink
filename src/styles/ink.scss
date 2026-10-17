@@ -2445,6 +2445,24 @@
   position: relative;
 }
 
+.Ink-ImageFrame {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--ink-border);
+}
+
+.Ink-figure {
+  margin: 0.75rem 0;
+}
+
+.Ink-figure figcaption {
+  color: var(--ink-muted, #64748b);
+  font-size: 0.85rem;
+}
+
 .ink-workspace-editor-wrapper .Ink-Editor {
   border: none;
   border-radius: 0;

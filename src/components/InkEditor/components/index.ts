@@ -35,6 +35,7 @@ export { SlashMenu } from './SlashMenu';
 export { OutlineRail } from './OutlineRail';
 export type { OutlineRailProps } from './OutlineRail';
 export { TrackChangesBar } from './TrackChangesBar';
+export { ImageFrame } from './ImageFrame';
 export { SignPad } from './SignPad';
 export { FindReplace } from './FindReplace';
 export { ToolbarCustomize } from './ToolbarCustomize';

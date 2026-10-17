@@ -312,6 +312,7 @@ import {
   ToolbarCustomize,
   ToolbarDropdown,
   TrackChangesBar,
+  ImageFrame,
   PresenceStack,
   RemoteCursors,
   clampInlineToolbarPosition,
@@ -440,6 +441,7 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
   const [signPadOpen, setSignPadOpen] = useState(false);
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const [sourceOpen, setSourceOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
   const [sourceHtml, setSourceHtml] = useState(EMPTY_STRING);
   const [findReplaceFocus, setFindReplaceFocus] =
     useState<FindReplaceFocusField>(FIND_REPLACE_FOCUS_FIND);
@@ -2215,6 +2217,10 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
             onDragOver={handleContentDragOver}
             onDrop={handleContentDrop}
             onDragEnd={handleContentDragEnd}
+            onClick={(event) => {
+              const target = event.target;
+              setSelectedImage(target instanceof HTMLImageElement ? target : null);
+            }}
             onPaste={(event) => {
               void handlePaste(event);
             }}
@@ -2225,6 +2231,13 @@ export const InkEditor: FC<InkEditorProps> = (props) => {
               onChange={setSourceHtml}
               disabled={disabled || readOnly}
               minHeight={minHeightValue}
+            />
+          ) : null}
+          {selectedImage ? (
+            <ImageFrame
+              image={selectedImage}
+              onChange={handleInput}
+              onClose={() => setSelectedImage(null)}
             />
           ) : null}
           {slashEnabled ? (
