@@ -39,7 +39,7 @@ import {
   NUMBER_ONE,
   EMPTY_STRING,
 } from '@const';
-import { cn } from '@utils';
+import { cn, hasInkPremiumFeature, resolveInkPremium } from '@utils';
 import { Button } from '@common-components';
 
 export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspaceProps) => {
@@ -79,12 +79,14 @@ export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspacePro
     handleSaveRename,
     handleCancelRename,
   } = useInkWorkspace(props);
+  const canSplit = hasInkPremiumFeature(resolveInkPremium(editorProps.premium), 'splitEditors');
+  const viewMode = canSplit ? splitMode : INK_SPLIT_MODE_NONE;
 
   return (
     <div
       className={cn('ink-workspace-root', className)}
       style={style}
-      data-split-mode={splitMode}
+      data-split-mode={viewMode}
     >
       <header className="ink-workspace-header">
         <div className="ink-workspace-header-left">
@@ -107,7 +109,7 @@ export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspacePro
           <div className="ink-workspace-split-controls" role="group" aria-label={INK_WORKSPACE_SPLIT_VIEW_LABEL}>
             <Button
               type="button"
-              className={cn('ink-workspace-icon-btn', splitMode === INK_SPLIT_MODE_NONE && 'ink-active')}
+              className={cn('ink-workspace-icon-btn', viewMode === INK_SPLIT_MODE_NONE && 'ink-active')}
               onClick={() => setSplitMode(INK_SPLIT_MODE_NONE)}
               title={INK_WORKSPACE_SINGLE_VIEW_TITLE}
             >
@@ -115,17 +117,19 @@ export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspacePro
             </Button>
             <Button
               type="button"
-              className={cn('ink-workspace-icon-btn', splitMode === INK_SPLIT_MODE_VERTICAL && 'ink-active')}
-              onClick={() => setSplitMode(INK_SPLIT_MODE_VERTICAL)}
-              title={INK_WORKSPACE_SPLIT_SIDE_TITLE}
+              className={cn('ink-workspace-icon-btn', viewMode === INK_SPLIT_MODE_VERTICAL && 'ink-active')}
+              onClick={() => canSplit && setSplitMode(INK_SPLIT_MODE_VERTICAL)}
+              disabled={!canSplit}
+              title={canSplit ? INK_WORKSPACE_SPLIT_SIDE_TITLE : 'Ink Pro'}
             >
               <SplitVerticalIcon />
             </Button>
             <Button
               type="button"
-              className={cn('ink-workspace-icon-btn', splitMode === INK_SPLIT_MODE_HORIZONTAL && 'ink-active')}
-              onClick={() => setSplitMode(INK_SPLIT_MODE_HORIZONTAL)}
-              title={INK_WORKSPACE_SPLIT_STACKED_TITLE}
+              className={cn('ink-workspace-icon-btn', viewMode === INK_SPLIT_MODE_HORIZONTAL && 'ink-active')}
+              onClick={() => canSplit && setSplitMode(INK_SPLIT_MODE_HORIZONTAL)}
+              disabled={!canSplit}
+              title={canSplit ? INK_WORKSPACE_SPLIT_STACKED_TITLE : 'Ink Pro'}
             >
               <SplitHorizontalIcon />
             </Button>
@@ -281,7 +285,7 @@ export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspacePro
           </aside>
         )}
 
-        <main className={cn('ink-workspace-main-area', `ink-split-${splitMode}`)}>
+        <main className={cn('ink-workspace-main-area', `ink-split-${viewMode}`)}>
           <section className="ink-workspace-pane ink-primary-pane">
             <InkTabs
               documents={documents}
@@ -305,7 +309,7 @@ export const InkWorkspace: React.FC<InkWorkspaceProps> = (props: InkWorkspacePro
             )}
           </section>
 
-          {splitMode !== INK_SPLIT_MODE_NONE && (
+          {viewMode !== INK_SPLIT_MODE_NONE && (
             <section className="ink-workspace-pane ink-secondary-pane">
               <div className="ink-secondary-pane-header">
                 <span className="ink-secondary-pane-label">{INK_WORKSPACE_SPLIT_VIEW_LABEL}</span>

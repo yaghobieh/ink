@@ -23,10 +23,12 @@ const allFeaturesOn = (): Record<InkPremiumFeature, boolean> =>
   >;
 
 const LICENSE_BODY_PATTERN = /^[A-Z0-9]{4}(?:_[A-Z0-9]{4}){3}$/;
+const LEMON_LICENSE_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const isInkPremiumLicenseKey = (licenseKey?: string): boolean => {
   if (!licenseKey) return false;
   const trimmed = licenseKey.trim();
+  if (LEMON_LICENSE_PATTERN.test(trimmed)) return true;
   if (!trimmed.startsWith(INK_PREMIUM_LICENSE_PREFIX)) return false;
   const body = trimmed.slice(INK_PREMIUM_LICENSE_PREFIX.length);
   return LICENSE_BODY_PATTERN.test(body);

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+### Added
+- Ink Pro is the $10 license. It unlocks theme tokens, toolbar icons, rich paste, image upload, WYSIWYG mode, and split editors.
+- Split view in `InkWorkspace` follows that license. The single editor stays available without it.
+
 ## 1.2.0
 
 ### Added
